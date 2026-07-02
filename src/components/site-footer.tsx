@@ -8,7 +8,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border/60 bg-[oklch(0.955_0.012_60)]">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-4">
         <div className="md:col-span-2">
-          <img src={logo.url} alt={`${site.full} logo`} className="h-14 w-auto md:h-16" />
+          <img src={logo.url} alt={`${site.full} logo`} className="h-14 md:h-16" style={{ width: 300 }} />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
             Romantic, luxury florals for the moments that matter — from a Tuesday bouquet to the wedding of a lifetime.
           </p>
