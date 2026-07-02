@@ -17,7 +17,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 md:py-5">
         <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)} aria-label={site.full}>
-          <img src={logo.url} alt={`${site.full} logo`} className="h-10 w-10 md:h-12 md:w-12" />
+          <img src={logo.url} alt={`${site.full} logo`} className="h-14 w-auto md:h-16" />
         </Link>
 
         <nav className="hidden items-center gap-9 md:flex">
