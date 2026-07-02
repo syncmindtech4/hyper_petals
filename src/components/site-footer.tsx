@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
 import { site } from "@/lib/site";
-import logo from "@/assets/luxe-floral-logo.png.asset.json";
+import logo from "@/assets/luxe-floral-logo.svg.asset.json";
 
 export function SiteFooter() {
   return (
