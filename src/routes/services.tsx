@@ -19,19 +19,19 @@ export const Route = createFileRoute("/services")({
 const services = [
   {
     title: "Weddings",
-    price: "From ₦850,000",
+    price: "From UGX 850,000",
     body: "Bridal bouquets, bridesmaids, boutonnières, ceremony arches, aisle florals and reception centerpieces — designed to hold their own next to the dress.",
     includes: ["Consultation & mood board", "Full design proposal", "Setup & teardown", "Personal florals for the party"],
   },
   {
     title: "Corporate & Brand",
-    price: "From ₦450,000",
+    price: "From UGX 450,000",
     body: "Launches, dinners, press days, media walls. Considered installations that photograph beautifully and stay on-brand.",
     includes: ["On-brand palette design", "Custom installations", "Press day styling", "Weekly office florals"],
   },
   {
     title: "Bespoke Styling",
-    price: "From ₦180,000",
+    price: "From UGX 180,000",
     body: "Intimate dinners, proposals, milestone birthdays. When you want something that feels like it was made only for you — because it was.",
     includes: ["Concept development", "Tablescapes", "Candle & prop styling", "On-site florist"],
   },
