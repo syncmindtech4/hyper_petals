@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import logo from "@/assets/luxe-floral-logo-clean.svg.asset.json";
+import logo from "@/assets/luxe-floral-logo-revert.svg.asset.json";
 import { site } from "@/lib/site";
 
 const nav = [
