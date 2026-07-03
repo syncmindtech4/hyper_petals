@@ -6,10 +6,10 @@ export const Route = createFileRoute("/services")({
   component: Services,
   head: () => ({
     meta: [
-      { title: "Event Florals & Wedding Services — Luxe Floral" },
-      { name: "description", content: "Full-service event florals from Luxe Floral Designs & Events — weddings, corporate events, and bespoke styling across Uganda." },
-      { property: "og:title", content: "Event Florals & Wedding Services — Luxe Floral" },
-      { property: "og:description", content: "Full-service event florals for weddings, corporate events, and bespoke styling." },
+      { title: "Birthday, Baby Shower & Proposal Florals — Luxe Floral" },
+      { name: "description", content: "Full-service event florals from Luxe Floral Designs & Events — birthday parties, baby showers, and wedding proposals across Uganda." },
+      { property: "og:title", content: "Birthday, Baby Shower & Proposal Florals — Luxe Floral" },
+      { property: "og:description", content: "Full-service event florals for birthdays, baby showers, and wedding proposals." },
       { property: "og:url", content: "/services" },
     ],
     links: [{ rel: "canonical", href: "/services" }],
@@ -18,22 +18,22 @@ export const Route = createFileRoute("/services")({
 
 const services = [
   {
-    title: "Weddings",
-    price: "From UGX 850,000",
-    body: "Bridal bouquets, bridesmaids, boutonnières, ceremony arches, aisle florals and reception centerpieces — designed to hold their own next to the dress.",
-    includes: ["Consultation & mood board", "Full design proposal", "Setup & teardown", "Personal florals for the party"],
-  },
-  {
-    title: "Corporate & Brand",
+    title: "Birthday Parties",
     price: "From UGX 450,000",
-    body: "Launches, dinners, press days, media walls. Considered installations that photograph beautifully and stay on-brand.",
-    includes: ["On-brand palette design", "Custom installations", "Press day styling", "Weekly office florals"],
+    body: "From sweet sixteen surprises to milestone celebrations — bold backdrops, table florals, and cake table styling that set the tone for an unforgettable party.",
+    includes: ["Theme & palette design", "Backdrop & balloon florals", "Table centerpieces", "Cake table styling"],
   },
   {
-    title: "Bespoke Styling",
-    price: "From UGX 180,000",
-    body: "Intimate dinners, proposals, milestone birthdays. When you want something that feels like it was made only for you — because it was.",
-    includes: ["Concept development", "Tablescapes", "Candle & prop styling", "On-site florist"],
+    title: "Baby Showers",
+    price: "From UGX 380,000",
+    body: "Soft, dreamy installations in pastel or gender-neutral palettes. Thoughtful details that make the mum-to-be feel truly celebrated.",
+    includes: ["Mood board & concept", "Welcome arch or backdrop", "Guest table florals", "Gift & dessert table styling"],
+  },
+  {
+    title: "Wedding Proposals",
+    price: "From UGX 280,000",
+    body: "Intimate, romantic settings designed to make the moment unforgettable. From private dinners to surprise garden setups — one question, one yes.",
+    includes: ["Venue scouting advice", "Romantic floral setup", "Candle & prop styling", "On-site installation"],
   },
 ];
 
@@ -44,10 +44,10 @@ function Services() {
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <p className="eyebrow">Services</p>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[1.05] text-foreground md:text-6xl">
-            Full-service florals for the moments you'll remember.
+            Florals for birthdays, showers & proposals.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            From an intimate proposal to a 400-guest wedding, we design and install floral experiences that feel like an extension of you.
+            From surprise proposals to milestone celebrations, we design and install floral moments that feel like an extension of you.
           </p>
         </div>
       </section>
