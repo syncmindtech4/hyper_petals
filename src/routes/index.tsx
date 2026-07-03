@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Luxe Floral Designs & Events — Romantic Luxury Florals" },
-      { name: "description", content: "Hand-tied bouquets and full-service event florals from Luxe Floral Designs & Events. Order signature arrangements or enquire about your wedding." },
+      { name: "description", content: "Hand-tied bouquets and full-service event florals from Luxe Floral Designs & Events. Order signature arrangements or enquire about your next celebration." },
       { property: "og:title", content: "Luxe Floral Designs & Events" },
       { property: "og:description", content: "Hand-tied bouquets and full-service event florals." },
       { property: "og:url", content: "/" },
@@ -53,7 +53,7 @@ function Home() {
             </div>
             <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border/70 pt-8">
               <div>
-                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Weddings</dt>
+                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Events</dt>
                 <dd className="mt-2 font-serif text-2xl text-foreground">120+</dd>
               </div>
               <div>
@@ -153,7 +153,7 @@ function Home() {
         <div className="mx-auto max-w-5xl px-6 py-24 text-center">
           <p className="eyebrow">Planning something?</p>
           <h2 className="mx-auto mt-4 max-w-2xl font-serif text-4xl leading-tight text-foreground md:text-5xl">
-            Weddings, celebrations, corporate — tell us the moment, we'll bring the flowers.
+            Birthdays, baby showers, proposals — tell us the moment, we'll bring the flowers.
           </h2>
           <Link
             to="/contact"
