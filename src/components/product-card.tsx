@@ -1,4 +1,4 @@
-import { formatNaira, type Product } from "@/lib/products";
+import { formatUGX, type Product } from "@/lib/products";
 import { waLink } from "@/lib/site";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -19,7 +19,7 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
       <div className="mt-5 flex items-baseline justify-between gap-4">
         <h3 className="font-serif text-xl text-foreground">{product.name}</h3>
-        <span className="text-sm text-foreground/80">{formatNaira(product.price)}</span>
+        <span className="text-sm text-foreground/80">{formatUGX(product.price)}</span>
       </div>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
       <a

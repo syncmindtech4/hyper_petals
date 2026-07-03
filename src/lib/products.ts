@@ -56,5 +56,5 @@ export const products: Product[] = [
   },
 ];
 
-export const formatNaira = (n: number) =>
-  new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(n);
+export const formatUGX = (n: number) =>
+  new Intl.NumberFormat("en-UG", { style: "currency", currency: "UGX", maximumFractionDigits: 0 }).format(n);
