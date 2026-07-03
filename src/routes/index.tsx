@@ -27,7 +27,7 @@ function Home() {
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 pb-16 pt-14 md:grid-cols-12 md:gap-8 md:pb-24 md:pt-20">
           <div className="md:col-span-6 md:pt-8">
-            <p className="eyebrow">Luxe Floral · Est. Lagos</p>
+            <p className="eyebrow">Luxe Floral · Est. Kampala</p>
             <h1 className="mt-5 font-serif text-5xl leading-[1.05] text-foreground md:text-[68px]">
               Flowers, arranged for
               <span className="italic text-primary"> the moments </span>
@@ -35,7 +35,7 @@ function Home() {
             </h1>
             <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
               Romantic, luxury bouquets and full-service event florals — designed by hand in our
-              Ikoyi studio and delivered across Lagos.
+              Kampala studio and delivered across Uganda.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <Link
@@ -122,11 +122,11 @@ function Home() {
               A love letter to flowers, tied by hand.
             </h2>
             <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-              We started {site.name} because Lagos deserved florals that felt considered — bouquets that
+              We started {site.name} because Kampala deserved florals that felt considered — bouquets that
               arrive quietly beautiful, and event installations that hold their own next to the moment they were made for.
             </p>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Every arrangement is designed and hand-tied in our Ikoyi studio using seasonal blooms sourced from farms we trust.
+              Every arrangement is designed and hand-tied in our Kampala studio using seasonal blooms sourced from farms we trust.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <Link

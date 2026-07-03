@@ -7,7 +7,7 @@ export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
       { title: "Event Florals & Wedding Services — Luxe Floral" },
-      { name: "description", content: "Full-service event florals from Luxe Floral Designs & Events — weddings, corporate events, and bespoke styling across Lagos." },
+      { name: "description", content: "Full-service event florals from Luxe Floral Designs & Events — weddings, corporate events, and bespoke styling across Uganda." },
       { property: "og:title", content: "Event Florals & Wedding Services — Luxe Floral" },
       { property: "og:description", content: "Full-service event florals for weddings, corporate events, and bespoke styling." },
       { property: "og:url", content: "/services" },

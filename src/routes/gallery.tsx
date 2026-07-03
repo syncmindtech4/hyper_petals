@@ -37,7 +37,7 @@ function Gallery() {
             Signature bouquets, ready to order.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Same-day delivery across Lagos on orders placed before 11am. All bouquets are hand-tied in our studio the morning of delivery.
+            Same-day delivery across Kampala on orders placed before 11am. All bouquets are hand-tied in our studio the morning of delivery.
           </p>
         </div>
       </section>
