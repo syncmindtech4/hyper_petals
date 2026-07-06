@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import archImg from "@/assets/gallery-arch.jpg";
+import { useServicesContent } from "@/hooks/useSiteContent";
 
 export const Route = createFileRoute("/services")({
   component: Services,
@@ -16,51 +17,31 @@ export const Route = createFileRoute("/services")({
   }),
 });
 
-const services = [
-  {
-    title: "Birthday Parties",
-    price: "From UGX 450,000",
-    body: "From sweet sixteen surprises to milestone celebrations — bold backdrops, table florals, and cake table styling that set the tone for an unforgettable party.",
-    includes: ["Theme & palette design", "Backdrop & balloon florals", "Table centerpieces", "Cake table styling"],
-  },
-  {
-    title: "Baby Showers",
-    price: "From UGX 380,000",
-    body: "Soft, dreamy installations in pastel or gender-neutral palettes. Thoughtful details that make the mum-to-be feel truly celebrated.",
-    includes: ["Mood board & concept", "Welcome arch or backdrop", "Guest table florals", "Gift & dessert table styling"],
-  },
-  {
-    title: "Wedding Proposals",
-    price: "From UGX 280,000",
-    body: "Intimate, romantic settings designed to make the moment unforgettable. From private dinners to surprise garden setups — one question, one yes.",
-    includes: ["Venue scouting advice", "Romantic floral setup", "Candle & prop styling", "On-site installation"],
-  },
-];
-
 function Services() {
+  const { data: s } = useServicesContent();
   return (
     <>
       <section className="border-b border-border/60">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <p className="eyebrow">Services</p>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[1.05] text-foreground md:text-6xl">
-            Florals for birthdays, showers & proposals.
+            {s.heading}
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            From surprise proposals to milestone celebrations, we design and install floral moments that feel like an extension of you.
+            {s.subtitle}
           </p>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-10 md:grid-cols-3">
-          {services.map((s) => (
-            <article key={s.title} className="flex flex-col border-t border-border/70 pt-8">
-              <p className="eyebrow">{s.price}</p>
-              <h2 className="mt-3 font-serif text-3xl text-foreground">{s.title}</h2>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+          {s.items.map((svc) => (
+            <article key={svc.title} className="flex flex-col border-t border-border/70 pt-8">
+              <p className="eyebrow">{svc.price}</p>
+              <h2 className="mt-3 font-serif text-3xl text-foreground">{svc.title}</h2>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{svc.body}</p>
               <ul className="mt-6 space-y-2.5">
-                {s.includes.map((i) => (
+                {svc.includes.map((i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-foreground/85">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <span>{i}</span>

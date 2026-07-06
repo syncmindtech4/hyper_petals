@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { Mail, Phone, MapPin, MessageCircle, Instagram } from "lucide-react";
-import { site, waLink } from "@/lib/site";
+import { site } from "@/lib/site";
+import { useContact } from "@/hooks/useSiteContent";
 
 export const Route = createFileRoute("/contact")({
   component: Contact,
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/contact")({
 
 function Contact() {
   const [sent, setSent] = useState(false);
+  const { data: c } = useContact();
+  const waHref = `https://wa.me/${c.whatsapp}?text=${encodeURIComponent(site.whatsappMsg)}`;
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -40,38 +43,38 @@ function Contact() {
           </p>
 
           <div className="mt-10 space-y-6">
-            <a href={waLink()} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group">
+            <a href={waHref} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group">
               <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="h-4 w-4" /></span>
               <span>
                 <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">WhatsApp</span>
                 <span className="mt-1 block font-serif text-lg text-foreground group-hover:text-primary">Message the studio</span>
               </span>
             </a>
-            <a href={site.phoneHref} className="flex items-start gap-4 group">
+            <a href={c.phoneHref} className="flex items-start gap-4 group">
               <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary"><Phone className="h-4 w-4" /></span>
               <span>
                 <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Phone</span>
-                <span className="mt-1 block font-serif text-lg text-foreground group-hover:text-primary">{site.phone}</span>
+                <span className="mt-1 block font-serif text-lg text-foreground group-hover:text-primary">{c.phone}</span>
               </span>
             </a>
-            <a href={`mailto:${site.email}`} className="flex items-start gap-4 group">
+            <a href={`mailto:${c.email}`} className="flex items-start gap-4 group">
               <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary"><Mail className="h-4 w-4" /></span>
               <span>
                 <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Email</span>
-                <span className="mt-1 block font-serif text-lg text-foreground group-hover:text-primary">{site.email}</span>
+                <span className="mt-1 block font-serif text-lg text-foreground group-hover:text-primary">{c.email}</span>
               </span>
             </a>
             <div className="flex items-start gap-4">
               <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary"><MapPin className="h-4 w-4" /></span>
               <span>
                 <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Studio</span>
-                <span className="mt-1 block font-serif text-lg text-foreground">{site.address}</span>
-                <span className="mt-1 block text-xs uppercase tracking-[0.2em] text-muted-foreground">{site.hours}</span>
+                <span className="mt-1 block font-serif text-lg text-foreground">{c.address}</span>
+                <span className="mt-1 block text-xs uppercase tracking-[0.2em] text-muted-foreground">{c.hours}</span>
               </span>
             </div>
           </div>
 
-          <a href={site.instagram} className="mt-10 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-primary hover:opacity-70">
+          <a href={c.instagram} className="mt-10 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-primary hover:opacity-70">
             <Instagram className="h-4 w-4" /> Follow the studio
           </a>
         </div>

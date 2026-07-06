@@ -4,10 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -114,16 +116,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const loc = useLocation();
+  const isAdminArea = loc.pathname.startsWith("/admin") || loc.pathname === "/auth";
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col bg-background text-foreground">
-        <SiteHeader />
+        {!isAdminArea && <SiteHeader />}
         <main className="flex-1">
           <Outlet />
         </main>
-        <SiteFooter />
-        <WhatsAppButton />
+        {!isAdminArea && <SiteFooter />}
+        {!isAdminArea && <WhatsAppButton />}
+        <Toaster position="top-right" richColors />
       </div>
     </QueryClientProvider>
   );

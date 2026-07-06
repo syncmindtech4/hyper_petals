@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
+import { supabase } from "@/integrations/supabase/client";
 import wedding from "@/assets/gallery-wedding.jpg";
 import arch from "@/assets/gallery-arch.jpg";
 import corporate from "@/assets/gallery-corporate.jpg";
@@ -28,6 +30,17 @@ const eventShots = [
 ];
 
 function Gallery() {
+  const { data: adminItems = [] } = useQuery({
+    queryKey: ["public_gallery"],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("gallery_items")
+        .select("id,kind,public_url,title,alt_text,caption")
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false });
+      return (data ?? []) as Array<{ id: string; kind: "image" | "video"; public_url: string; title: string | null; alt_text: string | null; caption: string | null }>;
+    },
+  });
   return (
     <>
       <section className="border-b border-border/60">
@@ -66,6 +79,16 @@ function Gallery() {
             {eventShots.map((img, i) => (
               <figure key={i} className={`overflow-hidden rounded-sm bg-muted ${img.tall ? "row-span-2 aspect-[3/5]" : "aspect-[4/5]"} ${i === 0 ? "md:col-span-2 md:row-span-1 md:aspect-[8/5]" : ""}`}>
                 <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
+              </figure>
+            ))}
+            {adminItems.map((item) => (
+              <figure key={item.id} className="overflow-hidden rounded-sm bg-muted aspect-[4/5]">
+                {item.kind === "image" ? (
+                  <img src={item.public_url} alt={item.alt_text ?? item.title ?? ""} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
+                ) : (
+                  <video src={item.public_url} controls className="h-full w-full object-cover" />
+                )}
+                {item.caption && <figcaption className="sr-only">{item.caption}</figcaption>}
               </figure>
             ))}
           </div>
