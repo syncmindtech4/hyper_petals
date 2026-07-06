@@ -4,6 +4,7 @@ import workshop from "@/assets/gallery-workshop.jpg";
 import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { site, waLink } from "@/lib/site";
+import { useHero } from "@/hooks/useSiteContent";
 
 export const Route = createFileRoute("/")({
   component: Home,
