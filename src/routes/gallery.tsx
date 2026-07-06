@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
+import { supabase } from "@/integrations/supabase/client";
 import wedding from "@/assets/gallery-wedding.jpg";
 import arch from "@/assets/gallery-arch.jpg";
 import corporate from "@/assets/gallery-corporate.jpg";
