@@ -22,21 +22,21 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const featured = products.slice(0, 3);
+  const { data: h } = useHero();
   return (
     <>
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 pb-16 pt-14 md:grid-cols-12 md:gap-8 md:pb-24 md:pt-20">
           <div className="md:col-span-6 md:pt-8">
-            <p className="eyebrow">Luxe Floral · Est. Kampala</p>
+            <p className="eyebrow">{h.eyebrow}</p>
             <h1 className="mt-5 font-serif text-5xl leading-[1.05] text-foreground md:text-[68px]">
-              Flowers, arranged for
-              <span className="italic text-primary"> the moments </span>
-              that matter.
+              {h.titleLead}
+              <span className="italic text-primary"> {h.titleItalic} </span>
+              {h.titleTail}
             </h1>
             <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-              Romantic, luxury bouquets and full-service event florals — designed by hand in our
-              Kampala studio and delivered across Uganda.
+              {h.subtitle}
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <Link
@@ -54,16 +54,16 @@ function Home() {
             </div>
             <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border/70 pt-8">
               <div>
-                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Events</dt>
-                <dd className="mt-2 font-serif text-2xl text-foreground">120+</dd>
+                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{h.stat1Label}</dt>
+                <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat1Value}</dd>
               </div>
               <div>
-                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Delivery</dt>
-                <dd className="mt-2 font-serif text-2xl text-foreground">Same day</dd>
+                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{h.stat2Label}</dt>
+                <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat2Value}</dd>
               </div>
               <div>
-                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Since</dt>
-                <dd className="mt-2 font-serif text-2xl text-foreground">2019</dd>
+                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{h.stat3Label}</dt>
+                <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat3Value}</dd>
               </div>
             </dl>
           </div>
