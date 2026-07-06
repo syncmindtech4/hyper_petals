@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import archImg from "@/assets/gallery-arch.jpg";
+import { useServicesContent } from "@/hooks/useSiteContent";
 
 export const Route = createFileRoute("/services")({
   component: Services,
