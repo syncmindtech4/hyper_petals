@@ -20,6 +20,8 @@ export const Route = createFileRoute("/contact")({
 
 function Contact() {
   const [sent, setSent] = useState(false);
+  const { data: c } = useContact();
+  const waHref = `https://wa.me/${c.whatsapp}?text=${encodeURIComponent(site.whatsappMsg)}`;
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
