@@ -81,6 +81,16 @@ function Gallery() {
                 <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
               </figure>
             ))}
+            {adminItems.map((item) => (
+              <figure key={item.id} className="overflow-hidden rounded-sm bg-muted aspect-[4/5]">
+                {item.kind === "image" ? (
+                  <img src={item.public_url} alt={item.alt_text ?? item.title ?? ""} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
+                ) : (
+                  <video src={item.public_url} controls className="h-full w-full object-cover" />
+                )}
+                {item.caption && <figcaption className="sr-only">{item.caption}</figcaption>}
+              </figure>
+            ))}
           </div>
         </div>
       </section>
