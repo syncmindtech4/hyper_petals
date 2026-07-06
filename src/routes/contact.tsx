@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { Mail, Phone, MapPin, MessageCircle, Instagram } from "lucide-react";
-import { site, waLink } from "@/lib/site";
+import { site } from "@/lib/site";
 import { useContact } from "@/hooks/useSiteContent";
 
 export const Route = createFileRoute("/contact")({
