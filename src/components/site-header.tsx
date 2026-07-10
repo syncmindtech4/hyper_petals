@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import logo from "@/assets/luxe-floral-logo-revert.svg.asset.json";
+import logo from "@/assets/luxe_floral_logo.svg";
 import { site } from "@/lib/site";
 
 const nav = [
@@ -16,8 +16,18 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 md:py-5">
-        <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)} aria-label={site.full}>
-          <img src={logo.url} alt={`${site.full} logo`} className="h-14 md:h-16" style={{ width: 300 }} />
+        <Link
+          to="/"
+          className="flex items-center gap-3"
+          onClick={() => setOpen(false)}
+          aria-label={site.full}
+        >
+          <img
+            src={logo}
+            alt={`${site.full} logo`}
+            className="h-14 md:h-16"
+            style={{ width: 300 }}
+          />
         </Link>
 
         <nav className="hidden items-center gap-9 md:flex">
