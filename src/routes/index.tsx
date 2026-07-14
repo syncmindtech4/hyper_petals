@@ -41,7 +41,7 @@ function Home() {
             <p className="mt-6 max-w-full text-base leading-relaxed text-muted-foreground">
               {h.subtitle}
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+            <div className="mt-9 flex flex-wrap items-center gap-12">
               <Link
                 to="/gallery"
                 className="rounded-lg bg-primary px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground transition-colors hover:bg-primary/90"
