@@ -11,7 +11,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Luxe Floral Designs & Events — Romantic Luxury Florals" },
-      { name: "description", content: "Hand-tied bouquets and full-service event florals from Luxe Floral Designs & Events. Order signature arrangements or enquire about your next celebration." },
+      {
+        name: "description",
+        content:
+          "Hand-tied bouquets and full-service event florals from Luxe Floral Designs & Events. Order signature arrangements or enquire about your next celebration.",
+      },
       { property: "og:title", content: "Luxe Floral Designs & Events" },
       { property: "og:description", content: "Hand-tied bouquets and full-service event florals." },
       { property: "og:url", content: "/" },
@@ -33,7 +37,6 @@ function Home() {
             <h1 className="mt-5 font-serif text-5xl leading-[1.05] text-foreground md:text-[68px]">
               {h.titleLead}
               <span className="italic text-primary"> {h.titleItalic} </span>
-              {h.titleTail}
             </h1>
             <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
               {h.subtitle}
@@ -54,15 +57,21 @@ function Home() {
             </div>
             <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border/70 pt-8">
               <div>
-                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{h.stat1Label}</dt>
+                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {h.stat1Label}
+                </dt>
                 <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat1Value}</dd>
               </div>
               <div>
-                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{h.stat2Label}</dt>
+                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {h.stat2Label}
+                </dt>
                 <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat2Value}</dd>
               </div>
               <div>
-                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{h.stat3Label}</dt>
+                <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {h.stat3Label}
+                </dt>
                 <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat3Value}</dd>
               </div>
             </dl>
@@ -92,9 +101,14 @@ function Home() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow">Featured</p>
-              <h2 className="mt-3 font-serif text-4xl text-foreground md:text-5xl">The signature collection</h2>
+              <h2 className="mt-3 font-serif text-4xl text-foreground md:text-5xl">
+                The signature collection
+              </h2>
             </div>
-            <Link to="/gallery" className="border-b border-primary pb-1 text-[11px] uppercase tracking-[0.22em] text-primary hover:opacity-70">
+            <Link
+              to="/gallery"
+              className="border-b border-primary pb-1 text-[11px] uppercase tracking-[0.22em] text-primary hover:opacity-70"
+            >
               View all bouquets →
             </Link>
           </div>
@@ -123,11 +137,13 @@ function Home() {
               A love letter to flowers, tied by hand.
             </h2>
             <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-              We started {site.name} because Kampala deserved florals that felt considered — bouquets that
-              arrive quietly beautiful, and event installations that hold their own next to the moment they were made for.
+              We started {site.name} because Kampala deserved florals that felt considered —
+              bouquets that arrive quietly beautiful, and event installations that hold their own
+              next to the moment they were made for.
             </p>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Every arrangement is designed and hand-tied in our Kampala studio using seasonal blooms sourced from farms we trust.
+              Every arrangement is designed and hand-tied in our Kampala studio using seasonal
+              blooms sourced from farms we trust.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <Link
