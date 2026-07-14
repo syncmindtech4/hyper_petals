@@ -43,11 +43,11 @@ export const defaultHero: HeroContent = {
   subtitle:
     "Bouquets, bridal & baby showers, birthdays, marriage proposals and Kwanjula décor — handcrafted by local florists and stylists, delivered same-day across Kampala.",
   stat1Label: "Events",
-  stat1Value: "120+",
+  stat1Value: "200+",
   stat2Label: "Delivery",
   stat2Value: "Same day",
-  stat3Label: "Since",
-  stat3Value: "2019",
+  stat3Label: "Mobile Money accepted",
+  stat3Value: "MTN · Airtel",
 };
 
 export const defaultContact: ContactContent = {

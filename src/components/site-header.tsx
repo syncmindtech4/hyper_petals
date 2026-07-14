@@ -5,8 +5,8 @@ import logo from "@/assets/luxe_floral_logo.svg";
 import { site } from "@/lib/site";
 
 const nav = [
-  { to: "/", label: "Home" },
-  { to: "/services", label: "Services" },
+  { to: "/bouquets", label: "Bouquets" },
+  { to: "/occasions", label: "Occasions" },
   { to: "/gallery", label: "Gallery" },
   { to: "/contact", label: "Contact" },
 ] as const;
@@ -48,7 +48,7 @@ export function SiteHeader() {
           to="/contact"
           className="hidden rounded-sm bg-primary px-5 py-2.5 text-[11px] uppercase tracking-[0.22em] text-primary-foreground transition-colors hover:bg-primary/90 md:inline-flex"
         >
-          Enquire
+          Require A Quote
         </Link>
 
         <button
@@ -81,7 +81,7 @@ export function SiteHeader() {
               onClick={() => setOpen(false)}
               className="mt-2 inline-flex items-center justify-center rounded-sm bg-primary px-5 py-3 text-[11px] uppercase tracking-[0.22em] text-primary-foreground"
             >
-              Enquire
+              Require A Quote
             </Link>
           </div>
         </div>

@@ -44,7 +44,7 @@ function Home() {
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <Link
                 to="/gallery"
-                className="rounded-sm bg-primary px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground transition-colors hover:bg-primary/90"
+                className="rounded-lg bg-primary px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Shop bouquets
               </Link>
@@ -52,10 +52,10 @@ function Home() {
                 to="/services"
                 className="border-b border-foreground/60 pb-1 text-[11px] uppercase tracking-[0.24em] text-foreground transition-colors hover:border-primary hover:text-primary"
               >
-                Event florals →
+                Explore Occasions ↓
               </Link>
             </div>
-            <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border/70 pt-8">
+            <div className="mt-14 grid max-w-full grid-cols-3 gap-6 border-t border-border/70 pt-8">
               <div>
                 <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                   {h.stat1Label}
@@ -74,7 +74,7 @@ function Home() {
                 </dt>
                 <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat3Value}</dd>
               </div>
-            </dl>
+            </div>
           </div>
 
           <div className="relative md:col-span-6">
