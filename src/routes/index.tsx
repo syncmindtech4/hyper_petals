@@ -193,7 +193,7 @@ function Home() {
             to="/contact"
             className="mt-8 inline-flex rounded-sm bg-primary px-8 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
           >
-            Start an enquiry
+            Start an inquiry
           </Link>
         </div>
       </section>
