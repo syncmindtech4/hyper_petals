@@ -1,6 +1,6 @@
-import blush from "@/assets/product-blush-roses.jpg";
-import burgundy from "@/assets/product-burgundy.jpg";
-import ivory from "@/assets/product-ivory.jpg";
+import garden_rose from "@/assets/bouquet_garden_roses.jpeg";
+import luxe from "@/assets/bouquet_006.jpeg";
+import bridal from "@/assets/bouquet_bridal.jpeg";
 import garden from "@/assets/product-garden.jpg";
 
 export type Product = {
@@ -15,21 +15,21 @@ export type Product = {
 
 export const products: Product[] = [
   {
-    id: "blush-rose",
-    name: "Blush Rose Bouquet",
+    id: "garden-rose",
+    name: "Garden Rose Bouquet",
     category: "Signature Bouquet",
     price: 45000,
-    image: blush,
+    image: garden_rose,
     description:
       "A gathering of soft pink garden roses, hand-tied and finished in cream ribbon. Romantic, tender, and quietly luxurious.",
     bestFor: "Anniversaries · Birthdays · Just because",
   },
   {
-    id: "burgundy-noir",
-    name: "Burgundy Noir",
+    id: "luxe-pack",
+    name: "Luxe Pack",
     category: "Statement Arrangement",
     price: 62000,
-    image: burgundy,
+    image: luxe,
     description:
       "Velvet burgundy roses set against deep foliage. A moody, editorial arrangement for those who love drama with their romance.",
     bestFor: "Milestones · Gifting · Editorial styling",
@@ -37,9 +37,9 @@ export const products: Product[] = [
   {
     id: "ivory-bridal",
     name: "Ivory Bridal Cluster",
-    category: "Bridal",
+    category: "Bridal Bouquet",
     price: 85000,
-    image: ivory,
+    image: bridal,
     description:
       "Cream garden roses with soft foliage in a rounded, timeless silhouette. Made to walk down the aisle.",
     bestFor: "Weddings · Elopements · Bridal shoots",
@@ -57,4 +57,8 @@ export const products: Product[] = [
 ];
 
 export const formatUGX = (n: number) =>
-  new Intl.NumberFormat("en-UG", { style: "currency", currency: "UGX", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat("en-UG", {
+    style: "currency",
+    currency: "UGX",
+    maximumFractionDigits: 0,
+  }).format(n);

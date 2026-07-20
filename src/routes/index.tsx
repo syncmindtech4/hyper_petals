@@ -86,17 +86,34 @@ function Home() {
               className="aspect-[4/5] w-full rounded-sm object-cover shadow-[var(--shadow-soft)]"
             />
             <div className="absolute -bottom-6 -left-6 hidden max-w-[240px] rounded-sm border border-border/60 bg-background/95 p-5 shadow-[var(--shadow-card)] backdrop-blur md:block">
-              <p className="eyebrow">Signature</p>
+              <p className="eyebrow">Now Booking</p>
               <p className="mt-2 font-serif text-lg leading-snug text-foreground">
-                Every stem chosen, every ribbon hand-tied.
+                Birthday setups for any month of your choice
               </p>
             </div>
           </div>
         </div>
       </section>
 
+      <div className="vine-divider">
+        <svg viewBox="0 0 640 40" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M0 20 Q 40 0, 80 20 T 160 20 T 240 20 T 320 20 T 400 20 T 480 20 T 560 20 T 640 20"
+            stroke="#1F3D2B"
+            stroke-width="1.3"
+            fill="none"
+          />
+          <g fill="#C6992F">
+            <circle cx="80" cy="20" r="3" />
+            <circle cx="240" cy="20" r="3" />
+            <circle cx="400" cy="20" r="3" />
+            <circle cx="560" cy="20" r="3" />
+          </g>
+        </svg>
+      </div>
+
       {/* FEATURED */}
-      <section className="border-t border-border/60">
+      <section className="border-border/60">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -147,10 +164,10 @@ function Home() {
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <Link
-                to="/services"
+                to="/occasions"
                 className="rounded-sm bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
               >
-                Our services
+                Our Services
               </Link>
               <a
                 href={waLink()}

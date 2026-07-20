@@ -3,27 +3,34 @@ import { Check } from "lucide-react";
 import archImg from "@/assets/gallery-arch.jpg";
 import { useServicesContent } from "@/hooks/useSiteContent";
 
-export const Route = createFileRoute("/services")({
-  component: Services,
+export const Route = createFileRoute("/occasions")({
+  component: Occasions,
   head: () => ({
     meta: [
       { title: "Birthday, Baby Shower & Proposal Florals — Luxe Floral" },
-      { name: "description", content: "Full-service event florals from Luxe Floral Designs & Events — birthday parties, baby showers, and wedding proposals across Uganda." },
+      {
+        name: "description",
+        content:
+          "Full-service event florals from Luxe Floral Designs & Events — birthday parties, baby showers, and wedding proposals across Uganda.",
+      },
       { property: "og:title", content: "Birthday, Baby Shower & Proposal Florals — Luxe Floral" },
-      { property: "og:description", content: "Full-service event florals for birthdays, baby showers, and wedding proposals." },
-      { property: "og:url", content: "/services" },
+      {
+        property: "og:description",
+        content: "Full-service event florals for birthdays, baby showers, and wedding proposals.",
+      },
+      { property: "og:url", content: "/occasions" },
     ],
-    links: [{ rel: "canonical", href: "/services" }],
+    links: [{ rel: "canonical", href: "/occasions" }],
   }),
 });
 
-function Services() {
+function Occasions() {
   const { data: s } = useServicesContent();
   return (
     <>
       <section className="border-b border-border/60">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <p className="eyebrow">Services</p>
+          <p className="eyebrow">Occasions</p>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[1.05] text-foreground md:text-6xl">
             {s.heading}
           </h1>
@@ -52,7 +59,7 @@ function Services() {
                 to="/contact"
                 className="mt-8 inline-flex w-max border-b border-primary pb-1 text-[11px] uppercase tracking-[0.22em] text-primary hover:opacity-70"
               >
-                Enquire →
+                Inquire →
               </Link>
             </article>
           ))}
@@ -61,10 +68,19 @@ function Services() {
 
       <section className="bg-[oklch(0.955_0.012_60)]">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-24 md:grid-cols-2">
-          <img src={archImg} alt="Floral wedding arch installation" loading="lazy" width={900} height={1200} className="aspect-[3/4] w-full rounded-sm object-cover" />
+          <img
+            src={archImg}
+            alt="Floral wedding arch installation"
+            loading="lazy"
+            width={900}
+            height={1200}
+            className="aspect-[3/4] w-full rounded-sm object-cover"
+          />
           <div>
             <p className="eyebrow">Process</p>
-            <h2 className="mt-3 font-serif text-4xl leading-tight text-foreground md:text-5xl">How we work together</h2>
+            <h2 className="mt-3 font-serif text-4xl leading-tight text-foreground md:text-5xl">
+              How we work together
+            </h2>
             <ol className="mt-8 space-y-6">
               {[
                 ["01", "Enquire", "Tell us the date, the vision and the venue."],
@@ -81,8 +97,11 @@ function Services() {
                 </li>
               ))}
             </ol>
-            <Link to="/contact" className="mt-10 inline-flex rounded-sm bg-primary px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90">
-              Start your enquiry
+            <Link
+              to="/contact"
+              className="mt-10 inline-flex rounded-sm bg-primary px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
+            >
+              Start your inquiry
             </Link>
           </div>
         </div>

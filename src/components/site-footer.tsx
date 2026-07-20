@@ -61,13 +61,13 @@ export function SiteFooter() {
           <p className="eyebrow">Explore</p>
           <ul className="mt-4 space-y-2 text-sm text-foreground/80">
             <li>
-              <Link to="/" className="hover:text-primary">
-                Home
+              <Link to="/bouquets" className="hover:text-primary">
+                Bouquets
               </Link>
             </li>
             <li>
-              <Link to="/services" className="hover:text-primary">
-                Services
+              <Link to="/occasions" className="hover:text-primary">
+                Occasions
               </Link>
             </li>
             <li>

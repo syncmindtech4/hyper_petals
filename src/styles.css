@@ -2,6 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -76,9 +77,11 @@
   * {
     border-color: var(--color-border);
   }
+
   html {
     font-family: var(--font-sans);
   }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -86,12 +89,21 @@
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "ss01", "cv11";
   }
-  h1, h2, h3, h4, h5 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
     font-family: var(--font-serif);
     font-weight: 500;
     letter-spacing: -0.01em;
   }
-  .font-serif { font-family: var(--font-serif); }
+
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+
   .eyebrow {
     font-family: var(--font-sans);
     text-transform: uppercase;
@@ -99,5 +111,21 @@
     font-size: 0.72rem;
     font-weight: 500;
     color: var(--burgundy);
+  }
+
+  .vine-divider {
+    width: 100%;
+    height: 46px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vine-divider svg {
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    opacity: 0.55;
   }
 }
