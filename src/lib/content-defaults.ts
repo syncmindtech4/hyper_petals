@@ -3,7 +3,7 @@ export type HeroContent = {
   eyebrow: string;
   titleLead: string;
   titleItalic: string;
-  titleTail: string;
+  titleTail?: string;
   subtitle: string;
   stat1Label: string;
   stat1Value: string;
