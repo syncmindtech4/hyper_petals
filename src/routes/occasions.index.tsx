@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import bouquet from "@/assets/bouquet_003.jpeg";
-import decor1 from "@/assets/decoration_000.jpeg";
-import decor2 from "@/assets/decoration_001.jpeg";
-import decor3 from "@/assets/decoration_002.jpeg";
+import bridal_shower from "@/assets/bridal-shower-party.jpg";
+import baby_shower from "@/assets/baby_shower.jpg";
+import birthday_party from "@/assets/birthday_party.jpg";
+import decor3 from "@/assets/proposal.jpg";
 import decor4 from "@/assets/decoration_003.jpeg";
 import decor5 from "@/assets/decoration_004.jpeg";
 
@@ -32,21 +32,21 @@ const cards = [
     to: "/occasions/birthday-parties" as const,
     label: "Birthday Parties",
     tag: "Kids · Sweet 16 · Milestone",
-    img: decor1,
+    img: birthday_party,
     tint: "from-[#3a2c10]/70 to-[#0d1a13]/85",
   },
   {
     to: "/occasions/bridal-showers" as const,
     label: "Bridal Showers",
     tag: "Blush · Gold · Ivory",
-    img: bouquet,
+    img: bridal_shower,
     tint: "from-[#6E2434]/70 to-[#3a1420]/85",
   },
   {
     to: "/occasions/baby-showers" as const,
     label: "Baby Showers",
     tag: "Boy · Girl · Reveal",
-    img: decor2,
+    img: baby_shower,
     tint: "from-[#5a6f89]/70 to-[#122219]/85",
   },
   {
@@ -75,9 +75,9 @@ function OccasionsIndex() {
             Every celebration deserves a beautiful setting.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/80">
-            From surprise proposals to Kwanjula ceremonies, we design and
-            install floral moments across Kampala, Entebbe and Wakiso — with
-            same-day delivery available on selected setups.
+            From surprise proposals to Kwanjula ceremonies, we design and install floral moments
+            across Kampala, Entebbe and Wakiso — with same-day delivery available on selected
+            setups.
           </p>
         </div>
       </section>
@@ -96,16 +96,10 @@ function OccasionsIndex() {
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${c.tint}`}
-              />
+              <div className={`absolute inset-0 bg-gradient-to-br ${c.tint}`} />
               <div className="relative flex h-full flex-col justify-end p-8 text-[color:var(--cream)]">
-                <p className="text-[11px] uppercase tracking-[0.22em] text-white/75">
-                  {c.tag}
-                </p>
-                <h2 className="mt-2 font-serif text-3xl md:text-4xl">
-                  {c.label}
-                </h2>
+                <p className="text-[11px] uppercase tracking-[0.22em] text-white/75">{c.tag}</p>
+                <h2 className="mt-2 font-serif text-3xl md:text-4xl">{c.label}</h2>
                 <span className="mt-4 inline-block border-b border-white/70 pb-1 text-[11px] uppercase tracking-[0.24em] w-max">
                   Explore →
                 </span>
@@ -115,12 +109,10 @@ function OccasionsIndex() {
           <div className="relative flex flex-col justify-between rounded-sm border border-border p-8">
             <div>
               <p className="eyebrow">Not sure yet?</p>
-              <h3 className="mt-3 font-serif text-2xl text-foreground">
-                Tell us the moment.
-              </h3>
+              <h3 className="mt-3 font-serif text-2xl text-foreground">Tell us the moment.</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                We style celebrations of every scale. Reach out and we'll help
-                shape the vision from scratch.
+                We style celebrations of every scale. Reach out and we'll help shape the vision from
+                scratch.
               </p>
             </div>
             <img
@@ -133,7 +125,7 @@ function OccasionsIndex() {
               to="/contact"
               className="mt-6 inline-flex w-max rounded-sm bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
             >
-              Start an enquiry
+              Start an inquiry
             </Link>
           </div>
         </div>

@@ -26,7 +26,7 @@ export const products: Product[] = [
   },
   {
     id: "luxe-pack",
-    name: "Luxe Pack",
+    name: "Luxe Floral Pack",
     category: "Statement Arrangement",
     price: 62000,
     image: luxe,

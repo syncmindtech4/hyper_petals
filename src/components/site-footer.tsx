@@ -5,7 +5,7 @@ import logo from "@/assets/luxe_floral_logo.svg";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-border/60 bg-[oklch(0.955_0.012_60)]">
+    <footer className="mt-1 border-t border-border/60 bg-[oklch(0.955_0.012_60)]">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-4">
         <div className="md:col-span-2">
           <img
