@@ -84,7 +84,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border/60">
-        <p className="mx-auto max-w-7xl px-6 py-6 text-xs uppercase tracking-[0.22em] text-muted-foreground">
+        <p className="mx-auto max-w-7xl px-6 py-6 text-xs lowercase tracking-[0.22em] text-muted-foreground">
           © {new Date().getFullYear()} {site.full}. All rights reserved.
         </p>
       </div>

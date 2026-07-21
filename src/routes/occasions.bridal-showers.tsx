@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { OccasionDetail } from "@/components/occasion-detail";
-import hero from "@/assets/bouquet_bridal.jpeg";
+import hero from "@/assets/bridal-shower-party.jpg";
 import g1 from "@/assets/bouquet_003.jpeg";
 import g2 from "@/assets/bouquet_007.jpeg";
 import g3 from "@/assets/decoration_001.jpeg";
@@ -41,9 +41,18 @@ const cfg = {
   heroImage: hero,
   heroGradient: "from-[#6E2434] to-[#3a1420]",
   included: [
-    { title: "Balloon & Floral Arch", body: "Organic garland in your chosen palette, framing the bride's seating area." },
-    { title: "Table & Seating Styling", body: 'Linens, centrepieces and a "Mrs." chair sign for the guest of honour.' },
-    { title: "Full Setup & Takedown", body: "Our team arrives early, styles everything, and clears up after — you just host." },
+    {
+      title: "Balloon & Floral Arch",
+      body: "Organic garland in your chosen palette, framing the bride's seating area.",
+    },
+    {
+      title: "Table & Seating Styling",
+      body: 'Linens, centrepieces and a "Mrs." chair sign for the guest of honour.',
+    },
+    {
+      title: "Full Setup & Takedown",
+      body: "Our team arrives early, styles everything, and clears up after — you just host.",
+    },
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "Real setups, real brides.",
@@ -71,7 +80,8 @@ const cfg = {
     },
   ],
   testimonial: {
-    quote: "Every guest asked who did our décor — the blush and gold arch matched the invitations perfectly.",
+    quote:
+      "Every guest asked who did our décor — the blush and gold arch matched the invitations perfectly.",
     cite: "— Patricia M., Bridal Shower client, Kololo",
   },
 };

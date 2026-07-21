@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { OccasionDetail } from "@/components/occasion-detail";
-import hero from "@/assets/decoration_002.jpeg";
+import hero from "@/assets/baby_shower.jpg";
 import g1 from "@/assets/decoration_003.jpeg";
 import g2 from "@/assets/decoration_004.jpeg";
 import g3 from "@/assets/bouquet_010.jpeg";
@@ -42,9 +42,15 @@ const cfg = {
   heroGradient: "from-[#5a6f89] to-[#122219]",
   chips: ["Boy", "Girl", "Surprise Reveal"],
   included: [
-    { title: "Balloon & Floral Arch", body: "Soft pastel or gender-neutral tones, with a fresh floral accent." },
+    {
+      title: "Balloon & Floral Arch",
+      body: "Soft pastel or gender-neutral tones, with a fresh floral accent.",
+    },
     { title: '"Oh Baby" Backdrop', body: "Named signage and a styled photo corner for mum-to-be." },
-    { title: "Reveal Setup (optional)", body: "Balloon-pop or confetti-cannon gender reveal moment, fully staged." },
+    {
+      title: "Reveal Setup (optional)",
+      body: "Balloon-pop or confetti-cannon gender reveal moment, fully staged.",
+    },
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "Boy, girl, or beautifully neutral.",
@@ -72,7 +78,8 @@ const cfg = {
     },
   ],
   testimonial: {
-    quote: "They set up such a soft, dreamy space — I actually cried when I walked in. Every friend has asked for their contact.",
+    quote:
+      "They set up such a soft, dreamy space — I actually cried when I walked in. Every friend has asked for their contact.",
     cite: "— Sylvia N., Baby Shower client, Naalya",
   },
 };

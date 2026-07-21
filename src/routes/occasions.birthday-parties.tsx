@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { OccasionDetail } from "@/components/occasion-detail";
-import hero from "@/assets/decoration_000.jpeg";
+import hero from "@/assets/birthday_party.jpg";
 import g1 from "@/assets/decoration_001.jpeg";
 import g2 from "@/assets/decoration_002.jpeg";
 import g3 from "@/assets/decoration_003.jpeg";
@@ -43,9 +43,18 @@ const cfg = {
   accent: "gold" as const,
   chips: ["Kids' Parties", "Sweet 16 / 18", "30th / 40th / 50th", "Milestone & Surprise"],
   included: [
-    { title: "Balloon Arch or Garland", body: "Organic or classic cluster styles in your theme's exact palette." },
-    { title: "Backdrop & Photo Corner", body: "Named signage, florals and a styled corner built for photos." },
-    { title: "Table & Cake Styling", body: "Grazing table, cake table and dessert styling to match the theme." },
+    {
+      title: "Balloon Arch or Garland",
+      body: "Organic or classic cluster styles in your theme's exact palette.",
+    },
+    {
+      title: "Backdrop & Photo Corner",
+      body: "Named signage, florals and a styled corner built for photos.",
+    },
+    {
+      title: "Table & Cake Styling",
+      body: "Grazing table, cake table and dessert styling to match the theme.",
+    },
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "Every theme, every age.",
@@ -69,7 +78,11 @@ const cfg = {
     {
       tag: "Full Décor",
       amount: "From UGX 1,100,000",
-      items: ["Everything in Signature", "Full venue styling & lounge setup", "Dedicated on-site coordinator"],
+      items: [
+        "Everything in Signature",
+        "Full venue styling & lounge setup",
+        "Dedicated on-site coordinator",
+      ],
     },
   ],
   testimonial: {

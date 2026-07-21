@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { OccasionDetail } from "@/components/occasion-detail";
-import hero from "@/assets/decoration_004.jpeg";
+import hero from "@/assets/decoration_003.jpeg";
 import g1 from "@/assets/decoration_000.jpeg";
 import g2 from "@/assets/decoration_001.jpeg";
 import g3 from "@/assets/decoration_002.jpeg";
@@ -19,7 +19,10 @@ export const Route = createFileRoute("/occasions/kwanjula")({
           "Kwanjula and Kuhingira décor across Uganda — tent draping, mat and canopy styling, gift-basket displays and family-colour theming for introduction ceremonies.",
       },
       { property: "og:title", content: "Kwanjula Décor — Luxe Floral" },
-      { property: "og:description", content: "Traditional ceremony styling built around your family colours." },
+      {
+        property: "og:description",
+        content: "Traditional ceremony styling built around your family colours.",
+      },
       { property: "og:image", content: hero },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: hero },
@@ -41,9 +44,18 @@ const cfg = {
   heroImage: hero,
   heroGradient: "from-[#B5602E] to-[#3a1420]",
   included: [
-    { title: "Tent & Canopy Draping", body: "Fabric draping, ceiling treatments and entrance arches in family colours." },
-    { title: "Mat & Seating Area Styling", body: "Traditional mat/floor seating styled with cushions, low tables and florals." },
-    { title: "Gift Basket & Table Display", body: "Styled display tables for baskets, luggage and gifts presented during the ceremony." },
+    {
+      title: "Tent & Canopy Draping",
+      body: "Fabric draping, ceiling treatments and entrance arches in family colours.",
+    },
+    {
+      title: "Mat & Seating Area Styling",
+      body: "Traditional mat/floor seating styled with cushions, low tables and florals.",
+    },
+    {
+      title: "Gift Basket & Table Display",
+      body: "Styled display tables for baskets, luggage and gifts presented during the ceremony.",
+    },
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "From intimate family gatherings to 300+ guests.",
@@ -84,10 +96,9 @@ const cfg = {
     <div className="mt-8 flex items-start gap-4 rounded-sm border border-primary/30 bg-secondary/40 p-6">
       <span className="text-2xl">🎨</span>
       <p className="text-sm leading-relaxed text-foreground/85">
-        <strong className="font-medium">Colour & theme guidance:</strong> Many
-        families coordinate décor around clan colours, the bride's gomesi or a
-        shared palette between both families. Send a fabric swatch or photo and
-        we'll design around it rather than a generic template.
+        <strong className="font-medium">Colour & theme guidance:</strong> Many families coordinate
+        décor around clan colours, the bride's gomesi or a shared palette between both families.
+        Send a fabric swatch or photo and we'll design around it rather than a generic template.
       </p>
     </div>
   ),
