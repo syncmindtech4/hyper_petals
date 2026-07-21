@@ -88,7 +88,7 @@ function HeroEditor() {
       <div className="grid gap-5 md:grid-cols-3">
         <Field label="Title (lead)" value={form.titleLead} onChange={upd("titleLead")} />
         <Field label="Title (italic)" value={form.titleItalic} onChange={upd("titleItalic")} />
-        <Field label="Title (tail)" value={form.titleTail} onChange={upd("titleTail")} />
+        <Field label="Title (tail)" value={form.titleTail ?? ""} onChange={upd("titleTail")} />
       </div>
       <Field label="Subtitle" value={form.subtitle} onChange={upd("subtitle")} textarea />
       <div className="grid gap-5 md:grid-cols-3">
