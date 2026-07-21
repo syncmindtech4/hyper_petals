@@ -18,7 +18,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 md:py-5">
         <Link
           to="/"
-          className="flex items-center gap-3"
+          className="flex items-center "
           onClick={() => setOpen(false)}
           aria-label={site.full}
         >
@@ -70,7 +70,6 @@ export function SiteHeader() {
                 onClick={() => setOpen(false)}
                 className="py-3 text-sm uppercase tracking-[0.2em] text-foreground/80"
                 activeProps={{ className: "text-primary" }}
-                
               >
                 {n.label}
               </Link>

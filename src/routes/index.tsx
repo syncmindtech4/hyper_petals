@@ -184,10 +184,11 @@ function Home() {
 
       {/* CTA STRIP */}
       <section>
-        <div className="mx-auto max-w-2xl px-6 py-10 text-center">
+        <div className="mx-auto max-w-7xl px-6 py-10 text-center">
           <p className="eyebrow">Planning something?</p>
-          <h2 className="mx-auto mt-4 max-w-2xl font-serif text-4xl leading-tight text-foreground md:text-5xl">
-            Birthdays, baby showers, proposals — tell us the moment, we'll bring the flowers.
+          <h2 className="mx-auto mt-4 max-w-7xl font-serif text-4xl leading-tight text-foreground md:text-5xl">
+            Birthdays, Baby & Bridal showers, Marriage Proposals, and Kwanjula. — tell us the
+            moment, we'll bring the flowers.
           </h2>
           <Link
             to="/contact"
