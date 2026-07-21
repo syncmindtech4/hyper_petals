@@ -37,7 +37,6 @@ export function SiteHeader() {
               to={n.to}
               className="text-[13px] uppercase tracking-[0.2em] text-foreground/75 transition-colors hover:text-primary"
               activeProps={{ className: "text-primary" }}
-              activeOptions={{ exact: n.to === "/" }}
             >
               {n.label}
             </Link>
@@ -71,7 +70,7 @@ export function SiteHeader() {
                 onClick={() => setOpen(false)}
                 className="py-3 text-sm uppercase tracking-[0.2em] text-foreground/80"
                 activeProps={{ className: "text-primary" }}
-                activeOptions={{ exact: n.to === "/" }}
+                
               >
                 {n.label}
               </Link>
