@@ -16,6 +16,12 @@ import { Route as BouquetsRouteImport } from './routes/bouquets'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OccasionsIndexRouteImport } from './routes/occasions.index'
+import { Route as OccasionsWeddingProposalsRouteImport } from './routes/occasions.wedding-proposals'
+import { Route as OccasionsKwanjulaRouteImport } from './routes/occasions.kwanjula'
+import { Route as OccasionsBridalShowersRouteImport } from './routes/occasions.bridal-showers'
+import { Route as OccasionsBirthdayPartiesRouteImport } from './routes/occasions.birthday-parties'
+import { Route as OccasionsBabyShowersRouteImport } from './routes/occasions.baby-showers'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
@@ -55,6 +61,38 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OccasionsIndexRoute = OccasionsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OccasionsRoute,
+} as any)
+const OccasionsWeddingProposalsRoute =
+  OccasionsWeddingProposalsRouteImport.update({
+    id: '/wedding-proposals',
+    path: '/wedding-proposals',
+    getParentRoute: () => OccasionsRoute,
+  } as any)
+const OccasionsKwanjulaRoute = OccasionsKwanjulaRouteImport.update({
+  id: '/kwanjula',
+  path: '/kwanjula',
+  getParentRoute: () => OccasionsRoute,
+} as any)
+const OccasionsBridalShowersRoute = OccasionsBridalShowersRouteImport.update({
+  id: '/bridal-showers',
+  path: '/bridal-showers',
+  getParentRoute: () => OccasionsRoute,
+} as any)
+const OccasionsBirthdayPartiesRoute =
+  OccasionsBirthdayPartiesRouteImport.update({
+    id: '/birthday-parties',
+    path: '/birthday-parties',
+    getParentRoute: () => OccasionsRoute,
+  } as any)
+const OccasionsBabyShowersRoute = OccasionsBabyShowersRouteImport.update({
+  id: '/baby-showers',
+  path: '/baby-showers',
+  getParentRoute: () => OccasionsRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -84,8 +122,14 @@ export interface FileRoutesByFullPath {
   '/bouquets': typeof BouquetsRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
-  '/occasions': typeof OccasionsRoute
+  '/occasions': typeof OccasionsRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
+  '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
+  '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
+  '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
+  '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/occasions/': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -96,7 +140,12 @@ export interface FileRoutesByTo {
   '/bouquets': typeof BouquetsRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
-  '/occasions': typeof OccasionsRoute
+  '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
+  '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
+  '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
+  '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
+  '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/occasions': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -109,8 +158,14 @@ export interface FileRoutesById {
   '/bouquets': typeof BouquetsRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
-  '/occasions': typeof OccasionsRoute
+  '/occasions': typeof OccasionsRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
+  '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
+  '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
+  '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
+  '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/occasions/': typeof OccasionsIndexRoute
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -125,6 +180,12 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/occasions'
     | '/admin'
+    | '/occasions/baby-showers'
+    | '/occasions/birthday-parties'
+    | '/occasions/bridal-showers'
+    | '/occasions/kwanjula'
+    | '/occasions/wedding-proposals'
+    | '/occasions/'
     | '/admin/content'
     | '/admin/gallery'
     | '/admin/'
@@ -135,6 +196,11 @@ export interface FileRouteTypes {
     | '/bouquets'
     | '/contact'
     | '/gallery'
+    | '/occasions/baby-showers'
+    | '/occasions/birthday-parties'
+    | '/occasions/bridal-showers'
+    | '/occasions/kwanjula'
+    | '/occasions/wedding-proposals'
     | '/occasions'
     | '/admin/content'
     | '/admin/gallery'
@@ -149,6 +215,12 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/occasions'
     | '/_authenticated/admin'
+    | '/occasions/baby-showers'
+    | '/occasions/birthday-parties'
+    | '/occasions/bridal-showers'
+    | '/occasions/kwanjula'
+    | '/occasions/wedding-proposals'
+    | '/occasions/'
     | '/_authenticated/admin/content'
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/'
@@ -161,7 +233,7 @@ export interface RootRouteChildren {
   BouquetsRoute: typeof BouquetsRoute
   ContactRoute: typeof ContactRoute
   GalleryRoute: typeof GalleryRoute
-  OccasionsRoute: typeof OccasionsRoute
+  OccasionsRoute: typeof OccasionsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -214,6 +286,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/occasions/': {
+      id: '/occasions/'
+      path: '/'
+      fullPath: '/occasions/'
+      preLoaderRoute: typeof OccasionsIndexRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/wedding-proposals': {
+      id: '/occasions/wedding-proposals'
+      path: '/wedding-proposals'
+      fullPath: '/occasions/wedding-proposals'
+      preLoaderRoute: typeof OccasionsWeddingProposalsRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/kwanjula': {
+      id: '/occasions/kwanjula'
+      path: '/kwanjula'
+      fullPath: '/occasions/kwanjula'
+      preLoaderRoute: typeof OccasionsKwanjulaRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/bridal-showers': {
+      id: '/occasions/bridal-showers'
+      path: '/bridal-showers'
+      fullPath: '/occasions/bridal-showers'
+      preLoaderRoute: typeof OccasionsBridalShowersRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/birthday-parties': {
+      id: '/occasions/birthday-parties'
+      path: '/birthday-parties'
+      fullPath: '/occasions/birthday-parties'
+      preLoaderRoute: typeof OccasionsBirthdayPartiesRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/baby-showers': {
+      id: '/occasions/baby-showers'
+      path: '/baby-showers'
+      fullPath: '/occasions/baby-showers'
+      preLoaderRoute: typeof OccasionsBabyShowersRouteImport
+      parentRoute: typeof OccasionsRoute
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -272,6 +386,28 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface OccasionsRouteChildren {
+  OccasionsBabyShowersRoute: typeof OccasionsBabyShowersRoute
+  OccasionsBirthdayPartiesRoute: typeof OccasionsBirthdayPartiesRoute
+  OccasionsBridalShowersRoute: typeof OccasionsBridalShowersRoute
+  OccasionsKwanjulaRoute: typeof OccasionsKwanjulaRoute
+  OccasionsWeddingProposalsRoute: typeof OccasionsWeddingProposalsRoute
+  OccasionsIndexRoute: typeof OccasionsIndexRoute
+}
+
+const OccasionsRouteChildren: OccasionsRouteChildren = {
+  OccasionsBabyShowersRoute: OccasionsBabyShowersRoute,
+  OccasionsBirthdayPartiesRoute: OccasionsBirthdayPartiesRoute,
+  OccasionsBridalShowersRoute: OccasionsBridalShowersRoute,
+  OccasionsKwanjulaRoute: OccasionsKwanjulaRoute,
+  OccasionsWeddingProposalsRoute: OccasionsWeddingProposalsRoute,
+  OccasionsIndexRoute: OccasionsIndexRoute,
+}
+
+const OccasionsRouteWithChildren = OccasionsRoute._addFileChildren(
+  OccasionsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -279,7 +415,7 @@ const rootRouteChildren: RootRouteChildren = {
   BouquetsRoute: BouquetsRoute,
   ContactRoute: ContactRoute,
   GalleryRoute: GalleryRoute,
-  OccasionsRoute: OccasionsRoute,
+  OccasionsRoute: OccasionsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
