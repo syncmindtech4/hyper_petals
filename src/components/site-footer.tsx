@@ -11,7 +11,7 @@ export function SiteFooter() {
           <img
             src={logo}
             alt={`${site.full} logo`}
-            className="h-14 md:h-16"
+            className="logo1 h-14 md:h-16"
             style={{ width: 300 }}
           />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">

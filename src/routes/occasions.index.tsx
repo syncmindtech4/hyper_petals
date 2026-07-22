@@ -88,7 +88,7 @@ function OccasionsIndex() {
             <Link
               key={c.to}
               to={c.to}
-              className="group relative block aspect-[4/5] overflow-hidden rounded-3xl"
+              className="group relative block aspect-[5/5] overflow-hidden rounded-3xl"
             >
               <img
                 src={c.img}
@@ -100,13 +100,13 @@ function OccasionsIndex() {
               <div className="relative flex h-full flex-col justify-end p-8 text-[color:var(--cream)]">
                 <p className="text-[11px] uppercase tracking-[0.22em] text-white/75">{c.tag}</p>
                 <h2 className="mt-2 font-serif text-3xl md:text-4xl">{c.label}</h2>
-                <span className="mt-4 inline-block border-b border-white/70 pb-1 text-[11px] uppercase tracking-[0.24em] w-max">
-                  Explore →
+                <span className="mt-4 inline-block border p-2 border-border rounded-xl border-white/70 pb-1 text-[11px] uppercase tracking-[0.24em] w-max">
+                  Explore Occasion →
                 </span>
               </div>
             </Link>
           ))}
-          <div className="relative flex flex-col justify-between rounded-3xl border border-border p-8">
+          <div className="relative flex flex-col justify-between rounded-3xl border border-border p-8 aspect-[5/5] ">
             <div>
               <p className="eyebrow">Not sure yet?</p>
               <h3 className="mt-3 font-serif text-2xl text-foreground">Tell us the moment.</h3>
@@ -115,12 +115,12 @@ function OccasionsIndex() {
                 scratch.
               </p>
             </div>
-            <img
+            {/* <img
               src={decor5}
               alt=""
               loading="lazy"
-              className="mt-6 aspect-[3/2] w-full rounded-2xl object-cover opacity-90"
-            />
+              className="mt-6 aspect-[5/3] w-full rounded-2xl object-cover opacity-90"
+            /> */}
             <Link
               to="/contact"
               className="mt-6 inline-flex w-max rounded-2xl bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"

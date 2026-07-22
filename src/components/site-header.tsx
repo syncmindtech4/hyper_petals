@@ -25,7 +25,7 @@ export function SiteHeader() {
           <img
             src={logo}
             alt={`${site.full} logo`}
-            className="h-14 md:h-16"
+            className="logo h-14 md:h-16"
             style={{ width: 300 }}
           />
         </Link>

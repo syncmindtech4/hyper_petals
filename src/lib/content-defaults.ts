@@ -51,10 +51,10 @@ export const defaultHero: HeroContent = {
 };
 
 export const defaultContact: ContactContent = {
-  phone: "+256 700 000 000",
-  phoneHref: "tel:+256700000000",
-  whatsapp: "256700000000",
-  email: "hello@luxefloral.co",
+  phone: "+256790449711",
+  phoneHref: "tel:++256790449711",
+  whatsapp: "+256790449711",
+  email: "luxefloral.designevents@gmail.com",
   address: "Kampala, Uganda",
   hours: "Tue – Sat · 10am – 6pm",
   instagram: "https://instagram.com",
