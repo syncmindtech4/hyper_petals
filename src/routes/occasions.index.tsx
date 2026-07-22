@@ -88,7 +88,7 @@ function OccasionsIndex() {
             <Link
               key={c.to}
               to={c.to}
-              className="group relative block aspect-[4/5] overflow-hidden rounded-xl"
+              className="group relative block aspect-[4/5] overflow-hidden rounded-3xl"
             >
               <img
                 src={c.img}
@@ -106,7 +106,7 @@ function OccasionsIndex() {
               </div>
             </Link>
           ))}
-          <div className="relative flex flex-col justify-between rounded-xl border border-border p-8">
+          <div className="relative flex flex-col justify-between rounded-3xl border border-border p-8">
             <div>
               <p className="eyebrow">Not sure yet?</p>
               <h3 className="mt-3 font-serif text-2xl text-foreground">Tell us the moment.</h3>
@@ -119,11 +119,11 @@ function OccasionsIndex() {
               src={decor5}
               alt=""
               loading="lazy"
-              className="mt-6 aspect-[3/2] w-full rounded-lg object-cover opacity-90"
+              className="mt-6 aspect-[3/2] w-full rounded-2xl object-cover opacity-90"
             />
             <Link
               to="/contact"
-              className="mt-6 inline-flex w-max rounded-lg bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
+              className="mt-6 inline-flex w-max rounded-2xl bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
             >
               Start an inquiry
             </Link>

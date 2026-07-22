@@ -64,7 +64,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
                 href={waLink(quoteMsg)}
                 target="_blank"
                 rel="noreferrer"
-                className={`inline-flex rounded-sm px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] transition-opacity hover:opacity-90 ${
+                className={`inline-flex rounded-xl px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] transition-opacity hover:opacity-90 ${
                   isGold
                     ? "bg-[#C6992F] text-[#0d1a13]"
                     : "bg-primary text-primary-foreground"
@@ -92,7 +92,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
               </div>
             )}
           </div>
-          <div className="aspect-[4/5] w-full overflow-hidden rounded-xl shadow-2xl">
+          <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-2xl">
             <img
               src={cfg.heroImage}
               alt={cfg.eyebrow}
@@ -134,7 +134,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
             {cfg.gallery.map((src, i) => (
               <div
                 key={i}
-                className={`overflow-hidden rounded-xl ${
+                className={`overflow-hidden rounded-2xl ${
                   i % 3 === 0 ? "md:row-span-2" : ""
                 }`}
               >
@@ -161,7 +161,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
             {cfg.tiers.map((t) => (
               <article
                 key={t.tag}
-                className={`flex flex-col rounded-xl border p-8 ${
+                className={`flex flex-col rounded-3xl border p-8 ${
                   t.featured
                     ? "border-transparent bg-[#122219] text-[color:var(--cream)]"
                     : "border-border bg-card"
@@ -193,7 +193,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
                   href={waLink(`Hi Luxe Floral, I'd like the ${t.tag} package for ${cfg.eyebrow.toLowerCase()}.`)}
                   target="_blank"
                   rel="noreferrer"
-                  className={`mt-6 rounded-lg border py-3 text-center text-[11px] uppercase tracking-[0.24em] transition-colors ${
+                  className={`mt-6 rounded-2xl border py-3 text-center text-[11px] uppercase tracking-[0.24em] transition-colors ${
                     t.featured
                       ? isGold
                         ? "border-[#C6992F] bg-[#C6992F] text-[#0d1a13]"
@@ -237,7 +237,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
               href={waLink(quoteMsg)}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex rounded-sm bg-background px-8 py-4 text-[11px] uppercase tracking-[0.24em] text-primary hover:opacity-90"
+              className="inline-flex rounded-2xl bg-background px-8 py-4 text-[11px] uppercase tracking-[0.24em] text-primary hover:opacity-90"
             >
               WhatsApp {site.phone}
             </a>
