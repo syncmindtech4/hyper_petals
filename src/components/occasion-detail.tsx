@@ -92,7 +92,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
               </div>
             )}
           </div>
-          <div className="aspect-[4/5] w-full overflow-hidden rounded-sm shadow-2xl">
+          <div className="aspect-[4/5] w-full overflow-hidden rounded-xl shadow-2xl">
             <img
               src={cfg.heroImage}
               alt={cfg.eyebrow}
@@ -134,7 +134,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
             {cfg.gallery.map((src, i) => (
               <div
                 key={i}
-                className={`overflow-hidden rounded-sm ${
+                className={`overflow-hidden rounded-xl ${
                   i % 3 === 0 ? "md:row-span-2" : ""
                 }`}
               >
@@ -161,7 +161,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
             {cfg.tiers.map((t) => (
               <article
                 key={t.tag}
-                className={`flex flex-col rounded-sm border p-8 ${
+                className={`flex flex-col rounded-xl border p-8 ${
                   t.featured
                     ? "border-transparent bg-[#122219] text-[color:var(--cream)]"
                     : "border-border bg-card"
@@ -193,7 +193,7 @@ export function OccasionDetail({ cfg }: { cfg: OccasionConfig }) {
                   href={waLink(`Hi Luxe Floral, I'd like the ${t.tag} package for ${cfg.eyebrow.toLowerCase()}.`)}
                   target="_blank"
                   rel="noreferrer"
-                  className={`mt-6 rounded-sm border py-3 text-center text-[11px] uppercase tracking-[0.24em] transition-colors ${
+                  className={`mt-6 rounded-lg border py-3 text-center text-[11px] uppercase tracking-[0.24em] transition-colors ${
                     t.featured
                       ? isGold
                         ? "border-[#C6992F] bg-[#C6992F] text-[#0d1a13]"
