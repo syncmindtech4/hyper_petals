@@ -3,6 +3,12 @@ import luxe from "@/assets/bouquet_006.jpeg";
 import bridal from "@/assets/bouquet_bridal.jpeg";
 import garden from "@/assets/product-garden.jpg";
 
+import wine_blush from "@/assets/bouquet_006.jpeg";
+import red_roses from "@/assets/bouquet_004.jpeg";
+import sunrise from "@/assets/bouquet_013.jpeg";
+import gift_basket from "@/assets/bouquet_010.jpeg";
+import cheer_bunch from "@/assets/bouquet_002.jpeg";
+
 export type Product = {
   id: string;
   name: string;
@@ -14,6 +20,56 @@ export type Product = {
 };
 
 export const products: Product[] = [
+  {
+    id: "wine-blush-dozen",
+    name: "Wine & Blush Dozen",
+    category: "Roses · Bestseller",
+    price: 110000,
+    image: wine_blush,
+    description:
+      "A dozen curated roses blending rich wine red and soft blush pink hues. Elegant, aromatic, and perfectly hand-tied with a satin ribbon.",
+    bestFor: "Anniversaries · Birthdays · Romantic Gestures",
+  },
+  {
+    id: "two-dozen-red-roses",
+    name: "Two Dozen Red Roses",
+    category: "Roses",
+    price: 190000,
+    image: red_roses,
+    description:
+      "Twenty-four premium long-stemmed red roses arranged with structural eucalyptus. The ultimate expression of classic luxury and deep affection.",
+    bestFor: "Anniversaries · Celebrations · Apologies",
+  },
+  {
+    id: "sunrise-mixed-bouquet",
+    name: "Sunrise Mixed Bouquet",
+    category: "Mixed Bouquets",
+    price: 95000,
+    image: sunrise,
+    description:
+      "A bright, warm selection of peach roses, golden chrysanthemums, and fresh summer greenery that mimics a Ugandan dawn.",
+    bestFor: "Get Well · Congratulations · Just Because",
+  },
+  {
+    id: "garden-gift-basket",
+    name: "Garden Gift Basket",
+    category: "Baskets",
+    price: 160000,
+    image: gift_basket,
+    description:
+      "A lush array of spray roses, lilies, and wildflowers arranged in a rustic woven basket. A perfect centerpiece or home-warming gift.",
+    bestFor: "Congratulations · Mother's Day · Housewarming",
+  },
+  {
+    id: "everyday-cheer-bunch",
+    name: "Everyday Cheer Bunch",
+    category: "Mixed Bouquets · Bestseller",
+    price: 65000,
+    image: cheer_bunch,
+    description:
+      "A delightful, compact bunch of vibrant mixed daisies, carnations, and spray roses to brighten anyone's everyday space.",
+    bestFor: "Just Because · Birthdays · Thank You",
+  },
   {
     id: "garden-rose",
     name: "Garden Rose Bouquet",

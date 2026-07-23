@@ -16,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { WhatsAppButton } from "@/components/whatsapp-button";
+import { CartProvider } from "@/hooks/use-cart";
 
 function NotFoundComponent() {
   return (
@@ -118,18 +119,22 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const loc = useLocation();
   const isAdminArea = loc.pathname.startsWith("/admin") || loc.pathname === "/auth";
+  const isCheckout = loc.pathname === "/checkout";
+  const hideHeaderFooter = isAdminArea || isCheckout;
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col bg-background text-foreground">
-        {!isAdminArea && <SiteHeader />}
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        {!isAdminArea && <SiteFooter />}
-        {!isAdminArea && <WhatsAppButton />}
-        <Toaster position="top-right" richColors />
-      </div>
+      <CartProvider>
+        <div className="flex min-h-screen flex-col bg-background text-foreground">
+          {!hideHeaderFooter && <SiteHeader />}
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          {!hideHeaderFooter && <SiteFooter />}
+          {!hideHeaderFooter && <WhatsAppButton />}
+          <Toaster position="top-right" richColors />
+        </div>
+      </CartProvider>
     </QueryClientProvider>
   );
 }
