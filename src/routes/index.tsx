@@ -55,7 +55,7 @@ function Home() {
                 Explore Occasions ↓
               </Link>
             </div>
-            <div className="mt-14 grid max-w-full grid-cols-3 gap-6 border-t border-border/70 pt-8">
+            <div className="mt-14 sm:grid-col grid max-w-full grid-cols-3 gap-6 border-t border-border/70 pt-8">
               <div>
                 <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                   {h.stat1Label}
@@ -68,7 +68,7 @@ function Home() {
                 </dt>
                 <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat2Value}</dd>
               </div>
-              <div className="max-w-full">
+              <div className="hidden max-w-full">
                 <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                   {h.stat3Label}
                 </dt>

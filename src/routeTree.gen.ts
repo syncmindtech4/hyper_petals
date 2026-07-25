@@ -9,9 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProductDetailRouteImport } from './routes/product-detail'
 import { Route as OccasionsRouteImport } from './routes/occasions'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as BouquetsRouteImport } from './routes/bouquets'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -27,6 +30,11 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
 import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authenticated/admin.content'
 
+const ProductDetailRoute = ProductDetailRouteImport.update({
+  id: '/product-detail',
+  path: '/product-detail',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OccasionsRoute = OccasionsRouteImport.update({
   id: '/occasions',
   path: '/occasions',
@@ -40,6 +48,16 @@ const GalleryRoute = GalleryRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogueRoute = CatalogueRouteImport.update({
+  id: '/catalogue',
+  path: '/catalogue',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BouquetsRoute = BouquetsRouteImport.update({
@@ -120,9 +138,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/bouquets': typeof BouquetsRoute
+  '/catalogue': typeof CatalogueRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/occasions': typeof OccasionsRouteWithChildren
+  '/product-detail': typeof ProductDetailRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
   '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
@@ -138,8 +159,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/bouquets': typeof BouquetsRoute
+  '/catalogue': typeof CatalogueRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
+  '/product-detail': typeof ProductDetailRoute
   '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
   '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
   '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
@@ -156,9 +180,12 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/bouquets': typeof BouquetsRoute
+  '/catalogue': typeof CatalogueRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/occasions': typeof OccasionsRouteWithChildren
+  '/product-detail': typeof ProductDetailRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
   '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
@@ -176,9 +203,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/bouquets'
+    | '/catalogue'
+    | '/checkout'
     | '/contact'
     | '/gallery'
     | '/occasions'
+    | '/product-detail'
     | '/admin'
     | '/occasions/baby-showers'
     | '/occasions/birthday-parties'
@@ -194,8 +224,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/bouquets'
+    | '/catalogue'
+    | '/checkout'
     | '/contact'
     | '/gallery'
+    | '/product-detail'
     | '/occasions/baby-showers'
     | '/occasions/birthday-parties'
     | '/occasions/bridal-showers'
@@ -211,9 +244,12 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/bouquets'
+    | '/catalogue'
+    | '/checkout'
     | '/contact'
     | '/gallery'
     | '/occasions'
+    | '/product-detail'
     | '/_authenticated/admin'
     | '/occasions/baby-showers'
     | '/occasions/birthday-parties'
@@ -231,13 +267,23 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BouquetsRoute: typeof BouquetsRoute
+  CatalogueRoute: typeof CatalogueRoute
+  CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   GalleryRoute: typeof GalleryRoute
   OccasionsRoute: typeof OccasionsRouteWithChildren
+  ProductDetailRoute: typeof ProductDetailRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/product-detail': {
+      id: '/product-detail'
+      path: '/product-detail'
+      fullPath: '/product-detail'
+      preLoaderRoute: typeof ProductDetailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/occasions': {
       id: '/occasions'
       path: '/occasions'
@@ -257,6 +303,20 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalogue': {
+      id: '/catalogue'
+      path: '/catalogue'
+      fullPath: '/catalogue'
+      preLoaderRoute: typeof CatalogueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bouquets': {
@@ -413,9 +473,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BouquetsRoute: BouquetsRoute,
+  CatalogueRoute: CatalogueRoute,
+  CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   GalleryRoute: GalleryRoute,
   OccasionsRoute: OccasionsRouteWithChildren,
+  ProductDetailRoute: ProductDetailRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
