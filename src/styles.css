@@ -38,6 +38,10 @@
   --color-cream: var(--cream);
   --color-burgundy: var(--burgundy);
   --color-charcoal: var(--charcoal);
+
+  --breakpoint-xs: 475px;
+  --breakpoint-3xl: 1600px;
+  --breakpoint-sm: 500px;
 }
 
 :root {

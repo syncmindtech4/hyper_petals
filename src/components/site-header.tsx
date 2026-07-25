@@ -5,24 +5,19 @@ import logo from "@/assets/luxe_floral_logo.svg";
 import { site } from "@/lib/site";
 import { useCart } from "@/hooks/use-cart";
 import { formatUGX } from "@/lib/products";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const nav = [
   { to: "/catalogue", label: "Bouquets" },
   { to: "/occasions", label: "Occasions" },
-  { to: "/catalogue?type=Baskets", label: "Packages" },
+  { to: "/gallery", label: "Gallery" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const { items, cartCount, cartTotal, updateQuantity, removeFromCart, isCartOpen, setIsCartOpen } = useCart();
+  const { items, cartCount, cartTotal, updateQuantity, removeFromCart, isCartOpen, setIsCartOpen } =
+    useCart();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
@@ -75,7 +70,9 @@ export function SiteHeader() {
               <SheetHeader className="pb-4 border-b border-border/60">
                 <SheetTitle className="font-serif text-2xl text-foreground flex items-center justify-between">
                   <span>Your Selection</span>
-                  <span className="text-sm font-sans font-normal text-muted-foreground">({cartCount} {cartCount === 1 ? 'item' : 'items'})</span>
+                  <span className="text-sm font-sans font-normal text-muted-foreground">
+                    ({cartCount} {cartCount === 1 ? "item" : "items"})
+                  </span>
                 </SheetTitle>
               </SheetHeader>
 
@@ -98,10 +95,16 @@ export function SiteHeader() {
                 <>
                   <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
                     {items.map((item) => {
-                      const addOnsTotal = item.selectedAddOns.reduce((sum, addOn) => sum + addOn.price, 0);
+                      const addOnsTotal = item.selectedAddOns.reduce(
+                        (sum, addOn) => sum + addOn.price,
+                        0,
+                      );
                       const itemTotal = (item.sizePrice + addOnsTotal) * item.quantity;
                       return (
-                        <div key={item.cartItemId} className="flex gap-4 pb-4 border-b border-border/40 last:border-b-0">
+                        <div
+                          key={item.cartItemId}
+                          className="flex gap-4 pb-4 border-b border-border/40 last:border-b-0"
+                        >
                           <img
                             src={item.product.image}
                             alt={item.product.name}
@@ -110,7 +113,9 @@ export function SiteHeader() {
                           <div className="flex-1 flex flex-col justify-between min-w-0">
                             <div>
                               <div className="flex justify-between items-start gap-2">
-                                <h4 className="font-serif text-base text-foreground truncate">{item.product.name}</h4>
+                                <h4 className="font-serif text-base text-foreground truncate">
+                                  {item.product.name}
+                                </h4>
                                 <button
                                   type="button"
                                   onClick={() => removeFromCart(item.cartItemId)}
@@ -125,7 +130,7 @@ export function SiteHeader() {
                               </p>
                               {item.selectedAddOns.length > 0 && (
                                 <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                                  Add-ons: {item.selectedAddOns.map(a => a.name).join(', ')}
+                                  Add-ons: {item.selectedAddOns.map((a) => a.name).join(", ")}
                                 </p>
                               )}
                               {item.deliveryDate && (
@@ -143,7 +148,9 @@ export function SiteHeader() {
                                 >
                                   <Minus className="h-3.5 w-3.5" />
                                 </button>
-                                <span className="px-2 text-xs font-medium text-foreground">{item.quantity}</span>
+                                <span className="px-2 text-xs font-medium text-foreground">
+                                  {item.quantity}
+                                </span>
                                 <button
                                   type="button"
                                   onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
@@ -152,7 +159,9 @@ export function SiteHeader() {
                                   <Plus className="h-3.5 w-3.5" />
                                 </button>
                               </div>
-                              <span className="text-sm font-semibold text-primary">{formatUGX(itemTotal)}</span>
+                              <span className="text-sm font-semibold text-primary">
+                                {formatUGX(itemTotal)}
+                              </span>
                             </div>
                           </div>
                         </div>
