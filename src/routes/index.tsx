@@ -88,7 +88,7 @@ function Home() {
             <div className="absolute -bottom-6 -left-6 hidden max-w-[240px] rounded-sm border border-border/60 bg-background/95 p-5 shadow-[var(--shadow-card)] backdrop-blur md:block">
               <p className="eyebrow">Now Booking</p>
               <p className="mt-2 font-serif text-lg leading-snug text-foreground">
-                Birthday setups for any month of your choice
+                Birthday setups for any month of your choice.
               </p>
             </div>
           </div>
@@ -188,7 +188,7 @@ function Home() {
           <p className="eyebrow">Planning something?</p>
           <h2 className="mx-auto mt-4 max-w-7xl font-serif text-4xl leading-tight text-foreground md:text-5xl">
             Birthdays, Baby & Bridal showers, Marriage Proposals, and Kwanjula. — tell us the
-            moment, we'll bring the flowers.
+            moment, we'll bring the flowers
           </h2>
           <Link
             to="/contact"
