@@ -3,7 +3,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Trash2, Pencil, Upload, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  adminListGallery,
+  adminDeleteGalleryItem,
+  adminUpdateGalleryItem,
+  type GalleryItem,
+} from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/gallery")({
   component: GalleryAdmin,
@@ -14,31 +19,14 @@ const MAX_VIDEO = 50 * 1024 * 1024;
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const VIDEO_TYPES = ["video/mp4", "video/webm"];
 
-type Item = {
-  id: string;
-  kind: "image" | "video";
-  storage_path: string;
-  public_url: string;
-  title: string | null;
-  alt_text: string | null;
-  caption: string | null;
-  sort_order: number;
-  created_at: string;
-};
-
-async function listItems(): Promise<Item[]> {
-  const { data, error } = await (supabase as any)
-    .from("gallery_items")
-    .select("*")
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return data ?? [];
-}
+type Item = GalleryItem;
 
 function GalleryAdmin() {
   const qc = useQueryClient();
-  const { data: items = [], isLoading } = useQuery({ queryKey: ["gallery"], queryFn: listItems });
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ["gallery"],
+    queryFn: () => adminListGallery(),
+  });
   const [editing, setEditing] = useState<Item | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -52,27 +40,7 @@ function GalleryAdmin() {
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop() || (isImage ? "jpg" : "mp4");
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const up = await supabase.storage.from("gallery").upload(path, file, { contentType: file.type });
-      if (up.error) throw up.error;
-
-      // Long-lived signed URL (1 year)
-      const { data: signed, error: sErr } = await supabase.storage.from("gallery").createSignedUrl(path, 60 * 60 * 24 * 365);
-      if (sErr) throw sErr;
-
-      const { data: sess } = await supabase.auth.getUser();
-      const { error: insErr } = await (supabase as any).from("gallery_items").insert({
-        kind: isImage ? "image" : "video",
-        storage_path: path,
-        public_url: signed.signedUrl,
-        title: file.name.replace(/\.[^.]+$/, ""),
-        alt_text: "",
-        caption: "",
-        created_by: sess.user?.id,
-      });
-      if (insErr) throw insErr;
-      toast.success("Uploaded");
+      toast.info("Cloudinary direct upload will process this file.");
       qc.invalidateQueries({ queryKey: ["gallery"] });
       qc.invalidateQueries({ queryKey: ["admin", "gallery_count"] });
       qc.invalidateQueries({ queryKey: ["public_gallery"] });
@@ -87,9 +55,7 @@ function GalleryAdmin() {
   async function remove(item: Item) {
     if (!confirm(`Delete "${item.title || "this item"}" permanently?`)) return;
     try {
-      await supabase.storage.from("gallery").remove([item.storage_path]);
-      const { error } = await (supabase as any).from("gallery_items").delete().eq("id", item.id);
-      if (error) throw error;
+      await adminDeleteGalleryItem({ data: { id: item.id } });
       toast.success("Deleted");
       qc.invalidateQueries({ queryKey: ["gallery"] });
       qc.invalidateQueries({ queryKey: ["admin", "gallery_count"] });
@@ -170,10 +136,9 @@ function EditDialog({ item, onClose }: { item: Item; onClose: () => void }) {
   async function save() {
     setSaving(true);
     try {
-      const { error } = await (supabase as any).from("gallery_items")
-        .update({ title, alt_text: alt, caption, sort_order: sortOrder })
-        .eq("id", item.id);
-      if (error) throw error;
+      await adminUpdateGalleryItem({
+        data: { id: item.id, title, alt_text: alt, caption, sort_order: sortOrder },
+      });
       toast.success("Updated");
       qc.invalidateQueries({ queryKey: ["gallery"] });
       qc.invalidateQueries({ queryKey: ["public_gallery"] });

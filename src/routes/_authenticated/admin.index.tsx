@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { adminGalleryCount } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Overview,
@@ -9,12 +9,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 function Overview() {
   const { data: galleryCount } = useQuery({
     queryKey: ["admin", "gallery_count"],
-    queryFn: async () => {
-      const { count } = await (supabase as any)
-        .from("gallery_items")
-        .select("*", { count: "exact", head: true });
-      return count ?? 0;
-    },
+    queryFn: () => adminGalleryCount(),
   });
 
   const cards = [

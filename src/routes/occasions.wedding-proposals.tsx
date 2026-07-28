@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { OccasionDetail } from "@/components/occasion-detail";
-import hero from "@/assets/proposal.jpg";
+import hero from "@/assets/proposal_africa.png";
 import g1 from "@/assets/bouquet_003.jpeg";
 import g2 from "@/assets/decoration_004.jpeg";
 import g3 from "@/assets/bouquet_014.jpeg";

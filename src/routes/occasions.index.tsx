@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import bridal_shower from "@/assets/bridal-shower-party.jpg";
 import baby_shower from "@/assets/baby_shower.jpg";
 import birthday_party from "@/assets/birthday_party.jpg";
-import decor3 from "@/assets/proposal.jpg";
+import proposal from "@/assets/proposal_africa.png";
 import decor4 from "@/assets/decoration_003.jpeg";
 import decor5 from "@/assets/decoration_004.jpeg";
 
@@ -53,7 +53,7 @@ const cards = [
     to: "/occasions/wedding-proposals" as const,
     label: "Marriage Proposals",
     tag: "Rooftop · Lakeside · Garden",
-    img: decor3,
+    img: proposal,
     tint: "from-[#6E2434]/70 to-[#0d1a13]/90",
   },
   {
@@ -76,7 +76,7 @@ function OccasionsIndex() {
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/80">
             From surprise proposals to Kwanjula ceremonies, we design and install floral moments
-            across Kampala, Entebbe and Wakiso — with same-day delivery available on selected
+            across Uganda — with same-day delivery available on selected
             setups.
           </p>
         </div>

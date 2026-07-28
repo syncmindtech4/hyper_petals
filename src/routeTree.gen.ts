@@ -20,6 +20,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OccasionsIndexRouteImport } from './routes/occasions.index'
+import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
+import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as OccasionsWeddingProposalsRouteImport } from './routes/occasions.wedding-proposals'
 import { Route as OccasionsKwanjulaRouteImport } from './routes/occasions.kwanjula'
 import { Route as OccasionsBridalShowersRouteImport } from './routes/occasions.bridal-showers'
@@ -83,6 +85,16 @@ const OccasionsIndexRoute = OccasionsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => OccasionsRoute,
+} as any)
+const SignUpSplatRoute = SignUpSplatRouteImport.update({
+  id: '/sign-up/$',
+  path: '/sign-up/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInSplatRoute = SignInSplatRouteImport.update({
+  id: '/sign-in/$',
+  path: '/sign-in/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OccasionsWeddingProposalsRoute =
   OccasionsWeddingProposalsRouteImport.update({
@@ -150,6 +162,8 @@ export interface FileRoutesByFullPath {
   '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/sign-in/$': typeof SignInSplatRoute
+  '/sign-up/$': typeof SignUpSplatRoute
   '/occasions/': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
@@ -169,6 +183,8 @@ export interface FileRoutesByTo {
   '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/sign-in/$': typeof SignInSplatRoute
+  '/sign-up/$': typeof SignUpSplatRoute
   '/occasions': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
@@ -192,6 +208,8 @@ export interface FileRoutesById {
   '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/sign-in/$': typeof SignInSplatRoute
+  '/sign-up/$': typeof SignUpSplatRoute
   '/occasions/': typeof OccasionsIndexRoute
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
@@ -215,6 +233,8 @@ export interface FileRouteTypes {
     | '/occasions/bridal-showers'
     | '/occasions/kwanjula'
     | '/occasions/wedding-proposals'
+    | '/sign-in/$'
+    | '/sign-up/$'
     | '/occasions/'
     | '/admin/content'
     | '/admin/gallery'
@@ -234,6 +254,8 @@ export interface FileRouteTypes {
     | '/occasions/bridal-showers'
     | '/occasions/kwanjula'
     | '/occasions/wedding-proposals'
+    | '/sign-in/$'
+    | '/sign-up/$'
     | '/occasions'
     | '/admin/content'
     | '/admin/gallery'
@@ -256,6 +278,8 @@ export interface FileRouteTypes {
     | '/occasions/bridal-showers'
     | '/occasions/kwanjula'
     | '/occasions/wedding-proposals'
+    | '/sign-in/$'
+    | '/sign-up/$'
     | '/occasions/'
     | '/_authenticated/admin/content'
     | '/_authenticated/admin/gallery'
@@ -273,6 +297,8 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   OccasionsRoute: typeof OccasionsRouteWithChildren
   ProductDetailRoute: typeof ProductDetailRoute
+  SignInSplatRoute: typeof SignInSplatRoute
+  SignUpSplatRoute: typeof SignUpSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -353,6 +379,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/occasions/'
       preLoaderRoute: typeof OccasionsIndexRouteImport
       parentRoute: typeof OccasionsRoute
+    }
+    '/sign-up/$': {
+      id: '/sign-up/$'
+      path: '/sign-up/$'
+      fullPath: '/sign-up/$'
+      preLoaderRoute: typeof SignUpSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in/$': {
+      id: '/sign-in/$'
+      path: '/sign-in/$'
+      fullPath: '/sign-in/$'
+      preLoaderRoute: typeof SignInSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/occasions/wedding-proposals': {
       id: '/occasions/wedding-proposals'
@@ -479,6 +519,8 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   OccasionsRoute: OccasionsRouteWithChildren,
   ProductDetailRoute: ProductDetailRoute,
+  SignInSplatRoute: SignInSplatRoute,
+  SignUpSplatRoute: SignUpSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

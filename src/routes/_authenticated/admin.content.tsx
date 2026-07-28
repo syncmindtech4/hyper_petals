@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useHero, useContact, useServicesContent } from "@/hooks/useSiteContent";
+import { saveSiteContent } from "@/lib/cms.functions";
 import type { HeroContent, ContactContent, ServicesContent, ServiceItem } from "@/lib/content-defaults";
 
 export const Route = createFileRoute("/_authenticated/admin/content")({
@@ -33,12 +33,8 @@ function ContentEditor() {
   );
 }
 
-async function saveKey(key: string, value: unknown) {
-  const { data: sess } = await supabase.auth.getUser();
-  const { error } = await (supabase as any)
-    .from("site_content")
-    .upsert({ key, value, updated_by: sess.user?.id, updated_at: new Date().toISOString() });
-  if (error) throw error;
+async function saveKey(key: "hero" | "contact" | "services", value: unknown) {
+  await saveSiteContent({ data: { key, value } });
 }
 
 function Field({ label, value, onChange, textarea }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) {
