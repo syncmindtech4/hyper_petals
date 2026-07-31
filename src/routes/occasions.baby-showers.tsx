@@ -54,29 +54,6 @@ const cfg = {
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "Boy, girl, or beautifully neutral.",
-  tiers: [
-    {
-      tag: "Essential",
-      amount: "From UGX 400,000",
-      items: ["Pastel balloon arch", "Mum-to-be chair styling", "Up to 15 guests"],
-    },
-    {
-      tag: "Most Booked · Signature",
-      amount: "From UGX 750,000",
-      items: [
-        '"Oh Baby" backdrop + floral arch',
-        "Table & seating styling",
-        "Gender-reveal moment staged",
-        "Up to 30 guests",
-      ],
-      featured: true,
-    },
-    {
-      tag: "Full Décor",
-      amount: "From UGX 1,300,000",
-      items: ["Everything in Signature", "Tent/venue draping", "Dedicated on-site coordinator"],
-    },
-  ],
   testimonial: {
     quote:
       "They set up such a soft, dreamy space — I actually cried when I walked in. Every friend has asked for their contact.",

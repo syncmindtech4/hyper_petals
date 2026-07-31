@@ -58,33 +58,6 @@ const cfg = {
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "Every theme, every age.",
-  tiers: [
-    {
-      tag: "Essential",
-      amount: "From UGX 250,000",
-      items: ["Balloon arch (single colour palette)", "Happy Birthday signage", "Up to 15 guests"],
-    },
-    {
-      tag: "Most Booked · Signature",
-      amount: "From UGX 550,000",
-      items: [
-        "Themed balloon & floral arch",
-        "Photo backdrop with name signage",
-        "Cake table & seating styling",
-        "Up to 40 guests",
-      ],
-      featured: true,
-    },
-    {
-      tag: "Full Décor",
-      amount: "From UGX 1,100,000",
-      items: [
-        "Everything in Signature",
-        "Full venue styling & lounge setup",
-        "Dedicated on-site coordinator",
-      ],
-    },
-  ],
   testimonial: {
     quote:
       "Our son's safari-themed 5th birthday looked like it belonged in a magazine — and it was ready before the first guest arrived.",

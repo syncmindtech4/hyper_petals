@@ -187,8 +187,8 @@ function Home() {
         <div className="mx-auto max-w-7xl px-6 py-10 text-center">
           <p className="eyebrow">Planning something?</p>
           <h2 className="mx-auto mt-4 max-w-7xl font-serif text-4xl leading-tight text-foreground md:text-5xl">
-            Birthdays, Baby & Bridal showers, Marriage Proposals, and Kwanjula. — tell us the
-            moment, we'll bring the flowers
+            Birthdays, Baby & Bridal showers, Marriage Proposals, Tea & Corporate Parties, and
+            Kwanjula. — tell us the moment, we'll bring the flowers.
           </h2>
           <Link
             to="/contact"

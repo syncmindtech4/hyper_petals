@@ -56,29 +56,6 @@ const cfg = {
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "Real setups, real brides.",
-  tiers: [
-    {
-      tag: "Essential",
-      amount: "From UGX 450,000",
-      items: ["Balloon arch (single colour palette)", "Bride's chair styling", "Up to 15 guests"],
-    },
-    {
-      tag: "Most Booked · Signature",
-      amount: "From UGX 850,000",
-      items: [
-        "Organic floral + balloon arch",
-        "Full table & seating styling",
-        "Backdrop with name signage",
-        "Up to 30 guests",
-      ],
-      featured: true,
-    },
-    {
-      tag: "Full Décor",
-      amount: "From UGX 1,500,000",
-      items: ["Everything in Signature", "Tent/venue draping", "Dedicated on-site coordinator"],
-    },
-  ],
   testimonial: {
     quote:
       "Every guest asked who did our décor — the blush and gold arch matched the invitations perfectly.",

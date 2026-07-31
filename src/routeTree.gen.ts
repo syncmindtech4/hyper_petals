@@ -23,7 +23,9 @@ import { Route as OccasionsIndexRouteImport } from './routes/occasions.index'
 import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
 import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as OccasionsWeddingProposalsRouteImport } from './routes/occasions.wedding-proposals'
+import { Route as OccasionsTeaPartiesRouteImport } from './routes/occasions.tea-parties'
 import { Route as OccasionsKwanjulaRouteImport } from './routes/occasions.kwanjula'
+import { Route as OccasionsCorporateChar38brandEventsRouteImport } from './routes/occasions.corporate&brand-events'
 import { Route as OccasionsBridalShowersRouteImport } from './routes/occasions.bridal-showers'
 import { Route as OccasionsBirthdayPartiesRouteImport } from './routes/occasions.birthday-parties'
 import { Route as OccasionsBabyShowersRouteImport } from './routes/occasions.baby-showers'
@@ -102,11 +104,22 @@ const OccasionsWeddingProposalsRoute =
     path: '/wedding-proposals',
     getParentRoute: () => OccasionsRoute,
   } as any)
+const OccasionsTeaPartiesRoute = OccasionsTeaPartiesRouteImport.update({
+  id: '/tea-parties',
+  path: '/tea-parties',
+  getParentRoute: () => OccasionsRoute,
+} as any)
 const OccasionsKwanjulaRoute = OccasionsKwanjulaRouteImport.update({
   id: '/kwanjula',
   path: '/kwanjula',
   getParentRoute: () => OccasionsRoute,
 } as any)
+const OccasionsCorporateChar38brandEventsRoute =
+  OccasionsCorporateChar38brandEventsRouteImport.update({
+    id: '/corporate&brand-events',
+    path: '/corporate&brand-events',
+    getParentRoute: () => OccasionsRoute,
+  } as any)
 const OccasionsBridalShowersRoute = OccasionsBridalShowersRouteImport.update({
   id: '/bridal-showers',
   path: '/bridal-showers',
@@ -160,7 +173,9 @@ export interface FileRoutesByFullPath {
   '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
   '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
   '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
+  '/occasions/corporate&brand-events': typeof OccasionsCorporateChar38brandEventsRoute
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
+  '/occasions/tea-parties': typeof OccasionsTeaPartiesRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
@@ -181,7 +196,9 @@ export interface FileRoutesByTo {
   '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
   '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
   '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
+  '/occasions/corporate&brand-events': typeof OccasionsCorporateChar38brandEventsRoute
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
+  '/occasions/tea-parties': typeof OccasionsTeaPartiesRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
@@ -206,7 +223,9 @@ export interface FileRoutesById {
   '/occasions/baby-showers': typeof OccasionsBabyShowersRoute
   '/occasions/birthday-parties': typeof OccasionsBirthdayPartiesRoute
   '/occasions/bridal-showers': typeof OccasionsBridalShowersRoute
+  '/occasions/corporate&brand-events': typeof OccasionsCorporateChar38brandEventsRoute
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
+  '/occasions/tea-parties': typeof OccasionsTeaPartiesRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
@@ -231,7 +250,9 @@ export interface FileRouteTypes {
     | '/occasions/baby-showers'
     | '/occasions/birthday-parties'
     | '/occasions/bridal-showers'
+    | '/occasions/corporate&brand-events'
     | '/occasions/kwanjula'
+    | '/occasions/tea-parties'
     | '/occasions/wedding-proposals'
     | '/sign-in/$'
     | '/sign-up/$'
@@ -252,7 +273,9 @@ export interface FileRouteTypes {
     | '/occasions/baby-showers'
     | '/occasions/birthday-parties'
     | '/occasions/bridal-showers'
+    | '/occasions/corporate&brand-events'
     | '/occasions/kwanjula'
+    | '/occasions/tea-parties'
     | '/occasions/wedding-proposals'
     | '/sign-in/$'
     | '/sign-up/$'
@@ -276,7 +299,9 @@ export interface FileRouteTypes {
     | '/occasions/baby-showers'
     | '/occasions/birthday-parties'
     | '/occasions/bridal-showers'
+    | '/occasions/corporate&brand-events'
     | '/occasions/kwanjula'
+    | '/occasions/tea-parties'
     | '/occasions/wedding-proposals'
     | '/sign-in/$'
     | '/sign-up/$'
@@ -401,11 +426,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OccasionsWeddingProposalsRouteImport
       parentRoute: typeof OccasionsRoute
     }
+    '/occasions/tea-parties': {
+      id: '/occasions/tea-parties'
+      path: '/tea-parties'
+      fullPath: '/occasions/tea-parties'
+      preLoaderRoute: typeof OccasionsTeaPartiesRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
     '/occasions/kwanjula': {
       id: '/occasions/kwanjula'
       path: '/kwanjula'
       fullPath: '/occasions/kwanjula'
       preLoaderRoute: typeof OccasionsKwanjulaRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/corporate&brand-events': {
+      id: '/occasions/corporate&brand-events'
+      path: '/corporate&brand-events'
+      fullPath: '/occasions/corporate&brand-events'
+      preLoaderRoute: typeof OccasionsCorporateChar38brandEventsRouteImport
       parentRoute: typeof OccasionsRoute
     }
     '/occasions/bridal-showers': {
@@ -490,7 +529,9 @@ interface OccasionsRouteChildren {
   OccasionsBabyShowersRoute: typeof OccasionsBabyShowersRoute
   OccasionsBirthdayPartiesRoute: typeof OccasionsBirthdayPartiesRoute
   OccasionsBridalShowersRoute: typeof OccasionsBridalShowersRoute
+  OccasionsCorporateChar38brandEventsRoute: typeof OccasionsCorporateChar38brandEventsRoute
   OccasionsKwanjulaRoute: typeof OccasionsKwanjulaRoute
+  OccasionsTeaPartiesRoute: typeof OccasionsTeaPartiesRoute
   OccasionsWeddingProposalsRoute: typeof OccasionsWeddingProposalsRoute
   OccasionsIndexRoute: typeof OccasionsIndexRoute
 }
@@ -499,7 +540,10 @@ const OccasionsRouteChildren: OccasionsRouteChildren = {
   OccasionsBabyShowersRoute: OccasionsBabyShowersRoute,
   OccasionsBirthdayPartiesRoute: OccasionsBirthdayPartiesRoute,
   OccasionsBridalShowersRoute: OccasionsBridalShowersRoute,
+  OccasionsCorporateChar38brandEventsRoute:
+    OccasionsCorporateChar38brandEventsRoute,
   OccasionsKwanjulaRoute: OccasionsKwanjulaRoute,
+  OccasionsTeaPartiesRoute: OccasionsTeaPartiesRoute,
   OccasionsWeddingProposalsRoute: OccasionsWeddingProposalsRoute,
   OccasionsIndexRoute: OccasionsIndexRoute,
 }

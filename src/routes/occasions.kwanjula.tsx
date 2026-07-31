@@ -59,34 +59,6 @@ const cfg = {
   ],
   gallery: [g1, g2, g3, g4, g5, g6],
   galleryHeading: "From intimate family gatherings to 300+ guests.",
-  tiers: [
-    {
-      tag: "Essential",
-      amount: "From UGX 1,200,000",
-      items: ["Entrance arch & basic tent draping", "Seating area styling", "Up to 80 guests"],
-    },
-    {
-      tag: "Most Booked · Signature",
-      amount: "From UGX 2,500,000",
-      items: [
-        "Full tent & canopy draping in family colours",
-        "Mat seating, gift-table & stage styling",
-        "Fresh floral accents throughout",
-        "Up to 200 guests",
-      ],
-      featured: true,
-    },
-    {
-      tag: "Full Décor",
-      amount: "From UGX 4,500,000",
-      items: [
-        "Everything in Signature",
-        "Multi-tent venue draping, lighting & stage design",
-        "Dedicated on-site coordinator for the full day",
-        "200+ guests",
-      ],
-    },
-  ],
   testimonial: {
     quote:
       "They matched our clan colours exactly and coordinated the whole compound with our planning committee — the aunties were impressed, which says a lot.",
