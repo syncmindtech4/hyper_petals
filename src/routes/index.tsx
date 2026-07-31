@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-bouquet.jpg";
 import workshop from "@/assets/gallery-workshop.jpg";
-import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { site, waLink } from "@/lib/site";
 import { useHero } from "@/hooks/useSiteContent";
+import { useProducts } from "@/hooks/useProducts";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { data: products } = useProducts();
   const featured = products.slice(0, 3);
   const { data: h } = useHero();
   return (

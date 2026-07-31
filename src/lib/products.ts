@@ -17,9 +17,15 @@ export type Product = {
   image: string;
   description: string;
   bestFor: string;
+  isBestseller?: boolean;
 };
 
-export const products: Product[] = [
+// Fallback/seed data. The live site reads products from the database
+// (see src/hooks/useProducts.ts) — this array is only used as `initialData`
+// so pages render instantly before the DB read resolves, and as a safety
+// net if the DB is briefly unreachable. Edit products via /admin/products,
+// not here.
+export const defaultProducts: Product[] = [
   {
     id: "wine-blush-dozen",
     name: "Wine & Blush Dozen",
@@ -111,6 +117,10 @@ export const products: Product[] = [
     bestFor: "Housewarmings · Thank-yous · Sunday tables",
   },
 ];
+
+// Back-compat alias — prefer `useProducts()` from "@/hooks/useProducts" for
+// anything user-facing, since that reads live data from the database.
+export const products = defaultProducts;
 
 export const formatUGX = (n: number) =>
   new Intl.NumberFormat("en-UG", {

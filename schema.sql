@@ -1,17 +1,24 @@
 -- =====================================================================
 -- Luxe Flora — Neon Postgres schema (full, from scratch)
 -- =====================================================================
+-- Safe to run multiple times: types, tables, indexes, and triggers are
+-- all guarded (IF NOT EXISTS / CREATE OR REPLACE / DO-block exception
+-- handling), and seed data uses ON CONFLICT DO NOTHING.
+--
 -- Covers:
 --   1. Extensions
 --   2. Enums
 --   3. Admin/CMS: user_roles, site_content, gallery_items
 --   4. Catalog: product_categories, products
 --   5. Commerce: delivery_locations, promo_codes, orders, order_items
+--   5b. Fixes user-id columns to TEXT for Clerk (was UUID for Supabase Auth)
 --   6. Triggers (updated_at bookkeeping)
 --   7. Seed data (mirrors current hardcoded content in the app)
+--   8. Fix product image paths (idempotent)
 --
 -- Run against your Neon connection string, e.g.:
---   psql "$DATABASE_URL" -f schema.sql
+--   npm run db:migrate
+--   (or directly: psql "$DATABASE_URL" -f schema.sql)
 -- =====================================================================
 
 BEGIN;
@@ -24,14 +31,31 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";   -- gen_random_uuid()
 -- ---------------------------------------------------------------------
 -- 2. Enums
 -- ---------------------------------------------------------------------
-CREATE TYPE app_role       AS ENUM ('admin', 'editor');
-CREATE TYPE gallery_kind   AS ENUM ('image', 'video');
-CREATE TYPE payment_method AS ENUM ('momo', 'airtel_money', 'card', 'cash_on_delivery');
-CREATE TYPE payment_status AS ENUM ('pending', 'paid', 'failed', 'refunded');
-CREATE TYPE order_status   AS ENUM (
-  'pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'
-);
-CREATE TYPE discount_type  AS ENUM ('flat', 'percent');
+DO $$ BEGIN
+  CREATE TYPE app_role AS ENUM ('admin', 'editor');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE gallery_kind AS ENUM ('image', 'video');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE payment_method AS ENUM ('momo', 'airtel_money', 'card', 'cash_on_delivery');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE payment_status AS ENUM ('pending', 'paid', 'failed', 'refunded');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE order_status AS ENUM (
+    'pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE discount_type AS ENUM ('flat', 'percent');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Shared trigger to keep updated_at columns fresh
 CREATE OR REPLACE FUNCTION set_updated_at()
@@ -48,31 +72,32 @@ $$;
 -- 3. Admin / CMS
 -- =====================================================================
 
--- Admin & editor role grants. user_id is the auth provider's user id
--- (Supabase Auth UUID, or any external provider). Neon has no built-in
--- auth, so authorization checks happen in application code against
--- this table rather than via RLS/auth.uid().
-CREATE TABLE user_roles (
+-- Admin & editor role grants. user_id is the auth provider's user id.
+-- This is TEXT, not UUID: Clerk user ids look like "user_2abC3dEfGhIjK",
+-- not a UUID. Neon has no built-in auth, so authorization checks happen
+-- in application code against this table rather than via RLS/auth.uid().
+CREATE TABLE IF NOT EXISTS user_roles (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID NOT NULL,
+  user_id    TEXT NOT NULL,
+  email      TEXT,
   role       app_role NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (user_id, role)
 );
-CREATE INDEX user_roles_user_id_idx ON user_roles (user_id);
+CREATE INDEX IF NOT EXISTS user_roles_user_id_idx ON user_roles (user_id);
 
 -- Editable site copy (hero, contact, services, etc.) — flexible
 -- key/value JSONB store so new sections don't need new migrations.
-CREATE TABLE site_content (
+CREATE TABLE IF NOT EXISTS site_content (
   key        TEXT PRIMARY KEY,
   value      JSONB NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_by UUID
+  updated_by TEXT
 );
 
 -- Gallery media metadata. Files themselves live in object storage
 -- (S3/R2/Supabase Storage/etc.) — public_url is the CDN-facing URL.
-CREATE TABLE gallery_items (
+CREATE TABLE IF NOT EXISTS gallery_items (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   kind         gallery_kind NOT NULL,
   storage_path TEXT NOT NULL,
@@ -82,15 +107,15 @@ CREATE TABLE gallery_items (
   caption      TEXT,
   sort_order   INT NOT NULL DEFAULT 0,
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_by   UUID
+  created_by   TEXT
 );
-CREATE INDEX gallery_items_sort_idx ON gallery_items (sort_order, created_at DESC);
+CREATE INDEX IF NOT EXISTS gallery_items_sort_idx ON gallery_items (sort_order, created_at DESC);
 
 -- =====================================================================
 -- 4. Catalog
 -- =====================================================================
 
-CREATE TABLE product_categories (
+CREATE TABLE IF NOT EXISTS product_categories (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug       TEXT NOT NULL UNIQUE,
   name       TEXT NOT NULL,
@@ -98,7 +123,7 @@ CREATE TABLE product_categories (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug         TEXT NOT NULL UNIQUE,           -- e.g. 'wine-blush-dozen'
   name         TEXT NOT NULL,
@@ -116,10 +141,10 @@ CREATE TABLE products (
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX products_category_idx ON products (category_id);
-CREATE INDEX products_active_idx ON products (is_active, sort_order);
+CREATE INDEX IF NOT EXISTS products_category_idx ON products (category_id);
+CREATE INDEX IF NOT EXISTS products_active_idx ON products (is_active, sort_order);
 
-CREATE TRIGGER products_set_updated_at
+CREATE OR REPLACE TRIGGER products_set_updated_at
   BEFORE UPDATE ON products
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
@@ -128,7 +153,7 @@ CREATE TRIGGER products_set_updated_at
 -- =====================================================================
 
 -- Delivery zones + flat fees (mirrors the LOCATIONS list in checkout.tsx)
-CREATE TABLE delivery_locations (
+CREATE TABLE IF NOT EXISTS delivery_locations (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name       TEXT NOT NULL UNIQUE,
   fee_ugx    INTEGER NOT NULL CHECK (fee_ugx >= 0),
@@ -136,7 +161,7 @@ CREATE TABLE delivery_locations (
   sort_order INT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE promo_codes (
+CREATE TABLE IF NOT EXISTS promo_codes (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code           TEXT NOT NULL UNIQUE,
   discount_type  discount_type NOT NULL,
@@ -149,10 +174,10 @@ CREATE TABLE promo_codes (
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
   id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_number       TEXT NOT NULL UNIQUE,            -- human-friendly, e.g. LF-20260728-0001
-  user_id            UUID,                            -- nullable: guest checkout supported
+  user_id            TEXT,                            -- Clerk user id; nullable: guest checkout supported
 
   -- Purchaser contact
   customer_name      TEXT NOT NULL,
@@ -188,15 +213,15 @@ CREATE TABLE orders (
   created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at         TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX orders_user_idx ON orders (user_id);
-CREATE INDEX orders_status_idx ON orders (status);
-CREATE INDEX orders_created_idx ON orders (created_at DESC);
+CREATE INDEX IF NOT EXISTS orders_user_idx ON orders (user_id);
+CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status);
+CREATE INDEX IF NOT EXISTS orders_created_idx ON orders (created_at DESC);
 
-CREATE TRIGGER orders_set_updated_at
+CREATE OR REPLACE TRIGGER orders_set_updated_at
   BEFORE UPDATE ON orders
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id      UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
   product_id    UUID REFERENCES products(id) ON DELETE SET NULL,
@@ -212,8 +237,20 @@ CREATE TABLE order_items (
 
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX order_items_order_idx ON order_items (order_id);
-CREATE INDEX order_items_product_idx ON order_items (product_id);
+CREATE INDEX IF NOT EXISTS order_items_order_idx ON order_items (order_id);
+CREATE INDEX IF NOT EXISTS order_items_product_idx ON order_items (product_id);
+
+-- ---------------------------------------------------------------------
+-- 5b. Fix pre-existing installations
+-- ---------------------------------------------------------------------
+-- If this schema was already applied with these columns as UUID (the
+-- original version, before Clerk was wired up), converting them to TEXT
+-- here is safe and idempotent — casting UUID or TEXT to TEXT is a no-op
+-- either way, and this runs every time this file is applied.
+ALTER TABLE user_roles    ALTER COLUMN user_id    TYPE TEXT USING user_id::text;
+ALTER TABLE site_content  ALTER COLUMN updated_by TYPE TEXT USING updated_by::text;
+ALTER TABLE gallery_items ALTER COLUMN created_by TYPE TEXT USING created_by::text;
+ALTER TABLE orders        ALTER COLUMN user_id    TYPE TEXT USING user_id::text;
 
 COMMIT;
 
@@ -310,40 +347,58 @@ SELECT * FROM (VALUES
   ('wine-blush-dozen', 'Wine & Blush Dozen',
     (SELECT id FROM product_categories WHERE slug = 'roses'), 'Roses · Bestseller', 110000,
     'A dozen curated roses blending rich wine red and soft blush pink hues. Elegant, aromatic, and perfectly hand-tied with a satin ribbon.',
-    'Anniversaries · Birthdays · Romantic Gestures', '/assets/bouquet_006.jpeg', true, 1),
+    'Anniversaries · Birthdays · Romantic Gestures', '/products/wine-blush-dozen.jpeg', true, 1),
   ('two-dozen-red-roses', 'Two Dozen Red Roses',
     (SELECT id FROM product_categories WHERE slug = 'roses'), 'Roses', 190000,
     'Twenty-four premium long-stemmed red roses arranged with structural eucalyptus. The ultimate expression of classic luxury and deep affection.',
-    'Anniversaries · Celebrations · Apologies', '/assets/bouquet_004.jpeg', false, 2),
+    'Anniversaries · Celebrations · Apologies', '/products/two-dozen-red-roses.jpeg', false, 2),
   ('sunrise-mixed-bouquet', 'Sunrise Mixed Bouquet',
     (SELECT id FROM product_categories WHERE slug = 'mixed-bouquets'), 'Mixed Bouquets', 95000,
     'A bright, warm selection of peach roses, golden chrysanthemums, and fresh summer greenery that mimics a Ugandan dawn.',
-    'Get Well · Congratulations · Just Because', '/assets/bouquet_013.jpeg', false, 3),
+    'Get Well · Congratulations · Just Because', '/products/sunrise-mixed-bouquet.jpeg', false, 3),
   ('garden-gift-basket', 'Garden Gift Basket',
     (SELECT id FROM product_categories WHERE slug = 'baskets'), 'Baskets', 160000,
     'A lush array of spray roses, lilies, and wildflowers arranged in a rustic woven basket. A perfect centerpiece or home-warming gift.',
-    'Congratulations · Mother''s Day · Housewarming', '/assets/bouquet_010.jpeg', false, 4),
+    'Congratulations · Mother''s Day · Housewarming', '/products/garden-gift-basket.jpeg', false, 4),
   ('everyday-cheer-bunch', 'Everyday Cheer Bunch',
     (SELECT id FROM product_categories WHERE slug = 'mixed-bouquets'), 'Mixed Bouquets · Bestseller', 65000,
     'A delightful, compact bunch of vibrant mixed daisies, carnations, and spray roses to brighten anyone''s everyday space.',
-    'Just Because · Birthdays · Thank You', '/assets/bouquet_002.jpeg', true, 5),
+    'Just Because · Birthdays · Thank You', '/products/everyday-cheer-bunch.jpeg', true, 5),
   ('garden-rose', 'Garden Rose Bouquet',
     (SELECT id FROM product_categories WHERE slug = 'signature-bouquet'), 'Signature Bouquet', 45000,
     'A gathering of soft pink garden roses, hand-tied and finished in cream ribbon. Romantic, tender, and quietly luxurious.',
-    'Anniversaries · Birthdays · Just because', '/assets/bouquet_garden_roses.jpeg', false, 6),
+    'Anniversaries · Birthdays · Just because', '/products/garden-rose.jpeg', false, 6),
   ('luxe-pack', 'Luxe Floral Pack',
     (SELECT id FROM product_categories WHERE slug = 'statement-arrangement'), 'Statement Arrangement', 62000,
     'Velvet burgundy roses set against deep foliage. A moody, editorial arrangement for those who love drama with their romance.',
-    'Milestones · Gifting · Editorial styling', '/assets/bouquet_006.jpeg', false, 7),
+    'Milestones · Gifting · Editorial styling', '/products/luxe-pack.jpeg', false, 7),
   ('ivory-bridal', 'Ivory Bridal Cluster',
     (SELECT id FROM product_categories WHERE slug = 'bridal-bouquet'), 'Bridal Bouquet', 85000,
     'Cream garden roses with soft foliage in a rounded, timeless silhouette. Made to walk down the aisle.',
-    'Weddings · Elopements · Bridal shoots', '/assets/bouquet_bridal.jpeg', false, 8),
+    'Weddings · Elopements · Bridal shoots', '/products/ivory-bridal.jpeg', false, 8),
   ('garden-pastel', 'Garden Pastel',
     (SELECT id FROM product_categories WHERE slug = 'signature-bouquet'), 'Signature Bouquet', 52000,
     'A wild, garden-picked gathering of pastel roses, ranunculus and trailing greenery. Soft, unstructured, endlessly pretty.',
-    'Housewarmings · Thank-yous · Sunday tables', '/assets/product-garden.jpg', false, 9)
+    'Housewarmings · Thank-yous · Sunday tables', '/products/garden-pastel.jpg', false, 9)
 ) AS v(slug, name, category_id, category_label, price_ugx, description, best_for, image_url, is_bestseller, sort_order)
 ON CONFLICT (slug) DO NOTHING;
 
 COMMIT;
+
+
+-- =====================================================================
+-- 8. Fix product image paths (idempotent — safe to re-run)
+-- =====================================================================
+-- If this schema.sql already ran once, the INSERTs above were skipped via
+-- ON CONFLICT DO NOTHING, so the /assets/... paths from that first run are
+-- still in place. These UPDATEs correct them to the new /products/... paths
+-- regardless of whether this is a first run or a re-run.
+UPDATE products SET image_url = '/products/wine-blush-dozen.jpeg' WHERE slug = 'wine-blush-dozen';
+UPDATE products SET image_url = '/products/two-dozen-red-roses.jpeg' WHERE slug = 'two-dozen-red-roses';
+UPDATE products SET image_url = '/products/sunrise-mixed-bouquet.jpeg' WHERE slug = 'sunrise-mixed-bouquet';
+UPDATE products SET image_url = '/products/garden-gift-basket.jpeg' WHERE slug = 'garden-gift-basket';
+UPDATE products SET image_url = '/products/everyday-cheer-bunch.jpeg' WHERE slug = 'everyday-cheer-bunch';
+UPDATE products SET image_url = '/products/garden-rose.jpeg' WHERE slug = 'garden-rose';
+UPDATE products SET image_url = '/products/luxe-pack.jpeg' WHERE slug = 'luxe-pack';
+UPDATE products SET image_url = '/products/ivory-bridal.jpeg' WHERE slug = 'ivory-bridal';
+UPDATE products SET image_url = '/products/garden-pastel.jpg' WHERE slug = 'garden-pastel';

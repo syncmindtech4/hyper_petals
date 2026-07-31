@@ -15,10 +15,21 @@ import {
   insertGalleryItem,
   updateGalleryItem,
   deleteGalleryItem,
+  type GalleryItem,
   type GalleryItemInput,
 } from "@/lib/db/gallery.server";
 import { userHasRole } from "@/lib/db/roles.server";
 import { getAuthenticatedUserId, requireAdminUser } from "@/lib/db/auth.server";
+import {
+  listActiveProducts,
+  listAllProductsAdmin,
+  insertProduct,
+  updateProduct,
+  deleteProduct,
+  type ProductInput,
+} from "@/lib/db/products.server";
+
+export type { GalleryItem };
 
 // ── Public reads ─────────────────────────────────────────────────────────────
 
@@ -47,6 +58,10 @@ export const getPublicGallery = createServerFn({ method: "GET" }).handler(async 
     alt_text,
     caption,
   }));
+});
+
+export const getProducts = createServerFn({ method: "GET" }).handler(async () => {
+  return listActiveProducts();
 });
 
 // ── Auth checks ───────────────────────────────────────────────────────────────
@@ -123,5 +138,54 @@ export const adminDeleteGalleryItem = createServerFn({ method: "POST" })
     await requireAdminUser();
     const deleted = await deleteGalleryItem(data.id);
     if (!deleted) throw new Error("Gallery item not found");
+    return deleted;
+  });
+
+// ── Admin: products ───────────────────────────────────────────────────────────
+
+export const adminListProducts = createServerFn({ method: "GET" }).handler(async () => {
+  await requireAdminUser();
+  return listAllProductsAdmin();
+});
+
+const productInputSchema = z.object({
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and hyphens only"),
+  name: z.string().min(1),
+  category_label: z.string().nullable().optional(),
+  price_ugx: z.number().int().nonnegative(),
+  description: z.string().optional(),
+  best_for: z.string().nullable().optional(),
+  image_url: z.string().min(1),
+  is_bestseller: z.boolean().optional(),
+  is_active: z.boolean().optional(),
+  sort_order: z.number().int().optional(),
+});
+
+export const adminCreateProduct = createServerFn({ method: "POST" })
+  .validator(productInputSchema)
+  .handler(async ({ data }) => {
+    await requireAdminUser();
+    return insertProduct(data as ProductInput);
+  });
+
+export const adminUpdateProduct = createServerFn({ method: "POST" })
+  .validator(productInputSchema.partial().extend({ id: z.string().uuid() }))
+  .handler(async ({ data }) => {
+    await requireAdminUser();
+    const { id, ...patch } = data;
+    const updated = await updateProduct(id, patch);
+    if (!updated) throw new Error("Product not found");
+    return updated;
+  });
+
+export const adminDeleteProduct = createServerFn({ method: "POST" })
+  .validator(z.object({ id: z.string().uuid() }))
+  .handler(async ({ data }) => {
+    await requireAdminUser();
+    const deleted = await deleteProduct(data.id);
+    if (!deleted) throw new Error("Product not found");
     return deleted;
   });

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { products } from "@/lib/products";
+import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/product-card";
 import { getPublicGallery } from "@/lib/cms.functions";
 import wedding from "@/assets/gallery-wedding.jpg";
@@ -34,6 +34,7 @@ function Gallery() {
     queryKey: ["public_gallery"],
     queryFn: () => getPublicGallery(),
   });
+  const { data: products } = useProducts();
   return (
     <>
       <section className="border-b border-border/60">
