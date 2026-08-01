@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { z } from "zod";
 import { SlidersHorizontal, ArrowUpDown, ChevronDown, Check, ShoppingCart, Heart, Calendar } from "lucide-react";
-import { products, Product, formatUGX } from "@/lib/products";
+import { Product, formatUGX } from "@/lib/products";
+import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -55,6 +56,7 @@ function Catalogue() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const { addToCart } = useCart();
+  const { data: products } = useProducts();
 
   // Search parameters state mapping
   const initialType = search.type || "";
@@ -144,7 +146,7 @@ function Catalogue() {
         // "popular" (use natural order of array as default popularity score)
         return 0;
       });
-  }, [selectedOccasions, selectedTypes, priceRange, sortBy]);
+  }, [products, selectedOccasions, selectedTypes, priceRange, sortBy]);
 
   const activeSortLabel = useMemo(() => {
     switch (sortBy) {

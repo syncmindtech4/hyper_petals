@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-bouquet.jpg";
 import workshop from "@/assets/gallery-workshop.jpg";
-import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { site, waLink } from "@/lib/site";
 import { useHero } from "@/hooks/useSiteContent";
+import { useProducts } from "@/hooks/useProducts";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { data: products } = useProducts();
   const featured = products.slice(0, 3);
   const { data: h } = useHero();
   return (
@@ -68,7 +69,7 @@ function Home() {
                 </dt>
                 <dd className="mt-2 font-serif text-2xl text-foreground">{h.stat2Value}</dd>
               </div>
-              <div className="hidden max-w-full">
+              <div className="lg::hidden max-w-full">
                 <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                   {h.stat3Label}
                 </dt>
@@ -187,8 +188,8 @@ function Home() {
         <div className="mx-auto max-w-7xl px-6 py-10 text-center">
           <p className="eyebrow">Planning something?</p>
           <h2 className="mx-auto mt-4 max-w-7xl font-serif text-4xl leading-tight text-foreground md:text-5xl">
-            Birthdays, Baby & Bridal showers, Marriage Proposals, and Kwanjula. — tell us the
-            moment, we'll bring the flowers
+            Birthdays, Baby & Bridal showers, Marriage Proposals, Tea & Corporate Parties, and
+            Kwanjula. — tell us the moment, we'll bring the flowers.
           </h2>
           <Link
             to="/contact"

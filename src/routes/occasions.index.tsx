@@ -2,9 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import bridal_shower from "@/assets/bridal-shower-party.jpg";
 import baby_shower from "@/assets/baby_shower.jpg";
 import birthday_party from "@/assets/birthday_party.jpg";
-import decor3 from "@/assets/proposal.jpg";
+import proposal from "@/assets/proposal_africa.png";
 import decor4 from "@/assets/decoration_003.jpeg";
 import decor5 from "@/assets/decoration_004.jpeg";
+import tea from "@/assets/tea.avif";
 
 export const Route = createFileRoute("/occasions/")({
   component: OccasionsIndex,
@@ -53,7 +54,7 @@ const cards = [
     to: "/occasions/wedding-proposals" as const,
     label: "Marriage Proposals",
     tag: "Rooftop · Lakeside · Garden",
-    img: decor3,
+    img: proposal,
     tint: "from-[#6E2434]/70 to-[#0d1a13]/90",
   },
   {
@@ -62,6 +63,20 @@ const cards = [
     tag: "Tent · Mat · Family colours",
     img: decor4,
     tint: "from-[#B5602E]/70 to-[#3a1420]/85",
+  },
+  {
+    to: "/occasions/tea-parties" as const,
+    label: "Tea Party",
+    tag: "Cups · Spices · Tables",
+    img: tea,
+    tint: "from-[#4E6B56]/70 to-[#122219]/85",
+  },
+  {
+    to: "/occasions/corporate&brand-events" as const,
+    label: "Corporate & Brand Events",
+    tag: "Classic · Elegant · Unique",
+    img: decor4,
+    tint: "from-[#1B2E4A]/70 to-[#0d1a13]/90",
   },
 ];
 
@@ -76,8 +91,7 @@ function OccasionsIndex() {
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/80">
             From surprise proposals to Kwanjula ceremonies, we design and install floral moments
-            across Kampala, Entebbe and Wakiso — with same-day delivery available on selected
-            setups.
+            across Uganda — with same-day delivery available on selected setups.
           </p>
         </div>
       </section>
@@ -100,33 +114,43 @@ function OccasionsIndex() {
               <div className="relative flex h-full flex-col justify-end p-8 text-[color:var(--cream)]">
                 <p className="text-[11px] uppercase tracking-[0.22em] text-white/75">{c.tag}</p>
                 <h2 className="mt-2 font-serif text-3xl md:text-4xl">{c.label}</h2>
-                <span className="mt-4 inline-block border p-2 border-border rounded-xl border-white/70 pb-1 text-[11px] uppercase tracking-[0.24em] w-max">
+                <span className="mt-4 inline-block border p-2 border-border rounded-xl border-white/70  text-[11px] uppercase tracking-[0.24em] w-max">
                   Explore Occasion →
                 </span>
               </div>
             </Link>
           ))}
-          <div className="relative flex flex-col justify-between rounded-3xl border border-border p-8 aspect-[5/5] ">
-            <div>
-              <p className="eyebrow">Not sure yet?</p>
-              <h3 className="mt-3 font-serif text-2xl text-foreground">Tell us the moment.</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                We style celebrations of every scale. Reach out and we'll help shape the vision from
-                scratch.
+          <div className="group relative flex aspect-[5/5] md:aspect-auto min-h-[320px] w-full flex-col justify-between overflow-hidden rounded-3xl border border-[#E4C877]/30 bg-[#122219] p-8 md:p-10 text-[color:var(--cream)] md:col-span-2">
+            <img
+              src={decor5}
+              alt="Custom floral setup"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover opacity-25 transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#122219] via-[#122219]/90 to-[#122219]/60" />
+
+            <div className="relative z-10 max-w-xl">
+              <p className="eyebrow !text-[#E4C877]">Custom Experience</p>
+              <h3 className="mt-3 font-serif text-3xl md:text-4xl text-white">
+                Have something unique in mind?
+              </h3>
+              <p className="mt-3 text-sm md:text-base leading-relaxed text-white/80">
+                We style celebrations of every scale across Uganda. Reach out and our team will help
+                bring your exact vision to life.
               </p>
             </div>
-            {/* <img
-              src={decor5}
-              alt=""
-              loading="lazy"
-              className="mt-6 aspect-[5/3] w-full rounded-2xl object-cover opacity-90"
-            /> */}
-            <Link
-              to="/contact"
-              className="mt-6 inline-flex w-max rounded-2xl bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
-            >
-              Start an inquiry
-            </Link>
+
+            <div className="relative z-10 mt-8 flex items-center justify-between">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-3 rounded-2xl bg-[#E4C877] px-6 py-3.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#122219] transition-all hover:bg-white hover:shadow-lg"
+              >
+                <span>Start an inquiry</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

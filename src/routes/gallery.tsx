@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { products } from "@/lib/products";
+import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/product-card";
-import { supabase } from "@/integrations/supabase/client";
+import { getPublicGallery } from "@/lib/cms.functions";
 import wedding from "@/assets/gallery-wedding.jpg";
 import arch from "@/assets/gallery-arch.jpg";
 import corporate from "@/assets/gallery-corporate.jpg";
@@ -32,15 +32,9 @@ const eventShots = [
 function Gallery() {
   const { data: adminItems = [] } = useQuery({
     queryKey: ["public_gallery"],
-    queryFn: async () => {
-      const { data } = await (supabase as any)
-        .from("gallery_items")
-        .select("id,kind,public_url,title,alt_text,caption")
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
-      return (data ?? []) as Array<{ id: string; kind: "image" | "video"; public_url: string; title: string | null; alt_text: string | null; caption: string | null }>;
-    },
+    queryFn: () => getPublicGallery(),
   });
+  const { data: products } = useProducts();
   return (
     <>
       <section className="border-b border-border/60">

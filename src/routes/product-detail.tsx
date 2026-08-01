@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { z } from "zod";
 import { Star, Truck, Calendar, RefreshCw, MessageSquare, ShoppingBag, ChevronLeft, ChevronRight, Check } from "lucide-react";
-import { products, Product, formatUGX } from "@/lib/products";
+import { defaultProducts, Product, formatUGX } from "@/lib/products";
+import { useProducts } from "@/hooks/useProducts";
 import { useCart, AddOn } from "@/hooks/use-cart";
 import { waLink } from "@/lib/site";
 import { toast } from "sonner";
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/product-detail")({
   validateSearch: (search) => productSearchSchema.parse(search),
   component: ProductDetail,
   head: ({ match }) => {
-    const product = products.find((p) => p.id === match.search.id) || products[0];
+    const product = defaultProducts.find((p) => p.id === match.search.id) || defaultProducts[0];
     return {
       meta: [
         { title: `${product.name} — Luxe Floral Designs & Events` },
@@ -56,11 +57,12 @@ const LOCATIONS = [
 function ProductDetail() {
   const { id } = Route.useSearch();
   const { addToCart } = useCart();
+  const { data: products } = useProducts();
 
   // Find product
   const product = useMemo(() => {
     return products.find((p) => p.id === id) || products[0];
-  }, [id]);
+  }, [products, id]);
 
   // Scroll to top on product change
   useEffect(() => {
@@ -76,12 +78,12 @@ function ProductDetail() {
     const images = [product.image];
     // Add two related assets to display a beautiful thumbnail grid
     if (product.id.includes("roses") || product.id.includes("dozen")) {
-      images.push(products[0].image, products[1].image);
+      images.push(products[0]?.image ?? product.image, products[1]?.image ?? product.image);
     } else {
-      images.push(products[2].image, products[4].image);
+      images.push(products[2]?.image ?? product.image, products[4]?.image ?? product.image);
     }
     return images;
-  }, [product]);
+  }, [product, products]);
 
   // Reset active image index when product changes
   useEffect(() => {
@@ -137,7 +139,7 @@ function ProductDetail() {
   // Recommendations
   const recommended = useMemo(() => {
     return products.filter((p) => p.id !== product.id).slice(0, 3);
-  }, [product]);
+  }, [products, product]);
 
   const handleAddOnToggle = (addOn: AddOn, checked: boolean) => {
     if (checked) {
