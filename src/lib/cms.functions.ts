@@ -1,3 +1,4 @@
+import { put, del } from "@vercel/blob";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import {
@@ -16,7 +17,6 @@ import {
   updateGalleryItem,
   deleteGalleryItem,
   type GalleryItem,
-  type GalleryItemInput,
 } from "@/lib/db/gallery.server";
 import { userHasRole } from "@/lib/db/roles.server";
 import { getAuthenticatedUserId, requireAdminUser } from "@/lib/db/auth.server";
@@ -28,8 +28,88 @@ import {
   deleteProduct,
   type ProductInput,
 } from "@/lib/db/products.server";
+import { validateMediaFile } from "@/lib/media";
 
 export type { GalleryItem };
+
+// ── Shared Vercel Blob Helper ────────────────────────────────────────────────
+
+async function uploadFileToVercelBlob(file: File, folder: string) {
+  validateMediaFile(file);
+
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    throw new Error("BLOB_READ_WRITE_TOKEN is not configured in environment variables");
+  }
+
+  const cleanFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+  const pathname = `${folder}/${Date.now()}-${cleanFilename}`;
+  
+  return put(pathname, file, {
+    access: "public",
+    token,
+  });
+}
+
+// ── Vercel Blob server functions ─────────────────────────────────────────────
+
+export const adminUploadToBlob = createServerFn({ method: "POST" })
+  .validator((formData: unknown) => {
+    if (!(formData instanceof FormData)) {
+      throw new Error("Expected FormData");
+    }
+    return formData;
+  })
+  .handler(async ({ data }) => {
+    await requireAdminUser();
+    const file = data.get("file");
+    const folder = (data.get("folder") as string) || "uploads";
+    if (!file || !(file instanceof File)) {
+      throw new Error("No valid file provided");
+    }
+
+    const blob = await uploadFileToVercelBlob(file, folder);
+    return {
+      url: blob.url,
+      pathname: blob.pathname,
+      contentType: blob.contentType,
+    };
+  });
+
+export const adminUploadGalleryMedia = createServerFn({ method: "POST" })
+  .validator((formData: unknown) => {
+    if (!(formData instanceof FormData)) {
+      throw new Error("Expected FormData");
+    }
+    return formData;
+  })
+  .handler(async ({ data }) => {
+    const userId = await requireAdminUser();
+    const file = data.get("file");
+    const title = (data.get("title") as string) || null;
+    const altText = (data.get("alt_text") as string) || null;
+    const caption = (data.get("caption") as string) || null;
+
+    if (!file || !(file instanceof File)) {
+      throw new Error("No valid file provided");
+    }
+
+    const { isImage } = validateMediaFile(file);
+    const folder = isImage ? "gallery/images" : "gallery/videos";
+    const blob = await uploadFileToVercelBlob(file, folder);
+
+    const item = await insertGalleryItem({
+      kind: isImage ? "image" : "video",
+      storage_path: blob.pathname,
+      public_url: blob.url,
+      title: title || file.name,
+      alt_text: altText,
+      caption: caption,
+      created_by: userId,
+    });
+
+    return item;
+  });
 
 // ── Public reads ─────────────────────────────────────────────────────────────
 
@@ -98,24 +178,6 @@ export const adminGalleryCount = createServerFn({ method: "GET" }).handler(async
   return countGalleryItems();
 });
 
-const galleryInsertSchema = z.object({
-  kind: z.enum(["image", "video"]),
-  storage_path: z.string().min(1),
-  public_url: z.string().url(),
-  title: z.string().nullable().optional(),
-  alt_text: z.string().nullable().optional(),
-  caption: z.string().nullable().optional(),
-  sort_order: z.number().optional(),
-});
-
-export const adminCreateGalleryItem = createServerFn({ method: "POST" })
-  .validator(galleryInsertSchema)
-  .handler(async ({ data }) => {
-    const userId = await requireAdminUser();
-    const input: GalleryItemInput = { ...data, created_by: userId };
-    return insertGalleryItem(input);
-  });
-
 const galleryUpdateSchema = z.object({
   id: z.string().uuid(),
   title: z.string().nullable().optional(),
@@ -138,6 +200,18 @@ export const adminDeleteGalleryItem = createServerFn({ method: "POST" })
     await requireAdminUser();
     const deleted = await deleteGalleryItem(data.id);
     if (!deleted) throw new Error("Gallery item not found");
+
+    if (
+      deleted.public_url &&
+      (deleted.public_url.includes("vercel-storage.com") || deleted.public_url.includes("blob.vercel"))
+    ) {
+      try {
+        const token = process.env.BLOB_READ_WRITE_TOKEN;
+        await del(deleted.public_url, { token });
+      } catch (err) {
+        console.error("Failed to delete blob from Vercel storage:", err);
+      }
+    }
     return deleted;
   });
 
