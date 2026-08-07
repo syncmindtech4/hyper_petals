@@ -4,14 +4,20 @@ import { useIsAdmin } from "@/hooks/useSiteContent";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
-  head: () => ({ meta: [{ title: "Admin — Luxe Floral" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [{ title: "Admin — Luxe Floral" }, { name: "robots", content: "noindex" }],
+  }),
 });
 
 function AdminLayout() {
   const { data: isAdmin, isLoading } = useIsAdmin();
 
   if (isLoading) {
-    return <div className="mx-auto max-w-6xl px-6 py-20 text-sm text-muted-foreground">Loading admin…</div>;
+    return (
+      <div className="mx-auto max-w-6xl px-6 py-20 text-sm text-muted-foreground">
+        Loading admin…
+      </div>
+    );
   }
 
   if (!isAdmin) {
@@ -20,7 +26,8 @@ function AdminLayout() {
         <p className="eyebrow">Access denied</p>
         <h1 className="mt-3 font-serif text-4xl text-foreground">Not an admin</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          This account doesn't have admin access. Ask a site owner to grant you the admin role, then reload.
+          This account doesn't have admin access. Ask a site owner to grant you the admin role, then
+          reload.
         </p>
         <div className="mt-8">
           <SignOutButton>
@@ -58,7 +65,9 @@ function AdminLayout() {
             to={t.to}
             activeOptions={{ exact: t.to === "/admin" }}
             activeProps={{ className: "border-primary text-primary" }}
-            inactiveProps={{ className: "border-transparent text-muted-foreground hover:text-foreground" }}
+            inactiveProps={{
+              className: "border-transparent text-muted-foreground hover:text-foreground",
+            }}
             className="-mb-px border-b-2 pb-3 text-[11px] uppercase tracking-[0.22em]"
           >
             {t.label}

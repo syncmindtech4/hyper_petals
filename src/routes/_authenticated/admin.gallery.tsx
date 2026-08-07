@@ -7,17 +7,14 @@ import {
   adminListGallery,
   adminDeleteGalleryItem,
   adminUpdateGalleryItem,
+  adminUploadGalleryMedia,
   type GalleryItem,
 } from "@/lib/cms.functions";
+import { validateMediaFile } from "@/lib/media";
 
 export const Route = createFileRoute("/_authenticated/admin/gallery")({
   component: GalleryAdmin,
 });
-
-const MAX_IMAGE = 5 * 1024 * 1024;
-const MAX_VIDEO = 50 * 1024 * 1024;
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const VIDEO_TYPES = ["video/mp4", "video/webm"];
 
 type Item = GalleryItem;
 
@@ -32,20 +29,25 @@ function GalleryAdmin() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
-    const isImage = IMAGE_TYPES.includes(file.type);
-    const isVideo = VIDEO_TYPES.includes(file.type);
-    if (!isImage && !isVideo) return toast.error("Only JPG/PNG/WebP images or MP4/WebM videos are allowed");
-    if (isImage && file.size > MAX_IMAGE) return toast.error("Image is over 5 MB");
-    if (isVideo && file.size > MAX_VIDEO) return toast.error("Video is over 50 MB");
+    try {
+      validateMediaFile(file);
+    } catch (err: any) {
+      return toast.error(err?.message ?? "Invalid file");
+    }
 
     setUploading(true);
+    const toastId = toast.loading("Uploading media to Vercel Blob…");
     try {
-      toast.info("Cloudinary direct upload will process this file.");
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("title", file.name.replace(/\.[^/.]+$/, ""));
+      await adminUploadGalleryMedia({ data: formData });
+      toast.success("Uploaded media to Vercel Blob!", { id: toastId });
       qc.invalidateQueries({ queryKey: ["gallery"] });
       qc.invalidateQueries({ queryKey: ["admin", "gallery_count"] });
       qc.invalidateQueries({ queryKey: ["public_gallery"] });
     } catch (e: any) {
-      toast.error(e?.message ?? "Upload failed");
+      toast.error(e?.message ?? "Upload failed", { id: toastId });
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";

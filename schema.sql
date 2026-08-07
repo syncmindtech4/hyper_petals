@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS gallery_items (
 );
 CREATE INDEX IF NOT EXISTS gallery_items_sort_idx ON gallery_items (sort_order, created_at DESC);
 
+
 -- =====================================================================
 -- 4. Catalog
 -- =====================================================================

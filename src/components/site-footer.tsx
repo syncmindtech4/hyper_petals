@@ -1,117 +1,92 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Facebook, Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
-import { site, waLink } from "@/lib/site";
+import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
+import { site } from "@/lib/site";
 import logo from "@/assets/luxe_floral_logo.svg";
 
 export function SiteFooter() {
   return (
-    <footer className="bg-[#5C1D24] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 sm:grid-cols-2 md:grid-cols-3">
-        {/* Column 1: Brand */}
-        <div className="space-y-4">
+    <footer className="mt-1 border-t border-border/60 bg-[oklch(0.955_0.012_60)]">
+      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-4">
+        <div className="md:col-span-2">
           <img
             src={logo}
             alt={`${site.full} logo`}
-            className="h-14 w-auto md:h-16"
-            style={{ filter: "brightness(0) invert(1)" }}
+            className="logo1 h-14 md:h-16"
+            style={{ width: 300 }}
           />
-          <p className="max-w-xs text-sm leading-relaxed text-[#E0E0E0]">
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
             Romantic, luxury florals for the moments that matter — from a Tuesday bouquet to the
             wedding of a lifetime.
           </p>
-          <div className="flex items-center gap-3">
+          <div className="mt-5 flex items-center gap-4 text-foreground/70">
             <a
               href={site.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
               aria-label="Instagram"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-[#5C1D24]"
+              className="transition-colors hover:text-primary"
             >
               <Instagram className="h-4 w-4" />
             </a>
             <a
               href={site.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
               aria-label="Facebook"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-[#5C1D24]"
+              className="transition-colors hover:text-primary"
             >
               <Facebook className="h-4 w-4" />
-            </a>
-            <a
-              href={waLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-[#5C1D24]"
-            >
-              <MessageCircle className="h-4 w-4" />
             </a>
           </div>
         </div>
 
-        {/* Column 2: Explore */}
         <div>
-          <h3 className="text-xs uppercase tracking-[1.5px] font-semibold text-white mb-5">
-            Explore
-          </h3>
-          <ul className="space-y-3 text-sm text-[#E0E0E0]">
+          <p className="eyebrow">Studio</p>
+          <ul className="mt-4 space-y-3 text-sm text-foreground/80">
+            <li className="flex items-start gap-2">
+              <MapPin className="mt-0.5 h-4 w-4 text-primary" />
+              <span>{site.address}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Phone className="mt-0.5 h-4 w-4 text-primary" />
+              <a href={site.phoneHref}>{site.phone}</a>
+            </li>
+            <li className="flex items-start gap-2">
+              <Mail className="mt-0.5 h-4 w-4 text-primary" />
+              <a href={`mailto:${site.email}`}>{site.email}</a>
+            </li>
+          </ul>
+          <p className="mt-4 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            {site.hours}
+          </p>
+        </div>
+
+        <div>
+          <p className="eyebrow">Explore</p>
+          <ul className="mt-4 space-y-2 text-sm text-foreground/80">
             <li>
-              <Link to="/catalogue" className="transition-opacity hover:opacity-80">
+              <Link to="/bouquets" className="hover:text-primary">
                 Bouquets
               </Link>
             </li>
             <li>
-              <Link to="/occasions" className="transition-opacity hover:opacity-80">
+              <Link to="/occasions" className="hover:text-primary">
                 Occasions
               </Link>
             </li>
             <li>
-              <Link to="/gallery" className="transition-opacity hover:opacity-80">
+              <Link to="/gallery" className="hover:text-primary">
                 Gallery
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="transition-opacity hover:opacity-80">
+              <Link to="/contact" className="hover:text-primary">
                 Contact
               </Link>
             </li>
           </ul>
         </div>
-
-        {/* Column 3: Studio Info */}
-        <div>
-          <h3 className="text-xs uppercase tracking-[1.5px] font-semibold text-white mb-5">
-            Studio Info
-          </h3>
-          <ul className="space-y-3.5 text-sm text-[#E0E0E0]">
-            <li className="flex items-start gap-2.5">
-              <MapPin className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <span>{site.address}</span>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <Phone className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <a href={site.phoneHref} className="hover:underline">{site.phone}</a>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <Mail className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <a href={`mailto:${site.email}`} className="hover:underline break-all">{site.email}</a>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <Clock className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <span>{site.hours}</span>
-            </li>
-          </ul>
-        </div>
       </div>
-
-      {/* Bottom Copyright */}
-      <div className="border-t border-white/15">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex justify-center">
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
-            © {new Date().getFullYear()} {site.full}. All rights reserved.
-          </p>
-        </div>
+      <div className="border-t border-border/60">
+        <p className="mx-auto max-w-7xl px-6 py-6 text-xs lowercase tracking-[0.22em] text-muted-foreground">
+          © {new Date().getFullYear()} {site.full}. All rights reserved.
+        </p>
       </div>
     </footer>
   );
