@@ -105,18 +105,12 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Bottom Copyright & Payments */}
+      {/* Bottom Copyright */}
       <div className="border-t border-white/15">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center sm:text-left">
+        <div className="mx-auto max-w-7xl px-6 py-8 flex justify-center">
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
             © {new Date().getFullYear()} {site.full}. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="border border-white/20 px-2 py-0.5 rounded text-[9px] tracking-widest text-[#E0E0E0] uppercase font-semibold">MTN MoMo</span>
-            <span className="border border-white/20 px-2 py-0.5 rounded text-[9px] tracking-widest text-[#E0E0E0] uppercase font-semibold">Airtel Money</span>
-            <span className="border border-white/20 px-2 py-0.5 rounded text-[9px] tracking-widest text-[#E0E0E0] uppercase font-semibold">Visa</span>
-            <span className="border border-white/20 px-2 py-0.5 rounded text-[9px] tracking-widest text-[#E0E0E0] uppercase font-semibold">Mastercard</span>
-          </div>
         </div>
       </div>
     </footer>
