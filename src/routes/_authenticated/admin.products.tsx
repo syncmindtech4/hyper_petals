@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
-import { Trash2, Pencil, X, Plus } from "lucide-react";
+import { Trash2, Pencil, X, Plus, Upload } from "lucide-react";
 import { formatUGX } from "@/lib/products";
 import {
   useAdminProducts,
@@ -11,6 +11,7 @@ import {
   adminCreateProduct,
   adminUpdateProduct,
   adminDeleteProduct,
+  adminUploadToBlob,
 } from "@/lib/cms.functions";
 import type { ProductRow } from "@/lib/db/products.server";
 
@@ -155,6 +156,29 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
   const [isBestseller, setIsBestseller] = useState(item?.is_bestseller ?? false);
   const [isActive, setIsActive] = useState(item?.is_active ?? true);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const imageFileRef = useRef<HTMLInputElement>(null);
+
+  async function handleImageUpload(file: File) {
+    if (!file.type.startsWith("image/")) {
+      return toast.error("Please select an image file (JPG, PNG, WebP, etc.)");
+    }
+    setUploadingImage(true);
+    const toastId = toast.loading("Uploading image to Vercel Blob…");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "products");
+      const result = await adminUploadToBlob({ data: formData });
+      setImageUrl(result.url);
+      toast.success("Image uploaded to Vercel Blob!", { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Image upload failed", { id: toastId });
+    } finally {
+      setUploadingImage(false);
+      if (imageFileRef.current) imageFileRef.current.value = "";
+    }
+  }
 
   function handleNameChange(value: string) {
     setName(value);
@@ -214,19 +238,32 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-sm border border-border/60 bg-muted">
               {imageUrl && <img src={imageUrl} alt="" className="h-full w-full object-cover" />}
             </div>
-            <label className="flex-1 grid gap-2">
-              <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Image URL</span>
-              <input
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://... or /products/your-image.jpg"
-                className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
-              />
-            </label>
+            <div className="flex-1 grid gap-2">
+              <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Product Image</span>
+              <div className="flex gap-2">
+                <input
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://... or upload file"
+                  className="flex-1 min-w-0 rounded-sm border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                />
+                <label className="inline-flex cursor-pointer shrink-0 items-center gap-1.5 rounded-sm bg-primary px-3 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary-foreground hover:bg-primary/90">
+                  <Upload className="h-3.5 w-3.5" />
+                  {uploadingImage ? "..." : "Upload"}
+                  <input
+                    ref={imageFileRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploadingImage}
+                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                  />
+                </label>
+              </div>
+            </div>
           </div>
           <p className="-mt-2 text-[11px] text-muted-foreground">
-            Paste a hosted image URL (e.g. from your image host) or a path under /public/products/. Direct upload
-            here will follow once the gallery's Cloudinary integration is wired up.
+            Paste an image URL or click "Upload" to upload an image directly to Vercel Blob.
           </p>
 
           <label className="grid gap-2">
