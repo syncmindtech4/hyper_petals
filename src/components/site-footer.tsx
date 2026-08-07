@@ -12,8 +12,8 @@ export function SiteFooter() {
           <img
             src={logo}
             alt={`${site.full} logo`}
-            className="logo1 h-14 md:h-16"
-            style={{ width: 260, filter: "brightness(0) invert(1)" }}
+            className="h-14 w-auto md:h-16"
+            style={{ filter: "brightness(0) invert(1)" }}
           />
           <p className="max-w-xs text-sm leading-relaxed text-[#E0E0E0]">
             Romantic, luxury florals for the moments that matter — from a Tuesday bouquet to the
