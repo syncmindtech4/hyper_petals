@@ -45,20 +45,20 @@
 }
 
 :root {
-  --radius: 0.25rem;
-  /* cream */
-  --background: oklch(0.976 0.011 78);
-  --cream: oklch(0.976 0.011 78);
+  --radius: 16px;
+  /* warm neutral off-white #FBF9F7 */
+  --background: #FBF9F7;
+  --cream: #FBF9F7;
   --foreground: oklch(0.22 0.015 40);
   --charcoal: oklch(0.22 0.015 40);
-  --card: oklch(0.99 0.006 78);
+  --card: #FFFFFF;
   --card-foreground: oklch(0.22 0.015 40);
-  --popover: oklch(0.99 0.006 78);
+  --popover: #FFFFFF;
   --popover-foreground: oklch(0.22 0.015 40);
-  /* burgundy #8B3A4A */
-  --primary: oklch(0.43 0.11 15);
-  --burgundy: oklch(0.43 0.11 15);
-  --primary-foreground: oklch(0.976 0.011 78);
+  /* brand maroon #5C1D24 */
+  --primary: #5C1D24;
+  --burgundy: #5C1D24;
+  --primary-foreground: #FFFFFF;
   /* blush #E8C4C4 */
   --secondary: oklch(0.87 0.04 15);
   --blush: oklch(0.87 0.04 15);
@@ -71,10 +71,10 @@
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.9 0.02 40);
   --input: oklch(0.9 0.02 40);
-  --ring: oklch(0.43 0.11 15);
+  --ring: #5C1D24;
 
-  --shadow-soft: 0 20px 60px -20px oklch(0.43 0.11 15 / 0.18);
-  --shadow-card: 0 8px 30px -12px oklch(0.22 0.015 40 / 0.12);
+  --shadow-soft: 0 20px 60px -20px rgba(92, 29, 36, 0.18);
+  --shadow-card: 0 8px 30px -12px rgba(34, 34, 34, 0.12);
 }
 
 @layer base {
@@ -92,6 +92,11 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "ss01", "cv11";
+  }
+
+  /* Global smooth transitions for interactive elements */
+  a, button, img, input, select, textarea, svg {
+    transition: all 0.3s ease-in-out;
   }
 
   h1,
@@ -138,6 +143,15 @@
   margin-left: -56px;
 }
 
-.logo1 {
-  margin-left: -96px;
+/* Premium product card styles */
+.product-card-premium {
+  border: none !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
+
+.product-card-premium:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06) !important;
+}

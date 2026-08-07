@@ -20,7 +20,7 @@ export function SiteHeader() {
     useCart();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[#5C1D24]/10 bg-[rgba(255,252,252,0.75)] backdrop-blur-[12px]">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 md:py-5">
         <Link
           to="/"
@@ -86,7 +86,7 @@ export function SiteHeader() {
                   <Link
                     to="/catalogue"
                     onClick={() => setIsCartOpen(false)}
-                    className="mt-6 inline-flex rounded-sm bg-primary px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-primary-foreground hover:bg-primary/90"
+                    className="mt-6 inline-flex rounded-full bg-primary px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-primary-foreground hover:bg-primary/90"
                   >
                     Shop Bouquets
                   </Link>
@@ -108,7 +108,7 @@ export function SiteHeader() {
                           <img
                             src={item.product.image}
                             alt={item.product.name}
-                            className="h-20 w-18 rounded-sm object-cover bg-muted"
+                            className="h-20 w-18 rounded-md object-cover bg-muted"
                           />
                           <div className="flex-1 flex flex-col justify-between min-w-0">
                             <div>
@@ -140,7 +140,7 @@ export function SiteHeader() {
                               )}
                             </div>
                             <div className="flex justify-between items-center mt-2">
-                              <div className="flex items-center border border-border/80 rounded-sm">
+                              <div className="flex items-center border border-border/80 rounded-full">
                                 <button
                                   type="button"
                                   onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
@@ -181,14 +181,14 @@ export function SiteHeader() {
                       <Link
                         to="/checkout"
                         onClick={() => setIsCartOpen(false)}
-                        className="flex w-full items-center justify-center rounded-sm bg-primary py-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
+                        className="flex w-full items-center justify-center rounded-full bg-primary py-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
                       >
                         Proceed To Checkout
                       </Link>
                       <button
                         type="button"
                         onClick={() => setIsCartOpen(false)}
-                        className="flex w-full items-center justify-center rounded-sm border border-border/80 py-3 text-[11px] uppercase tracking-[0.22em] text-foreground hover:bg-accent/40 transition-colors"
+                        className="flex w-full items-center justify-center rounded-full border border-border/80 py-3 text-[11px] uppercase tracking-[0.22em] text-foreground hover:bg-accent/40 transition-colors"
                       >
                         Continue Shopping
                       </button>
@@ -201,7 +201,7 @@ export function SiteHeader() {
 
           <Link
             to="/contact"
-            className="hidden rounded-sm bg-primary px-5 py-2.5 text-[11px] uppercase tracking-[0.22em] text-primary-foreground transition-colors hover:bg-primary/90 md:inline-flex"
+            className="hidden rounded-full bg-primary px-5 py-2.5 text-[11px] uppercase tracking-[0.22em] text-primary-foreground transition-colors hover:bg-primary/90 md:inline-flex"
           >
             Request A Quote
           </Link>
@@ -234,7 +234,7 @@ export function SiteHeader() {
             <Link
               to="/contact"
               onClick={() => setOpen(false)}
-              className="mt-2 inline-flex items-center justify-center rounded-sm bg-primary px-5 py-3 text-[11px] uppercase tracking-[0.22em] text-primary-foreground"
+              className="mt-2 inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-[11px] uppercase tracking-[0.22em] text-primary-foreground"
             >
               Request A Quote
             </Link>
