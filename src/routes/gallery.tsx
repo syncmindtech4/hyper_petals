@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/product-card";
 import { getPublicGallery } from "@/lib/cms.functions";
+import galleryHero from "@/assets/gallery-hero.png";
 import wedding from "@/assets/gallery-wedding.jpg";
 import arch from "@/assets/gallery-arch.jpg";
 import corporate from "@/assets/gallery-corporate.jpg";
@@ -37,15 +38,24 @@ function Gallery() {
   const { data: products } = useProducts();
   return (
     <>
-      <section className="border-b border-border/60">
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
-          <p className="eyebrow">Shop</p>
-          <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[1.05] text-foreground md:text-6xl">
-            Signature bouquets, ready to order.
-          </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Same-day delivery across Kampala on orders placed before 11am. All bouquets are hand-tied in our studio the morning of delivery.
-          </p>
+      <section className="mx-auto max-w-7xl px-6 py-6 md:py-12">
+        <div className="relative w-full rounded-[24px] min-h-[70vh] md:min-h-[80vh] flex items-center justify-center p-8 md:p-16 overflow-hidden bg-muted">
+          <img
+            src={galleryHero}
+            alt="Roses and hand-tied floral arrangement"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-[rgba(92,29,36,0.45)] backdrop-blur-[2px]" />
+
+          <div className="relative z-10 max-w-2xl text-center flex flex-col items-center space-y-6 text-white">
+            <p className="eyebrow text-white/90">Shop</p>
+            <h1 className="font-serif text-5xl leading-[1.05] text-white md:text-6xl">
+              Signature bouquets, ready to order.
+            </h1>
+            <p className="max-w-2xl text-base leading-relaxed text-white/90">
+              Same-day delivery across Kampala on orders placed before 11am. All bouquets are hand-tied in our studio the morning of delivery.
+            </p>
+          </div>
         </div>
       </section>
 
