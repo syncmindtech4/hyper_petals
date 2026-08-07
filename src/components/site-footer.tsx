@@ -1,26 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { Instagram, Facebook, Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
 import { site, waLink } from "@/lib/site";
 import logo from "@/assets/luxe_floral_logo.svg";
-import { toast } from "sonner";
 
 export function SiteFooter() {
-  const [email, setEmail] = useState("");
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      toast.success("Welcome to the VIP Club!", {
-        description: "You've successfully subscribed to our VIP newsletter.",
-      });
-      setEmail("");
-    }
-  };
-
   return (
     <footer className="bg-[#5C1D24] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 sm:grid-cols-2 md:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 sm:grid-cols-2 md:grid-cols-3">
         {/* Column 1: Brand */}
         <div className="space-y-4">
           <img
@@ -116,32 +102,6 @@ export function SiteFooter() {
               <span>{site.hours}</span>
             </li>
           </ul>
-        </div>
-
-        {/* Column 4: Newsletter */}
-        <div>
-          <h3 className="text-xs uppercase tracking-[1.5px] font-semibold text-white mb-5">
-            VIP Club
-          </h3>
-          <p className="text-sm text-[#E0E0E0] mb-4 leading-relaxed">
-            Join our VIP club for exclusive floral drops, event invites, and early access.
-          </p>
-          <form onSubmit={handleSubscribe} className="space-y-3">
-            <input
-              type="email"
-              required
-              placeholder="Your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-transparent border border-white/30 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white transition-colors animate-none"
-            />
-            <button
-              type="submit"
-              className="w-full bg-white text-[#5C1D24] rounded-full py-2.5 text-xs uppercase tracking-wider font-semibold hover:bg-white/90 transition-all cursor-pointer text-center"
-            >
-              Join
-            </button>
-          </form>
         </div>
       </div>
 

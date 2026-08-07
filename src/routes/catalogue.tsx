@@ -16,7 +16,36 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import heroImage from "@/assets/hero-bouquet.jpg";
+
+const PRODUCTS_PER_PAGE = 8;
+
+function getPageNumbers(currentPage: number, totalPages: number): (number | "ellipsis")[] {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const pages = new Set<number>([1, 2, totalPages - 1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
+  const sorted = [...pages].filter((p) => p >= 1 && p <= totalPages).sort((a, b) => a - b);
+
+  const result: (number | "ellipsis")[] = [];
+  sorted.forEach((page, idx) => {
+    if (idx > 0 && page - sorted[idx - 1] > 1) {
+      result.push("ellipsis");
+    }
+    result.push(page);
+  });
+  return result;
+}
 
 const catalogueSearchSchema = z.object({
   type: z.string().optional(),
@@ -72,6 +101,7 @@ function Catalogue() {
   );
   const [priceRange, setPriceRange] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>(search.sort || "popular");
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Sync state if search params change
   useEffect(() => {
@@ -149,6 +179,32 @@ function Catalogue() {
       });
   }, [products, selectedOccasions, selectedTypes, priceRange, sortBy]);
 
+  // Reset to page 1 whenever the filtered/sorted result set changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedOccasions, selectedTypes, priceRange, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    return filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
+
+  const pageNumbers = useMemo(
+    () => getPageNumbers(currentPage, totalPages),
+    [currentPage, totalPages]
+  );
+
+  const goToPage = (page: number) => {
+    const clamped = Math.min(Math.max(page, 1), totalPages);
+    setCurrentPage(clamped);
+    const gridElement = document.getElementById("catalogue-grid");
+    if (gridElement) {
+      gridElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const activeSortLabel = useMemo(() => {
     switch (sortBy) {
       case "price-asc":
@@ -203,7 +259,7 @@ function Catalogue() {
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Maroonish glass blur overlay */}
-        <div className="absolute inset-0 bg-[rgba(92,29,36,0.65)] backdrop-blur-[8px]" />
+        <div className="absolute inset-0 bg-[rgba(92,29,36,0.45)] backdrop-blur-[2px]" />
         
         {/* Text content on top */}
         <div className="relative z-10 max-w-2xl text-left flex flex-col items-start space-y-6 text-white">
@@ -431,7 +487,18 @@ function Catalogue() {
           {/* Results Count & Sort Dropdown */}
           <div className="flex items-center justify-between gap-4 flex-1 lg:flex-initial">
             <p className="text-xs text-muted-foreground">
-              Showing <span className="font-medium text-foreground">{filteredProducts.length}</span> arrangements
+              {filteredProducts.length === 0 ? (
+                <>Showing <span className="font-medium text-foreground">0</span> arrangements</>
+              ) : (
+                <>
+                  Showing{" "}
+                  <span className="font-medium text-foreground">
+                    {(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–
+                    {Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length)}
+                  </span>{" "}
+                  of <span className="font-medium text-foreground">{filteredProducts.length}</span> arrangements
+                </>
+              )}
             </p>
 
             <div className="flex items-center gap-2">
@@ -477,7 +544,7 @@ function Catalogue() {
           </div>
         ) : (
           <div className="grid gap-x-6 gap-y-12 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {filteredProducts.map((p) => (
+            {paginatedProducts.map((p) => (
               <div
                 key={p.id}
                 className="group relative flex flex-col bg-card product-card-premium transition-all duration-300 shadow-sm"
@@ -538,6 +605,59 @@ function Catalogue() {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <Pagination className="pt-4">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) goToPage(currentPage - 1);
+                  }}
+                  aria-disabled={currentPage === 1}
+                  className={currentPage === 1 ? "pointer-events-none opacity-40" : "cursor-pointer"}
+                />
+              </PaginationItem>
+
+              {pageNumbers.map((page, idx) =>
+                page === "ellipsis" ? (
+                  <PaginationItem key={`ellipsis-${idx}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      isActive={page === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToPage(page);
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              )}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) goToPage(currentPage + 1);
+                  }}
+                  aria-disabled={currentPage === totalPages}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-40" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         )}
       </div>
     </div>
