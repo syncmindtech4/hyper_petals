@@ -51,7 +51,7 @@ export function SiteFooter() {
         </div>
 
         {/* Column 2: Explore */}
-        <div>
+        <div className="flex flex-col items-center text-center">
           <h3 className="text-xs uppercase tracking-[1.5px] font-semibold text-white mb-5">
             Explore
           </h3>

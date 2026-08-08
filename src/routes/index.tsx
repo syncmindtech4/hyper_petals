@@ -50,7 +50,7 @@ function Home() {
                 Shop bouquets
               </Link>
               <Link
-                to="/services"
+                to="/occasions"
                 className="border-b border-foreground/60 pb-1 text-[11px] uppercase tracking-[0.24em] text-foreground transition-colors hover:border-primary hover:text-primary"
               >
                 Explore Occasions ↓

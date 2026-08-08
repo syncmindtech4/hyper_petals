@@ -189,16 +189,18 @@ function Gallery() {
 
   return (
     <>
-      <section className="mx-auto max-w-7xl px-6 py-6 md:py-12">
-        <div className="relative w-full rounded-[24px] min-h-[70vh] md:min-h-[80vh] flex items-center justify-center p-8 md:p-16 overflow-hidden bg-muted">
-          <img
-            src={galleryHero}
-            alt="Roses and hand-tied floral arrangement"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-[rgba(92,29,36,0.45)] backdrop-blur-[2px]" />
+      <section className="relative flex min-h-[660px] items-center overflow-hidden border-b border-border/60 text-white md:min-h-[500px]">
+        <img
+          src={galleryHero}
+          alt="Roses and hand-tied floral arrangement"
+          loading="eager"
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#5C1D24]/65 via-[#5C1D24]/45 to-[#5C1D24]/68" />
 
-          <div className="relative z-10 max-w-2xl text-center flex flex-col items-center space-y-6 text-white">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 md:py-28">
+          <div className="max-w-2xl text-left flex flex-col items-start space-y-6">
             <p className="eyebrow text-white/90">Shop</p>
             <h1 className="font-serif text-5xl leading-[1.05] text-white md:text-6xl">
               Signature bouquets, ready to order.
@@ -223,7 +225,7 @@ function Gallery() {
         </div>
       </section>
 
-      {bands.map((band) => (
+      {bands.map((band, i) => (
         <section key={band.key} className={band.bandClass}>
           <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
             <div className="flex flex-wrap items-end justify-between gap-6">
@@ -243,6 +245,7 @@ function Gallery() {
             <MediaCarousel
               items={band.images.map((src) => ({ src }))}
               dotClassName={band.dotClassName}
+              direction={i % 2 === 0 ? "left" : "right"}
             />
           </div>
         </section>
@@ -264,6 +267,7 @@ function Gallery() {
                 video: item.kind === "video",
               }))}
               dotClassName="bg-primary"
+              direction={bands.length % 2 === 0 ? "left" : "right"}
             />
           </div>
         </section>
