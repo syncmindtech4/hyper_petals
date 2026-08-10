@@ -249,50 +249,52 @@ function Catalogue() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-6 md:py-12">
-      {/* Full-bleed overlay glass blur Hero Section */}
-      <div className="relative w-full rounded-[24px] min-h-[70vh] md:min-h-[80vh] flex items-center justify-start p-8 md:p-16 mb-12 overflow-hidden bg-muted">
-        {/* Background Image */}
+    <>
+      {/* Full-bleed Hero Section */}
+      <section className="relative overflow-hidden border-b border-border/60 text-white">
         <img
           src={heroImage}
           alt="Luxe hand-tied floral arrangements"
-          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        {/* Maroonish glass blur overlay */}
-        <div className="absolute inset-0 bg-[rgba(92,29,36,0.45)] backdrop-blur-[2px]" />
-        
-        {/* Text content on top */}
-        <div className="relative z-10 max-w-2xl text-left flex flex-col items-start space-y-6 text-white">
-          <span className="inline-block bg-white/20 border border-white/20 text-white text-[10px] uppercase tracking-[1.5px] font-semibold px-4 py-1.5 rounded-full">
-            KAMPALA STUDIO · FRESH DAILY
-          </span>
-          <h1 className="font-serif text-5xl md:text-7xl text-white font-light leading-tight tracking-tight">
-            Hand-Tied <br className="hidden md:inline" /> Arrangements
-          </h1>
-          <p className="text-white/90 text-base md:text-lg leading-relaxed max-w-xl">
-            Each arrangement is designed and hand-tied in our Kampala studio using freshly cut, 
-            premium seasonal blooms. Choose a bouquet to customize sizes, add-ons, and local delivery.
-          </p>
-          <div className="flex flex-wrap items-center gap-6 pt-4 w-full sm:w-auto">
-            <button
-              onClick={scrollToGrid}
-              className="rounded-full bg-white text-[#5C1D24] px-8 py-3.5 text-xs font-semibold uppercase tracking-[1.5px] shadow-lg hover:bg-white/95 hover:-translate-y-0.5 hover:scale-[1.03] transition-all duration-300 cursor-pointer w-full sm:w-auto text-center font-medium"
-            >
-              Explore Catalogue
-            </button>
-            <Link
-              to="/contact"
-              className="text-xs font-semibold uppercase tracking-[1.5px] border-b border-white/40 hover:border-white py-1 text-white transition-all duration-300 w-full sm:w-auto text-center"
-            >
-              Request a Custom Quote
-            </Link>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#5C1D24]/90 via-[#5C1D24]/78 to-[#5C1D24]/92" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 md:py-28">
+          <div className="max-w-2xl text-left flex flex-col items-start space-y-6">
+            <span className="inline-block bg-white/20 border border-white/20 text-white text-[10px] uppercase tracking-[1.5px] font-semibold px-4 py-1.5 rounded-full">
+              KAMPALA STUDIO · FRESH DAILY
+            </span>
+            <h1 className="font-serif text-5xl md:text-7xl text-white font-light leading-tight tracking-tight">
+              Hand-Tied <br className="hidden md:inline" /> Arrangements
+            </h1>
+            <p className="text-white/90 text-base md:text-lg leading-relaxed max-w-xl">
+              Each arrangement is designed and hand-tied in our Kampala studio using freshly cut,
+              premium seasonal blooms. Choose a bouquet to customize sizes, add-ons, and local delivery.
+            </p>
+            <div className="flex flex-wrap items-center gap-6 pt-4 w-full sm:w-auto">
+              <button
+                onClick={scrollToGrid}
+                className="rounded-full bg-white text-[#5C1D24] px-8 py-3.5 text-xs font-semibold uppercase tracking-[1.5px] shadow-lg hover:bg-white/95 hover:-translate-y-0.5 hover:scale-[1.03] transition-all duration-300 cursor-pointer w-full sm:w-auto text-center font-medium"
+              >
+                Explore Catalogue
+              </button>
+              <Link
+                to="/contact"
+                className="text-xs font-semibold uppercase tracking-[1.5px] border-b border-white/40 hover:border-white py-1 text-white transition-all duration-300 w-full sm:w-auto text-center"
+              >
+                Request a Custom Quote
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
+      <div className="mx-auto max-w-7xl px-6 py-6 md:py-12">
       {/* Catalogue Grid and Sticky Filter Bar */}
       <div id="catalogue-grid" className="scroll-mt-24 space-y-8">
-        
+
         {/* Sticky Horizontal Filter Bar */}
         <div className="sticky top-[76px] z-20 bg-background/95 backdrop-blur-md border-y border-border/40 py-4 px-2 flex flex-wrap items-center justify-between gap-4">
           
@@ -619,7 +621,7 @@ function Catalogue() {
                     if (currentPage > 1) goToPage(currentPage - 1);
                   }}
                   aria-disabled={currentPage === 1}
-                  className={currentPage === 1 ? "pointer-events-none opacity-40" : "cursor-pointer"}
+                  className={`rounded-full ${currentPage === 1 ? "pointer-events-none opacity-40" : "cursor-pointer"}`}
                 />
               </PaginationItem>
 
@@ -637,7 +639,7 @@ function Catalogue() {
                         e.preventDefault();
                         goToPage(page);
                       }}
-                      className="cursor-pointer"
+                      className="cursor-pointer rounded-full"
                     >
                       {page}
                     </PaginationLink>
@@ -653,13 +655,14 @@ function Catalogue() {
                     if (currentPage < totalPages) goToPage(currentPage + 1);
                   }}
                   aria-disabled={currentPage === totalPages}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-40" : "cursor-pointer"}
+                  className={`rounded-full ${currentPage === totalPages ? "pointer-events-none opacity-40" : "cursor-pointer"}`}
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

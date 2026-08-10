@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import occasionsHero from "@/assets/occasions-hero.jpg";
 import bridal_shower from "@/assets/bridal-shower-party.jpg";
 import baby_shower from "@/assets/baby_shower.jpg";
 import birthday_party from "@/assets/birthday_party.jpg";
@@ -83,8 +84,16 @@ const cards = [
 function OccasionsIndex() {
   return (
     <>
-      <section className="border-b border-border/60 bg-[#122219] text-[color:var(--cream)]">
-        <div className="mx-auto max-w-7xl px-6 py-24 md:py-28">
+      <section className="relative flex min-h-[660px] items-center overflow-hidden border-b border-border/60 text-[color:var(--cream)] md:min-h-[500px]">
+        <img
+          src={occasionsHero}
+          alt="Elegant floral table setting for a celebration"
+          loading="eager"
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#122219]/65 via-[#122219]/48 to-[#122219]/70" />
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 md:py-28">
           <p className="eyebrow !text-[#E4C877]">Occasions</p>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[1.05] md:text-6xl">
             Every celebration deserves a beautiful setting.
@@ -110,7 +119,9 @@ function OccasionsIndex() {
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className={`absolute inset-0 bg-gradient-to-br ${c.tint}`} />
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${c.tint} transition-opacity duration-500 group-hover:opacity-40`}
+              />
               <div className="relative flex h-full flex-col justify-end p-8 text-[color:var(--cream)]">
                 <p className="text-[11px] uppercase tracking-[0.22em] text-white/75">{c.tag}</p>
                 <h2 className="mt-2 font-serif text-3xl md:text-4xl">{c.label}</h2>
