@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, ShoppingBag, Trash2, Plus, Minus } from "lucide-react";
-import logo from "@/assets/luxe_floral_logo.svg";
+import logo from "@/assets/hyper petals & decor_logo_black.svg";
 import { site } from "@/lib/site";
 import { useCart } from "@/hooks/use-cart";
 import { formatUGX } from "@/lib/products";

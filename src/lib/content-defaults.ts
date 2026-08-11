@@ -46,7 +46,7 @@ export const defaultHero: HeroContent = {
   stat1Value: "200+",
   stat2Label: "Delivery",
   stat2Value: "Same day",
-  stat3Label: "Mobile Money accepted",
+  stat3Label: "Mobile Money",
   stat3Value: "MTN · Airtel",
 };
 

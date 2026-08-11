@@ -44,7 +44,7 @@ function Home() {
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-12">
               <Link
-                to="/bouquets"
+                to="/catalogue"
                 className="rounded-lg bg-primary px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Shop bouquets
