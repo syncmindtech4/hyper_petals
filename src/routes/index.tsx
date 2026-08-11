@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Hand-tied bouquets and full-service event florals from Luxe Floral Designs & Events. Order signature arrangements or enquire about your next celebration.",
+          "Hand-tied bouquets and full-service event florals from Hyper Petals Decor. Order signature arrangements or enquire about your next celebration.",
       },
       { property: "og:title", content: "Hyper Petals & Decor" },
       { property: "og:description", content: "Hand-tied bouquets and full-service event florals." },
@@ -167,17 +167,17 @@ function Home() {
               blooms sourced from farms we trust.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
-              <Link
+              {/* <Link
                 to="/occasions"
                 className="rounded-sm bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
               >
                 Our Services
-              </Link>
+              </Link> */}
               <a
                 href={waLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-b border-foreground/60 pb-1 text-[11px] uppercase tracking-[0.24em] text-foreground hover:border-primary hover:text-primary"
+                className="border border-border  border-foreground/60 p-2 rounded-xl text-[11px] uppercase tracking-[0.24em] text-foreground hover:border-primary hover:text-primary"
               >
                 Message on WhatsApp
               </a>

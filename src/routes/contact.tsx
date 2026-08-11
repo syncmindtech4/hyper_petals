@@ -8,13 +8,13 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
   head: () => ({
     meta: [
-      { title: "Contact & Enquiries — Luxe Floral" },
+      { title: "Contact & Enquiries — Hyper Petals Decor" },
       {
         name: "description",
         content:
-          "Get in touch with Luxe Floral Designs & Events for bouquet orders, event florals and bespoke enquiries. WhatsApp, phone, email or send us a message.",
+          "Get in touch with Hyper Petals Decor for bouquet orders, event florals and bespoke enquiries. WhatsApp, phone, email or send us a message.",
       },
-      { property: "og:title", content: "Contact & Enquiries — Luxe Floral" },
+      { property: "og:title", content: "Contact & Enquiries — Hyper Petals Decor" },
       {
         property: "og:description",
         content: "Get in touch for bouquets, event florals and bespoke enquiries.",

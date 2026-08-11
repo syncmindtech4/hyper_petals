@@ -22,7 +22,7 @@ export const Route = createFileRoute("/checkout")({
   component: Checkout,
   head: () => ({
     meta: [
-      { title: "Secure Checkout — Luxe Floral Designs & Events" },
+      { title: "Secure Checkout — Hyper Petals Decor" },
       { name: "description", content: "Complete your premium hand-tied bouquet order securely." },
     ],
   }),
@@ -104,7 +104,7 @@ function Checkout() {
   // Promo code calculation
   const applyPromoCode = () => {
     const code = promoInput.toUpperCase().trim();
-    if (code === "WELCOME10" || code === "LUXEFLORAL") {
+    if (code === "WELCOME10" || code === "HYPERPETALS" || code === "LUXEFLORAL") {
       setAppliedPromo(code);
       setDiscountAmount(cartTotal * 0.1);
       toast.success("Promo code applied! 10% discount subtracted.");
@@ -649,7 +649,7 @@ function Checkout() {
 
                 <div className="bg-[#FFCC00]/10 border border-[#FFCC00]/30 rounded-sm p-3 flex justify-between items-center">
                   <div className="text-left">
-                    <p className="text-[11px] font-semibold text-foreground">Luxe Floral Designs</p>
+                    <p className="text-[11px] font-semibold text-foreground">Hyper Petals Decor</p>
                     <p className="text-[10px] text-muted-foreground">Amount: {formatUGX(grandTotal)}</p>
                   </div>
                   <span className="text-[9px] font-bold text-black bg-[#FFCC00] px-2 py-0.5 rounded-sm">MoMo Secure</span>
@@ -683,7 +683,7 @@ function Checkout() {
               <div className="space-y-1">
                 <h3 className="font-serif text-2xl text-foreground font-medium">Order Placed Successfully!</h3>
                 <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
-                  Thank you for choosing Luxe Floral Designs! Your payment has been received, and our Kampalan florists are scheduling your delivery.
+                  Thank you for choosing Hyper Petals Decor! Your payment has been received, and our Kampalan florists are scheduling your delivery.
                 </p>
               </div>
 
