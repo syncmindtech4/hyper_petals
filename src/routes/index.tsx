@@ -10,13 +10,13 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "Luxe Floral Designs & Events — Romantic Luxury Florals" },
+      { title: "Hyper Petals & Decor — Romantic Luxury Florals" },
       {
         name: "description",
         content:
           "Hand-tied bouquets and full-service event florals from Luxe Floral Designs & Events. Order signature arrangements or enquire about your next celebration.",
       },
-      { property: "og:title", content: "Luxe Floral Designs & Events" },
+      { property: "og:title", content: "Hyper Petals & Decor" },
       { property: "og:description", content: "Hand-tied bouquets and full-service event florals." },
       { property: "og:url", content: "/" },
     ],
