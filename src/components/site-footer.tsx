@@ -116,6 +116,19 @@ export function SiteFooter() {
             © {new Date().getFullYear()} {site.full}. All rights reserved.
           </p>
         </div>
+       <div className="mx-auto max-w-7xl px-6 py-8 flex justify-end">
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
+            designed by{" "}
+            <a 
+              href="https://syncmindtech.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              SyncMindTech
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );
