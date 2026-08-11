@@ -46,7 +46,7 @@ export const defaultHero: HeroContent = {
   stat1Value: "200+",
   stat2Label: "Delivery",
   stat2Value: "Same day",
-  stat3Label: "Mobile Money accepted",
+  stat3Label: "Mobile Money",
   stat3Value: "MTN · Airtel",
 };
 
@@ -54,7 +54,7 @@ export const defaultContact: ContactContent = {
   phone: "+256790449711",
   phoneHref: "tel:++256790449711",
   whatsapp: "+256790449711",
-  email: "luxefloral.designevents@gmail.com",
+  email: "hyperpetals.decor@gmail.com",
   address: "Kampala, Uganda",
   hours: "Tue – Sat · 10am – 6pm",
   instagram: "https://instagram.com",

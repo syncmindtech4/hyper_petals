@@ -44,7 +44,7 @@ function Home() {
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-12">
               <Link
-                to="/gallery"
+                to="/catalogue"
                 className="rounded-lg bg-primary px-7 py-3.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Shop bouquets
@@ -84,13 +84,16 @@ function Home() {
               alt="Luxury bouquet of blush and burgundy roses"
               width={1600}
               height={1200}
-              className="aspect-[4/5] w-full rounded-sm object-cover shadow-[var(--shadow-soft)]"
+              className="aspect-[4/5] w-full rounded-2xl object-cover shadow-[var(--shadow-soft)]"
             />
-            <div className="absolute -bottom-6 -left-6 hidden max-w-[240px] rounded-sm border border-border/60 bg-background/95 p-5 shadow-[var(--shadow-card)] backdrop-blur md:block">
-              <p className="eyebrow">Now Booking</p>
-              <p className="mt-2 font-serif text-lg leading-snug text-foreground">
-                Birthday setups for any month of your choice.
-              </p>
+            <div className="absolute -bottom-6 -left-6 hidden max-w-[240px] rounded-2xl border border-border/60 bg-background/95 p-5 shadow-[var(--shadow-card)] backdrop-blur md:block">
+              <div className="absolute inset-0 backdrop-blur-xl rounded-2xl"></div>
+              <div className="relative z-10 rounded-2xl">
+                <p className="eyebrow">Now Booking</p>
+                <p className="mt-2 font-serif text-lg leading-snug text-foreground">
+                  Birthday setups for any month of your choice.
+                </p>
+              </div>
             </div>
           </div>
         </div>

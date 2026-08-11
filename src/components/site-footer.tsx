@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook, Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
 import { site, waLink } from "@/lib/site";
-import logo from "@/assets/luxe_floral_logo.svg";
+import logo from "@/assets/hyper_petals_decor_logo_white.svg";
 
 export function SiteFooter() {
   return (
@@ -91,11 +91,15 @@ export function SiteFooter() {
             </li>
             <li className="flex items-start gap-2.5">
               <Phone className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <a href={site.phoneHref} className="hover:underline">{site.phone}</a>
+              <a href={site.phoneHref} className="hover:underline">
+                {site.phone}
+              </a>
             </li>
             <li className="flex items-start gap-2.5">
               <Mail className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <a href={`mailto:${site.email}`} className="hover:underline break-all">{site.email}</a>
+              <a href={`mailto:${site.email}`} className="hover:underline break-all">
+                {site.email}
+              </a>
             </li>
             <li className="flex items-start gap-2.5">
               <Clock className="mt-0.5 h-4 w-4 text-white shrink-0" />
