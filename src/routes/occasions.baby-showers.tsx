@@ -12,13 +12,13 @@ export const Route = createFileRoute("/occasions/baby-showers")({
   component: () => <OccasionDetail cfg={cfg} />,
   head: () => ({
     meta: [
-      { title: "Baby Shower Décor & Gender Reveals — Luxe Floral, Kampala" },
+      { title: "Baby Shower Décor & Gender Reveals — Hyper Petals Decor, Kampala" },
       {
         name: "description",
         content:
           'Baby shower styling in Uganda — soft-toned balloon arches, "Oh Baby" backdrops and gender-reveal setups designed around mum-to-be.',
       },
-      { property: "og:title", content: "Baby Shower Styling — Luxe Floral" },
+      { property: "og:title", content: "Baby Shower Styling — Hyper Petals Decor" },
       { property: "og:description", content: "Soft pastel and gender-neutral baby shower décor." },
       { property: "og:image", content: hero },
       { name: "twitter:card", content: "summary_large_image" },

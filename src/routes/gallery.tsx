@@ -12,9 +12,9 @@
 //   component: Gallery,
 //   head: () => ({
 //     meta: [
-//       { title: "Bouquets & Event Portfolio — Luxe Floral" },
-//       { name: "description", content: "Browse Luxe Floral's signature bouquets and a portfolio of past weddings, corporate events, and bespoke floral installations." },
-//       { property: "og:title", content: "Bouquets & Event Portfolio — Luxe Floral" },
+//       { title: "Bouquets & Event Portfolio — Hyper Petals Decor" },
+//       { name: "description", content: "Browse Hyper Petals Decor's signature bouquets and a portfolio of past weddings, corporate events, and bespoke floral installations." },
+//       { property: "og:title", content: "Bouquets & Event Portfolio — Hyper Petals Decor" },
 //       { property: "og:description", content: "Signature bouquets and a portfolio of past events." },
 //       { property: "og:url", content: "/gallery" },
 //     ],
@@ -153,13 +153,13 @@ export const Route = createFileRoute("/gallery")({
   component: Gallery,
   head: () => ({
     meta: [
-      { title: "Bouquets & Event Portfolio — Luxe Floral" },
+      { title: "Bouquets & Event Portfolio — Hyper Petals Decor" },
       {
         name: "description",
         content:
-          "Browse Luxe Floral's signature bouquets and a portfolio of past weddings, corporate events, and bespoke floral installations.",
+          "Browse Hyper Petals Decor's signature bouquets and a portfolio of past weddings, corporate events, and bespoke floral installations.",
       },
-      { property: "og:title", content: "Bouquets & Event Portfolio — Luxe Floral" },
+      { property: "og:title", content: "Bouquets & Event Portfolio — Hyper Petals Decor" },
       { property: "og:description", content: "Signature bouquets and a portfolio of past events." },
       { property: "og:url", content: "/gallery" },
     ],

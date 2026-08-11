@@ -28,7 +28,7 @@ export const Route = createFileRoute("/catalogue")({
   component: Catalogue,
   head: () => ({
     meta: [
-      { title: "Shop Premium Bouquets — Luxe Floral Designs & Events" },
+      { title: "Shop Premium Bouquets — Hyper Petals Decor" },
       {
         name: "description",
         content: "Browse our signature hand-tied arrangements, roses, gift baskets, and custom floral packages in Kampala.",

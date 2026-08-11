@@ -30,7 +30,7 @@ export const Route = createFileRoute("/product-detail")({
     const product = defaultProducts.find((p) => p.id === match.search.id) || defaultProducts[0];
     return {
       meta: [
-        { title: `${product.name} — Luxe Floral Designs & Events` },
+        { title: `${product.name} — Hyper Petals Decor` },
         { name: "description", content: product.description },
       ],
     };
@@ -199,7 +199,7 @@ function ProductDetail() {
       ? `\n- *Card Note*: "${giftMessage.trim()}"`
       : "";
 
-    const message = `Hello Luxe Floral Designs & Events! I'd like to place an order:
+    const message = `Hello Hyper Petals Decor! I'd like to place an order:
 - *Product*: ${product.name}
 - *Size*: ${selectedSize} (Price: ${formatUGX(sizePrice)})
 - *Quantity*: ${quantity}${addOnsText}${giftText}
