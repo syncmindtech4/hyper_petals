@@ -113,15 +113,13 @@ export function SiteFooter() {
       <div className="border-t border-white/15">
         <div className="mx-auto max-w-7xl px-6 py-8 flex justify-center">
           <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
-            © {new Date().getFullYear()} {site.full}. All rights reserved.
+            © 2026 {site.full}. All rights reserved.
           </p>
-        </div>
-        <div className="mx-auto max-w-7xl px-6 py-8 flex justify-end">
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
-            designed by{" "}
-            <a
-              href="https://syncmindtech.com/"
-              target="_blank"
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] fixed bottom-24 right-6 z-50 flex text-primary-foreground shadow-[var(--shadow-soft)] transition-transform">
+            designed by 
+            <a 
+              href="https://syncmindtech.com/" 
+              target="_blank" 
               rel="noopener noreferrer"
               className="hover:underline"
             >
