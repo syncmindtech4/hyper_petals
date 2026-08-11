@@ -115,7 +115,7 @@ export function SiteFooter() {
           <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
             © {new Date().getFullYear()} {site.full}. All rights reserved.
           </p>
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-end">
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:scale-105">
             designed by{" "}
             <a 
               href="https://syncmindtech.com/" 
