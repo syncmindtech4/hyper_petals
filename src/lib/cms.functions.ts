@@ -143,6 +143,17 @@ export const getPublicGallery = createServerFn({ method: "GET" }).handler(async 
 export const getProducts = createServerFn({ method: "GET" }).handler(async () => {
   return listActiveProducts();
 });
+// export const getProducts = createServerFn({ method: "GET" }).handler(async () => {
+//   console.log("DATABASE_URL present?", !!process.env.DATABASE_URL);
+//   try {
+//     const result = await listActiveProducts();
+//     console.log("getProducts returned:", result.length, "rows");
+//     return result;
+//   } catch (err) {
+//     console.error("getProducts failed:", err);
+//     throw err;
+//   }
+// });
 
 // ── Auth checks ───────────────────────────────────────────────────────────────
 
