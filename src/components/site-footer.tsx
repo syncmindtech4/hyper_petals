@@ -113,7 +113,7 @@ export function SiteFooter() {
       <div className="border-t relative border-white/15">
         <div className="mx-auto max-w-7xl px-6 py-8 flex justify-center">
           <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
-            © {new Date().getFullYear()} {site.full}. All rights reserved.
+            © 2026 {site.full}. All rights reserved.
           </p>
           <p className="text-xs tracking-[1.5px] text-[#E0E0E0] absolute italic font-semibold bottom-24 right-6 z-50 flex gap-1 transition-transform">
             designed by
