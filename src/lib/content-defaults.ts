@@ -53,12 +53,13 @@ export const defaultHero: HeroContent = {
 export const defaultContact: ContactContent = {
   phone: "+256790449711",
   phoneHref: "tel:++256790449711",
-  whatsapp: "+256790449711",
+  whatsapp: "+971522901168",
   email: "hyperpetals.decor@gmail.com",
   address: "Kampala, Uganda",
   hours: "Tue – Sat · 10am – 6pm",
   instagram: "https://instagram.com",
 };
+// whatsapp: "+256790449711",
 
 export const defaultServices: ServicesContent = {
   heading: "Florals for birthdays, showers & proposals.",
