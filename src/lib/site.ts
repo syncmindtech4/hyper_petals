@@ -4,7 +4,7 @@ export const site = {
   tagline: "& Decor",
   phone: "+256 790 449 711",
   phoneHref: "tel:+256790449711",
-  whatsapp: "+256790449711",
+  whatsapp: "+971522901168",
   whatsappMsg: "Hi Hyper Petals & Decor, I'd love to place an order.",
   email: "hyperpetals.decor@gmail.com",
   address: "Kampala, Uganda",
@@ -16,3 +16,5 @@ export const site = {
 
 export const waLink = (msg = site.whatsappMsg) =>
   `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+// whatsapp: "+256790449711",

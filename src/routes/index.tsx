@@ -340,9 +340,9 @@ function Home() {
             {isInitialProductsLoad
               ? Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-[4/5] rounded-2xl bg-muted/40" />
-                    <div className="mt-4 h-3 w-2/3 rounded bg-muted/40" />
-                    <div className="mt-2 h-3 w-1/3 rounded bg-muted/40" />
+                    <div className="aspect-[4/5] rounded-2xl bg-muted/70" />
+                    <div className="mt-4 h-3 w-2/3 rounded bg-muted/70" />
+                    <div className="mt-2 h-3 w-1/3 rounded bg-muted/70" />
                   </div>
                 ))
               : featured.map((p) => <ProductCard key={p.id} product={p} />)}
