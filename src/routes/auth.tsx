@@ -5,7 +5,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "Admin Sign In — Luxe Floral" },
+      { title: "Admin Sign In — Hyper Petals Decor" },
       { name: "robots", content: "noindex" },
     ],
   }),

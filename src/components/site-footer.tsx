@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook, Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
 import { site, waLink } from "@/lib/site";
-import logo from "@/assets/luxe_floral_logo.svg";
+import logo from "@/assets/hyper_petals_decor_logo_white.svg";
 
 export function SiteFooter() {
   return (
@@ -91,11 +91,15 @@ export function SiteFooter() {
             </li>
             <li className="flex items-start gap-2.5">
               <Phone className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <a href={site.phoneHref} className="hover:underline">{site.phone}</a>
+              <a href={site.phoneHref} className="hover:underline">
+                {site.phone}
+              </a>
             </li>
             <li className="flex items-start gap-2.5">
               <Mail className="mt-0.5 h-4 w-4 text-white shrink-0" />
-              <a href={`mailto:${site.email}`} className="hover:underline break-all">{site.email}</a>
+              <a href={`mailto:${site.email}`} className="hover:underline break-all">
+                {site.email}
+              </a>
             </li>
             <li className="flex items-start gap-2.5">
               <Clock className="mt-0.5 h-4 w-4 text-white shrink-0" />
@@ -107,9 +111,20 @@ export function SiteFooter() {
 
       {/* Bottom Copyright */}
       <div className="border-t border-white/15">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex justify-center">
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
-            © {new Date().getFullYear()} {site.full}. All rights reserved.
+        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center sm:text-left">
+            © 2026 {site.full}. All rights reserved.
+          </p>
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] italic font-semibold flex gap-1">
+            designed by:
+            <a
+              href="https://syncmindtech.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#E4C877] transition-colors"
+            >
+              SyncMindTech
+            </a>
           </p>
         </div>
       </div>

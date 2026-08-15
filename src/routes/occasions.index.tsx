@@ -12,13 +12,13 @@ export const Route = createFileRoute("/occasions/")({
   component: OccasionsIndex,
   head: () => ({
     meta: [
-      { title: "Occasions — Luxe Floral Designs & Events, Kampala" },
+      { title: "Occasions — Hyper Petals Decor, Kampala" },
       {
         name: "description",
         content:
-          "Birthday parties, bridal & baby showers, marriage proposals and Kwanjula décor by Luxe Floral — full-service styling across Kampala and Uganda.",
+          "Birthday parties, bridal & baby showers, marriage proposals and Kwanjula décor by Hyper Petals Decor — full-service styling across Kampala and Uganda.",
       },
-      { property: "og:title", content: "Occasions — Luxe Floral" },
+      { property: "og:title", content: "Occasions — Hyper Petals Decor" },
       {
         property: "og:description",
         content: "Full-service event florals for every celebration in Uganda.",

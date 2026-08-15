@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
+import socialLogo from "../assets/hyper petals & decor_logo_black.svg";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -76,17 +77,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Luxe Floral Designs & Events — Premium Bouquets & Event Florals" },
-      { name: "description", content: "Luxe Floral Designs & Events crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
-      { property: "og:title", content: "Luxe Floral Designs & Events — Premium Bouquets & Event Florals" },
-      { property: "og:description", content: "Luxe Floral Designs & Events crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
+      { title: "Hyper Petals Decor — Premium Bouquets & Event Florals" },
+      { name: "description", content: "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
+      { property: "og:title", content: "Hyper Petals Decor — Premium Bouquets & Event Florals" },
+      { property: "og:description", content: "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Luxe Floral Designs & Events" },
+      { property: "og:site_name", content: "Hyper Petals Decor" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Luxe Floral Designs & Events — Premium Bouquets & Event Florals" },
-      { name: "twitter:description", content: "Luxe Floral Designs & Events crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/P0VIV4ecdQNVEFRnizFIzbVrXX52/social-images/social-1783060227617-luxe_floral_logo.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/P0VIV4ecdQNVEFRnizFIzbVrXX52/social-images/social-1783060227617-luxe_floral_logo.webp" },
+      { name: "twitter:title", content: "Hyper Petals Decor — Premium Bouquets & Event Florals" },
+      { name: "twitter:description", content: "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
+      { property: "og:image", content: socialLogo },
+      { name: "twitter:image", content: socialLogo },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

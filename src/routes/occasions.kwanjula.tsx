@@ -12,13 +12,13 @@ export const Route = createFileRoute("/occasions/kwanjula")({
   component: () => <OccasionDetail cfg={cfg} />,
   head: () => ({
     meta: [
-      { title: "Kwanjula & Traditional Ceremony Décor — Luxe Floral" },
+      { title: "Kwanjula & Traditional Ceremony Décor — Hyper Petals & Decor" },
       {
         name: "description",
         content:
           "Kwanjula and Kuhingira décor across Uganda — tent draping, mat and canopy styling, gift-basket displays and family-colour theming for introduction ceremonies.",
       },
-      { property: "og:title", content: "Kwanjula Décor — Luxe Floral" },
+      { property: "og:title", content: "Kwanjula Décor — Hyper Petals & Decor" },
       {
         property: "og:description",
         content: "Traditional ceremony styling built around your family colours.",

@@ -58,13 +58,13 @@ export const Route = createFileRoute("/gallery")({
   component: Gallery,
   head: () => ({
     meta: [
-      { title: "Bouquets & Event Portfolio — Luxe Floral" },
+      { title: "Bouquets & Event Portfolio — Hyper Petals Decor" },
       {
         name: "description",
         content:
-          "Browse Luxe Floral's signature bouquets and a portfolio of past weddings, corporate events, and bespoke floral installations.",
+          "Browse Hyper Petals Decor's signature bouquets and a portfolio of past weddings, corporate events, and bespoke floral installations.",
       },
-      { property: "og:title", content: "Bouquets & Event Portfolio — Luxe Floral" },
+      { property: "og:title", content: "Bouquets & Event Portfolio — Hyper Petals Decor" },
       { property: "og:description", content: "Signature bouquets and a portfolio of past events." },
       { property: "og:url", content: "/gallery" },
     ],
@@ -206,7 +206,8 @@ function Gallery() {
               Signature bouquets, ready to order.
             </h1>
             <p className="max-w-2xl text-base leading-relaxed text-white/90">
-              Same-day delivery across Kampala on orders placed before 11am. All bouquets are hand-tied in our studio the morning of delivery.
+              Same-day delivery across Kampala on orders placed before 11am. All bouquets are
+              hand-tied in our studio the morning of delivery.
             </p>
           </div>
         </div>

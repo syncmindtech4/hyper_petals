@@ -108,18 +108,41 @@ export type ProductUpdate = Partial<ProductInput>;
 
 export async function updateProduct(id: string, patch: ProductUpdate): Promise<ProductRow | null> {
   const sql = getSql();
+
+  // Fetch-then-merge instead of SQL COALESCE: COALESCE can't tell "field omitted
+  // from the patch" apart from "field explicitly set to null to clear it" — both
+  // arrive as `null` and it silently keeps the old value either way. Merging in
+  // JS lets `undefined` mean "leave as-is" and `null` mean "clear it", while still
+  // sending every value as a plain parameterized argument (no dynamic SQL).
+  const existingRows = await sql`SELECT * FROM products WHERE id = ${id}::uuid`;
+  const existing = existingRows[0] as ProductRow | undefined;
+  if (!existing) return null;
+
+  const merged = {
+    slug: patch.slug !== undefined ? patch.slug : existing.slug,
+    name: patch.name !== undefined ? patch.name : existing.name,
+    category_label: patch.category_label !== undefined ? patch.category_label : existing.category_label,
+    price_ugx: patch.price_ugx !== undefined ? patch.price_ugx : existing.price_ugx,
+    description: patch.description !== undefined ? patch.description : existing.description,
+    best_for: patch.best_for !== undefined ? patch.best_for : existing.best_for,
+    image_url: patch.image_url !== undefined ? patch.image_url : existing.image_url,
+    is_bestseller: patch.is_bestseller !== undefined ? patch.is_bestseller : existing.is_bestseller,
+    is_active: patch.is_active !== undefined ? patch.is_active : existing.is_active,
+    sort_order: patch.sort_order !== undefined ? patch.sort_order : existing.sort_order,
+  };
+
   const rows = await sql`
     UPDATE products SET
-      slug = COALESCE(${patch.slug ?? null}, slug),
-      name = COALESCE(${patch.name ?? null}, name),
-      category_label = COALESCE(${patch.category_label ?? null}, category_label),
-      price_ugx = COALESCE(${patch.price_ugx ?? null}, price_ugx),
-      description = COALESCE(${patch.description ?? null}, description),
-      best_for = COALESCE(${patch.best_for ?? null}, best_for),
-      image_url = COALESCE(${patch.image_url ?? null}, image_url),
-      is_bestseller = COALESCE(${patch.is_bestseller ?? null}, is_bestseller),
-      is_active = COALESCE(${patch.is_active ?? null}, is_active),
-      sort_order = COALESCE(${patch.sort_order ?? null}, sort_order)
+      slug = ${merged.slug},
+      name = ${merged.name},
+      category_label = ${merged.category_label},
+      price_ugx = ${merged.price_ugx},
+      description = ${merged.description},
+      best_for = ${merged.best_for},
+      image_url = ${merged.image_url},
+      is_bestseller = ${merged.is_bestseller},
+      is_active = ${merged.is_active},
+      sort_order = ${merged.sort_order}
     WHERE id = ${id}::uuid
     RETURNING id, slug, name, category_label, price_ugx, description, best_for,
               image_url, is_bestseller, is_active, sort_order, created_at, updated_at

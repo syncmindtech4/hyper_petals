@@ -68,12 +68,31 @@ export async function insertGalleryItem(input: GalleryItemInput): Promise<Galler
 
 export async function updateGalleryItem(id: string, patch: GalleryItemUpdate): Promise<void> {
   const sql = getSql();
+
+  // Fetch-then-merge instead of SQL COALESCE — see updateProduct in products.server.ts
+  // for why: COALESCE can't distinguish "omitted from patch" from "explicitly cleared
+  // to null", so it silently kept the old value in both cases.
+  const existingRows = await sql`
+    SELECT title, alt_text, caption, sort_order FROM gallery_items WHERE id = ${id}::uuid
+  `;
+  const existing = existingRows[0] as
+    | { title: string | null; alt_text: string | null; caption: string | null; sort_order: number }
+    | undefined;
+  if (!existing) return;
+
+  const merged = {
+    title: patch.title !== undefined ? patch.title : existing.title,
+    alt_text: patch.alt_text !== undefined ? patch.alt_text : existing.alt_text,
+    caption: patch.caption !== undefined ? patch.caption : existing.caption,
+    sort_order: patch.sort_order !== undefined ? patch.sort_order : existing.sort_order,
+  };
+
   await sql`
     UPDATE gallery_items SET
-      title = COALESCE(${patch.title ?? null}, title),
-      alt_text = COALESCE(${patch.alt_text ?? null}, alt_text),
-      caption = COALESCE(${patch.caption ?? null}, caption),
-      sort_order = COALESCE(${patch.sort_order ?? null}, sort_order)
+      title = ${merged.title},
+      alt_text = ${merged.alt_text},
+      caption = ${merged.caption},
+      sort_order = ${merged.sort_order}
     WHERE id = ${id}::uuid
   `;
 }

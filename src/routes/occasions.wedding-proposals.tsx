@@ -12,13 +12,13 @@ export const Route = createFileRoute("/occasions/wedding-proposals")({
   component: () => <OccasionDetail cfg={cfg} />,
   head: () => ({
     meta: [
-      { title: "Marriage Proposal Setups — Luxe Floral, Kampala" },
+      { title: "Marriage Proposal Setups — Hyper Petals & Decor, Kampala" },
       {
         name: "description",
         content:
           "Discreet, romantic marriage proposal setups across Uganda — rooftop, lakeside, garden and suite styling with florals, candles and full venue scouting.",
       },
-      { property: "og:title", content: "Marriage Proposal Setups — Luxe Floral" },
+      { property: "og:title", content: "Marriage Proposal Setups — Hyper Petals & Decor" },
       { property: "og:description", content: "Rooftop, lakeside and garden proposal styling." },
       { property: "og:image", content: hero },
       { name: "twitter:card", content: "summary_large_image" },

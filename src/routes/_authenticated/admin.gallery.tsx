@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Pencil, Upload, X } from "lucide-react";
+import { Trash2, Pencil, Upload, X, ChevronDown, ChevronUp } from "lucide-react";
 import {
   adminListGallery,
   adminDeleteGalleryItem,
@@ -10,7 +10,7 @@ import {
   adminUploadGalleryMedia,
   type GalleryItem,
 } from "@/lib/cms.functions";
-import { validateMediaFile } from "@/lib/media";
+import { MediaUploader } from "@/components/media-uploader";
 
 export const Route = createFileRoute("/_authenticated/admin/gallery")({
   component: GalleryAdmin,
@@ -25,34 +25,35 @@ function GalleryAdmin() {
     queryFn: () => adminListGallery(),
   });
   const [editing, setEditing] = useState<Item | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [showUploader, setShowUploader] = useState(true);
 
-  async function handleFile(file: File) {
-    try {
-      validateMediaFile(file);
-    } catch (err: any) {
-      return toast.error(err?.message ?? "Invalid file");
-    }
+  const handleUploadSingleFile = async (
+    file: File,
+    meta: { title: string; altText: string; caption: string },
+    onProgress: (percent: number) => void
+  ) => {
+    onProgress(30);
+    const formData = new FormData();
+    formData.append("file", file);
+    if (meta.title) formData.append("title", meta.title);
+    if (meta.altText) formData.append("alt_text", meta.altText);
+    if (meta.caption) formData.append("caption", meta.caption);
 
-    setUploading(true);
-    const toastId = toast.loading("Uploading media to Vercel Blob…");
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", file.name.replace(/\.[^/.]+$/, ""));
-      await adminUploadGalleryMedia({ data: formData });
-      toast.success("Uploaded media to Vercel Blob!", { id: toastId });
-      qc.invalidateQueries({ queryKey: ["gallery"] });
-      qc.invalidateQueries({ queryKey: ["admin", "gallery_count"] });
-      qc.invalidateQueries({ queryKey: ["public_gallery"] });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Upload failed", { id: toastId });
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  }
+    onProgress(60);
+    const result = await adminUploadGalleryMedia({ data: formData });
+    onProgress(100);
+
+    qc.invalidateQueries({ queryKey: ["gallery"] });
+    qc.invalidateQueries({ queryKey: ["admin", "gallery_count"] });
+    qc.invalidateQueries({ queryKey: ["public_gallery"] });
+    return result;
+  };
+
+  const handleAllCompleted = () => {
+    qc.invalidateQueries({ queryKey: ["gallery"] });
+    qc.invalidateQueries({ queryKey: ["admin", "gallery_count"] });
+    qc.invalidateQueries({ queryKey: ["public_gallery"] });
+  };
 
   async function remove(item: Item) {
     if (!confirm(`Delete "${item.title || "this item"}" permanently?`)) return;
@@ -68,19 +69,37 @@ function GalleryAdmin() {
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">
-          Images (JPG, PNG, WebP · ≤5 MB) or video (MP4, WebM · ≤50 MB).
-        </p>
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90">
+    <div className="space-y-8">
+      {/* Header & Toggle Uploader */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/40 pb-4">
+        <div>
+          <h2 className="font-serif text-2xl text-foreground">Media Gallery</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Upload and manage photos and video showcases for Hyper Petals & Decor.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowUploader((v) => !v)}
+          className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-[11px] uppercase tracking-[0.24em] font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
+        >
           <Upload className="h-4 w-4" />
-          {uploading ? "Uploading…" : "Upload media"}
-          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
-            className="hidden" disabled={uploading}
-            onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
-        </label>
+          {showUploader ? "Hide Uploader" : "Batch Upload Media"}
+          {showUploader ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </button>
       </div>
+
+      {/* Multi-Media Uploader Section */}
+      {showUploader && (
+        <div className="rounded-lg border border-border/80 bg-card/50 p-6 shadow-sm">
+          <MediaUploader
+            onUploadFile={handleUploadSingleFile}
+            onAllCompleted={handleAllCompleted}
+            allowedTypes={["image", "video"]}
+            title="Batch Upload Gallery Photos & Videos"
+            subtitle="Drag and drop multiple photos (JPG, PNG, WebP) or videos (MP4, WebM, MOV) to upload them directly to the gallery."
+          />
+        </div>
+      )}
 
       {isLoading ? (
         <div className="mt-10 text-sm text-muted-foreground">Loading…</div>

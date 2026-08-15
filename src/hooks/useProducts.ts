@@ -1,17 +1,17 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { defaultProducts, type Product } from "@/lib/products";
+import type { Product } from "@/lib/products";
 import { getProducts, adminListProducts } from "@/lib/cms.functions";
 import type { ProductRow } from "@/lib/db/products.server";
 
 // Public: active products for the storefront (catalogue, home, product detail).
-// `initialData` means pages render immediately with the bundled defaults,
-// then swap in live DB data as soon as it resolves — same pattern as
-// useHero()/useContact() in useSiteContent.ts.
+// `initialData` starts as an empty array so pages render immediately without
+// a loading flash, then swap in live DB data as soon as the query resolves —
+// same pattern as useHero()/useContact() in useSiteContent.ts.
 export function useProducts() {
   return useQuery({
     queryKey: ["products"],
     queryFn: () => getProducts(),
-    initialData: defaultProducts,
+    initialData: [] as Product[],
     staleTime: 60_000,
   });
 }

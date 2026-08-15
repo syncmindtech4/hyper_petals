@@ -157,27 +157,53 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
   const [isActive, setIsActive] = useState(item?.is_active ?? true);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<string[]>(item?.image_url ? [item.image_url] : []);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const imageFileRef = useRef<HTMLInputElement>(null);
 
-  async function handleImageUpload(file: File) {
-    if (!file.type.startsWith("image/")) {
-      return toast.error("Please select an image file (JPG, PNG, WebP, etc.)");
+  async function handleMultipleImageUploads(files: FileList | File[]) {
+    const fileList = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (fileList.length === 0) {
+      return toast.error("Please select valid image files (JPG, PNG, WebP, GIF)");
     }
     setUploadingImage(true);
-    const toastId = toast.loading("Uploading image to Vercel Blob…");
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", "products");
-      const result = await adminUploadToBlob({ data: formData });
-      setImageUrl(result.url);
-      toast.success("Image uploaded to Vercel Blob!", { id: toastId });
-    } catch (err: any) {
-      toast.error(err?.message ?? "Image upload failed", { id: toastId });
-    } finally {
-      setUploadingImage(false);
-      if (imageFileRef.current) imageFileRef.current.value = "";
+    const toastId = toast.loading(
+      fileList.length === 1
+        ? "Uploading image to Vercel Blob…"
+        : `Uploading ${fileList.length} images to Vercel Blob…`
+    );
+
+    const newUrls: string[] = [];
+    let successCount = 0;
+
+    for (const file of fileList) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "products");
+        const result = await adminUploadToBlob({ data: formData });
+        newUrls.push(result.url);
+        successCount++;
+      } catch (err: any) {
+        console.error("Product image upload failed:", err);
+      }
     }
+
+    if (newUrls.length > 0) {
+      setUploadedImages((prev) => Array.from(new Set([...newUrls, ...prev])));
+      setImageUrl(newUrls[0]);
+      toast.success(
+        fileList.length === 1
+          ? "Image uploaded successfully!"
+          : `Successfully uploaded ${successCount} product images!`,
+        { id: toastId }
+      );
+    } else {
+      toast.error("Failed to upload images.", { id: toastId });
+    }
+
+    setUploadingImage(false);
+    if (imageFileRef.current) imageFileRef.current.value = "";
   }
 
   function handleNameChange(value: string) {
@@ -234,37 +260,100 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
         </div>
 
         <div className="mt-6 grid gap-4">
-          <div className="flex items-center gap-4">
-            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-sm border border-border/60 bg-muted">
-              {imageUrl && <img src={imageUrl} alt="" className="h-full w-full object-cover" />}
-            </div>
-            <div className="flex-1 grid gap-2">
-              <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Product Image</span>
-              <div className="flex gap-2">
-                <input
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://... or upload file"
-                  className="flex-1 min-w-0 rounded-sm border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-                />
-                <label className="inline-flex cursor-pointer shrink-0 items-center gap-1.5 rounded-sm bg-primary px-3 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary-foreground hover:bg-primary/90">
-                  <Upload className="h-3.5 w-3.5" />
-                  {uploadingImage ? "..." : "Upload"}
+          {/* Dropzone & Preview Section */}
+          <div className="space-y-2">
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground font-medium">
+              Product Image & Gallery
+            </span>
+
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(false);
+                if (e.dataTransfer.files?.length) {
+                  handleMultipleImageUploads(e.dataTransfer.files);
+                }
+              }}
+              className={`relative flex items-center gap-4 rounded-md border-2 border-dashed p-4 transition-all ${
+                isDraggingOver
+                  ? "border-primary bg-primary/10"
+                  : "border-border/60 bg-muted/20 hover:border-primary/50"
+              }`}
+            >
+              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-sm border border-border/60 bg-muted relative">
+                {imageUrl ? (
+                  <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+                    No image
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1 grid gap-2">
+                <div className="flex gap-2">
                   <input
-                    ref={imageFileRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    disabled={uploadingImage}
-                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                    value={imageUrl}
+                    onChange={(e) => {
+                      setImageUrl(e.target.value);
+                      if (e.target.value && !uploadedImages.includes(e.target.value)) {
+                        setUploadedImages((prev) => [e.target.value, ...prev]);
+                      }
+                    }}
+                    placeholder="https://... or upload files"
+                    className="flex-1 min-w-0 rounded-sm border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
                   />
-                </label>
+                  <label className="inline-flex cursor-pointer shrink-0 items-center gap-1.5 rounded-sm bg-primary px-3.5 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary-foreground hover:bg-primary/90">
+                    <Upload className="h-3.5 w-3.5" />
+                    {uploadingImage ? "..." : "Upload"}
+                    <input
+                      ref={imageFileRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      disabled={uploadingImage}
+                      onChange={(e) => e.target.files?.length && handleMultipleImageUploads(e.target.files)}
+                    />
+                  </label>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Drag & drop multiple image files here or click Upload to select photos.
+                </p>
               </div>
             </div>
+
+            {/* Thumbnail Selection Bar if multiple uploaded */}
+            {uploadedImages.length > 1 && (
+              <div className="pt-2">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  Select Primary Image ({uploadedImages.length} available):
+                </span>
+                <div className="mt-1.5 flex flex-wrap gap-2">
+                  {uploadedImages.map((url, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setImageUrl(url)}
+                      className={`relative h-12 w-12 overflow-hidden rounded-sm border-2 transition-all ${
+                        imageUrl === url ? "border-primary scale-105 shadow-xs" : "border-transparent opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={url} alt="" className="h-full w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          <p className="-mt-2 text-[11px] text-muted-foreground">
-            Paste an image URL or click "Upload" to upload an image directly to Vercel Blob.
-          </p>
 
           <label className="grid gap-2">
             <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Name</span>

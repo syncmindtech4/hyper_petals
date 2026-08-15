@@ -23,21 +23,43 @@ export function isAllowedVideo(mimeType: string): boolean {
   return VIDEO_MIME_TYPES.includes(mimeType) || mimeType.startsWith("video/");
 }
 
+export function formatBytes(bytes: number, decimals = 1): string {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
 export function validateMediaFile(file: File): { isImage: boolean; isVideo: boolean } {
   const isImage = isAllowedImage(file.type);
   const isVideo = isAllowedVideo(file.type);
 
   if (!isImage && !isVideo) {
-    throw new Error("Only JPG/PNG/WebP/GIF images or MP4/WebM videos are allowed");
+    throw new Error(`File "${file.name}" has an invalid format. Allowed: JPG, PNG, WebP, GIF, AVIF, MP4, WebM, MOV.`);
   }
 
   if (isImage && file.size > MAX_IMAGE_SIZE) {
-    throw new Error("Image file size exceeds the 10 MB limit");
+    throw new Error(`Image "${file.name}" (${formatBytes(file.size)}) exceeds the 10 MB limit.`);
   }
 
   if (isVideo && file.size > MAX_VIDEO_SIZE) {
-    throw new Error("Video file size exceeds the 50 MB limit");
+    throw new Error(`Video "${file.name}" (${formatBytes(file.size)}) exceeds the 50 MB limit.`);
   }
 
   return { isImage, isVideo };
 }
+
+export function validateMediaFiles(files: FileList | File[]): Array<{ file: File; isImage: boolean; isVideo: boolean }> {
+  const fileArray = Array.from(files);
+  if (fileArray.length === 0) {
+    throw new Error("No files selected.");
+  }
+  return fileArray.map((file) => {
+    const info = validateMediaFile(file);
+    return { file, ...info };
+  });
+}
+
+

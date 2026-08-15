@@ -34,6 +34,27 @@ export type { GalleryItem };
 
 // ── Shared Vercel Blob Helper ────────────────────────────────────────────────
 
+// Allowlist of blob folders callers may target — the folder is client-supplied,
+// so this stops an arbitrary/attacker-controlled path from being written into
+// the blob store even though these endpoints already require an admin session.
+const ALLOWED_BLOB_FOLDERS = ["uploads", "products", "gallery/images", "gallery/videos"] as const;
+
+function resolveBlobFolder(requested: string): string {
+  return (ALLOWED_BLOB_FOLDERS as readonly string[]).includes(requested) ? requested : "uploads";
+}
+
+// Real hostname check rather than a substring match — a URL like
+// "https://evil.example.com/?x=vercel-storage.com" would pass `.includes()`
+// but must not be treated as one of our own blobs.
+function isVercelBlobUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return hostname.endsWith("vercel-storage.com") || hostname.endsWith("blob.vercel-storage.com");
+  } catch {
+    return false;
+  }
+}
+
 async function uploadFileToVercelBlob(file: File, folder: string) {
   validateMediaFile(file);
 
@@ -63,7 +84,7 @@ export const adminUploadToBlob = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireAdminUser();
     const file = data.get("file");
-    const folder = (data.get("folder") as string) || "uploads";
+    const folder = resolveBlobFolder((data.get("folder") as string) || "uploads");
     if (!file || !(file instanceof File)) {
       throw new Error("No valid file provided");
     }
@@ -201,10 +222,7 @@ export const adminDeleteGalleryItem = createServerFn({ method: "POST" })
     const deleted = await deleteGalleryItem(data.id);
     if (!deleted) throw new Error("Gallery item not found");
 
-    if (
-      deleted.public_url &&
-      (deleted.public_url.includes("vercel-storage.com") || deleted.public_url.includes("blob.vercel"))
-    ) {
+    if (deleted.public_url && isVercelBlobUrl(deleted.public_url)) {
       try {
         const token = process.env.BLOB_READ_WRITE_TOKEN;
         await del(deleted.public_url, { token });
@@ -232,7 +250,7 @@ const productInputSchema = z.object({
   price_ugx: z.number().int().nonnegative(),
   description: z.string().optional(),
   best_for: z.string().nullable().optional(),
-  image_url: z.string().min(1),
+  image_url: z.string().url(),
   is_bestseller: z.boolean().optional(),
   is_active: z.boolean().optional(),
   sort_order: z.number().int().optional(),
