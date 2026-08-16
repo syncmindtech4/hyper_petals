@@ -30,7 +30,7 @@ function GalleryAdmin() {
   const handleUploadSingleFile = async (
     file: File,
     meta: { title: string; altText: string; caption: string },
-    onProgress: (percent: number) => void
+    onProgress: (percent: number) => void,
   ) => {
     onProgress(30);
     const formData = new FormData();
@@ -75,11 +75,7 @@ function GalleryAdmin() {
         <div>
           <h2 className="font-serif text-2xl text-foreground">Media Gallery</h2>
           <p className="text-sm text-muted-foreground mt-1">
-<<<<<<< HEAD
-            Upload and manage photos and video showcases for Luxe Floral.
-=======
             Upload and manage photos and video showcases for Hyper Petals & Decor.
->>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
           </p>
         </div>
         <button
@@ -110,32 +106,49 @@ function GalleryAdmin() {
       ) : items.length === 0 ? (
         <div className="mt-10 rounded-sm border border-dashed border-border/60 p-14 text-center">
           <p className="font-serif text-2xl text-foreground">No media yet</p>
-          <p className="mt-2 text-sm text-muted-foreground">Upload your first image or video to get started.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Upload your first image or video to get started.
+          </p>
         </div>
       ) : (
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <div key={item.id} className="group overflow-hidden rounded-sm border border-border/60 bg-card">
+            <div
+              key={item.id}
+              className="group overflow-hidden rounded-sm border border-border/60 bg-card"
+            >
               <div className="aspect-[4/5] bg-muted">
                 {item.kind === "image" ? (
-                  <img src={item.public_url} alt={item.alt_text ?? item.title ?? ""} className="h-full w-full object-cover" />
+                  <img
+                    src={item.public_url}
+                    alt={item.alt_text ?? item.title ?? ""}
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <video src={item.public_url} controls className="h-full w-full object-cover" />
                 )}
               </div>
               <div className="p-4">
-                <p className="truncate font-serif text-lg text-foreground">{item.title || "Untitled"}</p>
-                {item.caption && <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.caption}</p>}
+                <p className="truncate font-serif text-lg text-foreground">
+                  {item.title || "Untitled"}
+                </p>
+                {item.caption && (
+                  <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.caption}</p>
+                )}
                 <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                   {item.kind} · {new Date(item.created_at).toLocaleDateString()}
                 </p>
                 <div className="mt-3 flex gap-2">
-                  <button onClick={() => setEditing(item)}
-                    className="inline-flex items-center gap-1.5 rounded-sm border border-input px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] hover:bg-accent">
+                  <button
+                    onClick={() => setEditing(item)}
+                    className="inline-flex items-center gap-1.5 rounded-sm border border-input px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] hover:bg-accent"
+                  >
                     <Pencil className="h-3 w-3" /> Edit
                   </button>
-                  <button onClick={() => remove(item)}
-                    className="inline-flex items-center gap-1.5 rounded-sm border border-destructive/40 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-destructive hover:bg-destructive/10">
+                  <button
+                    onClick={() => remove(item)}
+                    className="inline-flex items-center gap-1.5 rounded-sm border border-destructive/40 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-destructive hover:bg-destructive/10"
+                  >
                     <Trash2 className="h-3 w-3" /> Delete
                   </button>
                 </div>
@@ -176,41 +189,76 @@ function EditDialog({ item, onClose }: { item: Item; onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg rounded-sm border border-border bg-card p-8 shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg rounded-sm border border-border bg-card p-8 shadow-2xl"
+      >
         <div className="flex items-center justify-between">
           <h2 className="font-serif text-2xl text-foreground">Edit media</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="h-5 w-5" /></button>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X className="h-5 w-5" />
+          </button>
         </div>
         <div className="mt-6 grid gap-4">
           <label className="grid gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Title</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)}
-              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Title
+            </span>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+            />
           </label>
           <label className="grid gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Alt text (accessibility)</span>
-            <input value={alt} onChange={(e) => setAlt(e.target.value)}
-              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Alt text (accessibility)
+            </span>
+            <input
+              value={alt}
+              onChange={(e) => setAlt(e.target.value)}
+              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+            />
           </label>
           <label className="grid gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Caption</span>
-            <textarea rows={3} value={caption} onChange={(e) => setCaption(e.target.value)}
-              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Caption
+            </span>
+            <textarea
+              rows={3}
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+            />
           </label>
           <label className="grid gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Sort order (lower = first)</span>
-            <input type="number" value={sortOrder} onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-              className="w-32 rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Sort order (lower = first)
+            </span>
+            <input
+              type="number"
+              value={sortOrder}
+              onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
+              className="w-32 rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+            />
           </label>
         </div>
         <div className="mt-8 flex gap-3">
-          <button onClick={save} disabled={saving}
-            className="rounded-sm bg-primary px-6 py-2.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90 disabled:opacity-60">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="rounded-sm bg-primary px-6 py-2.5 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+          >
             {saving ? "Saving…" : "Save"}
           </button>
-          <button onClick={onClose}
-            className="rounded-sm border border-input px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] hover:bg-accent">
+          <button
+            onClick={onClose}
+            className="rounded-sm border border-input px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] hover:bg-accent"
+          >
             Cancel
           </button>
         </div>

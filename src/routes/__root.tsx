@@ -53,17 +53,21 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="font-serif text-3xl text-foreground">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Please refresh or head back home.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Please refresh or head back home.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="rounded-sm bg-primary px-5 py-2.5 text-xs uppercase tracking-widest text-primary-foreground hover:bg-primary/90"
           >
             Try again
           </button>
-          <a href="/" className="rounded-sm border border-input bg-background px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-accent">
+          <a
+            href="/"
+            className="rounded-sm border border-input bg-background px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-accent"
+          >
             Go home
           </a>
         </div>
@@ -78,28 +82,38 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Hyper Petals Decor — Premium Bouquets & Event Florals" },
-      { name: "description", content: "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
+      {
+        name: "description",
+        content:
+          "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments.",
+      },
       { property: "og:title", content: "Hyper Petals Decor — Premium Bouquets & Event Florals" },
-      { property: "og:description", content: "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
+      {
+        property: "og:description",
+        content:
+          "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Hyper Petals Decor" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Hyper Petals Decor — Premium Bouquets & Event Florals" },
-      { name: "twitter:description", content: "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
-<<<<<<< HEAD
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/P0VIV4ecdQNVEFRnizFIzbVrXX52/social-images/social-1783060227617-luxe_floral_logo.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/P0VIV4ecdQNVEFRnizFIzbVrXX52/social-images/social-1783060227617-luxe_floral_logo.webp" },
-=======
+      {
+        name: "twitter:description",
+        content:
+          "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments.",
+      },
       { property: "og:image", content: socialLogo },
       { name: "twitter:image", content: socialLogo },
->>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -115,9 +129,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ClerkProvider>
-          {children}
-        </ClerkProvider>
+        <ClerkProvider>{children}</ClerkProvider>
         <Scripts />
       </body>
     </html>

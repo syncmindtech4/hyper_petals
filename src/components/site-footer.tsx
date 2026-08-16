@@ -110,23 +110,13 @@ export function SiteFooter() {
       </div>
 
       {/* Bottom Copyright */}
-<<<<<<< HEAD
       <div className="border-t relative border-white/15">
         <div className="mx-auto max-w-7xl px-6 py-8 flex justify-center">
           <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
             © 2026 {site.full}. All rights reserved.
           </p>
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] absolute italic font-semibold bottom-24 right-6 z-50 flex gap-1 transition-transform">
-            designed by
-=======
-      <div className="border-t border-white/15">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center sm:text-left">
-            © 2026 {site.full}. All rights reserved.
-          </p>
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] italic font-semibold flex gap-1">
-            designed by:
->>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] absolute italic font-serif bottom-24 right-6 z-50 flex gap-1 transition-transform">
+            Designed by
             <a
               href="https://syncmindtech.com/"
               target="_blank"
