@@ -572,6 +572,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { z } from "zod";
+<<<<<<< HEAD
 import {
   Star,
   Truck,
@@ -583,6 +584,9 @@ import {
   ChevronRight,
   Check,
 } from "lucide-react";
+=======
+import { Star, Truck, Calendar, RefreshCw, MessageSquare, ShoppingBag } from "lucide-react";
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
 import { Product, formatUGX } from "@/lib/products";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart, AddOn } from "@/hooks/use-cart";
@@ -599,6 +603,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BouquetCustomizer } from "@/components/bouquet-customizer";
+import {
+  EMPTY_CUSTOMIZATION,
+  customizationSummary,
+  isCustomizableBouquet,
+  isCustomizationComplete,
+  missingCustomizationFields,
+} from "@/lib/bouquet-customization";
 
 const productSearchSchema = z.object({
   id: z.string().catch("wine-blush-dozen"),
@@ -641,6 +653,8 @@ const LOCATIONS = [
   { name: "Lubowa", fee: 20000 },
 ];
 
+const OTHER_LOCATION = "Other";
+
 function ProductDetail() {
   const { id } = Route.useSearch();
   const { addToCart } = useCart();
@@ -658,6 +672,7 @@ function ProductDetail() {
 
   // Set document title once the real product loads (head() can't do this
   // synchronously since product data comes from the DB).
+<<<<<<< HEAD
   useEffect(() => {
     if (product) {
       document.title = `${product.name} — Hyper Petals Decor`;
@@ -682,8 +697,12 @@ function ProductDetail() {
   }, [product, products]);
 
   // Reset active image index when product changes
+=======
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
   useEffect(() => {
-    setActiveImageIndex(0);
+    if (product) {
+      document.title = `${product.name} — Hyper Petals Decor`;
+    }
   }, [product]);
 
   // Form State
@@ -693,9 +712,16 @@ function ProductDetail() {
   const [recipientName, setRecipientName] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
   const [deliveryLocation, setDeliveryLocation] = useState("Kampala Central");
+  const [customLocation, setCustomLocation] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [customization, setCustomization] = useState(EMPTY_CUSTOMIZATION);
+
+  // Reset customization selections when switching products
+  useEffect(() => {
+    setCustomization(EMPTY_CUSTOMIZATION);
+  }, [id]);
 
   // Set default delivery date to tomorrow
   useEffect(() => {
@@ -739,6 +765,15 @@ function ProductDetail() {
     return products.filter((p) => p.id !== product.id).slice(0, 3);
   }, [products, product]);
 
+  const requiresCustomization = isCustomizableBouquet(product);
+  const customizationValid = !requiresCustomization || isCustomizationComplete(customization);
+  const customizationMissing = requiresCustomization
+    ? missingCustomizationFields(customization)
+    : [];
+
+  const effectiveDeliveryLocation =
+    deliveryLocation === OTHER_LOCATION ? customLocation.trim() : deliveryLocation;
+
   const handleAddOnToggle = (addOn: AddOn, checked: boolean) => {
     if (checked) {
       setSelectedAddOns((prev) => [...prev, addOn]);
@@ -748,8 +783,18 @@ function ProductDetail() {
   };
 
   const handleAddToCart = () => {
+    if (requiresCustomization && !customizationValid) {
+      toast.error("Please finish customizing your bouquet", {
+        description: `Still needed: ${customizationMissing.join(", ")}`,
+      });
+      return;
+    }
     if (isGift && (!recipientName.trim() || !recipientPhone.trim())) {
       toast.error("Please fill in the recipient's details");
+      return;
+    }
+    if (deliveryLocation === OTHER_LOCATION && !customLocation.trim()) {
+      toast.error("Please type in your delivery location");
       return;
     }
     if (!deliveryDate) {
@@ -765,9 +810,10 @@ function ProductDetail() {
       selectedAddOns,
       isGift,
       giftDetails: isGift ? { recipientName, recipientPhone } : undefined,
-      deliveryLocation,
+      deliveryLocation: effectiveDeliveryLocation,
       deliveryDate,
       giftMessage: giftMessage.trim() || undefined,
+      customizations: requiresCustomization ? customization : undefined,
     });
 
     toast.success(`${product.name} added to cart!`, {
@@ -776,8 +822,18 @@ function ProductDetail() {
   };
 
   const handleWhatsAppOrder = () => {
+    if (requiresCustomization && !customizationValid) {
+      toast.error("Please finish customizing your bouquet", {
+        description: `Still needed: ${customizationMissing.join(", ")}`,
+      });
+      return;
+    }
     if (isGift && (!recipientName.trim() || !recipientPhone.trim())) {
       toast.error("Please fill in the recipient's details");
+      return;
+    }
+    if (deliveryLocation === OTHER_LOCATION && !customLocation.trim()) {
+      toast.error("Please type in your delivery location");
       return;
     }
     if (!deliveryDate) {
@@ -795,12 +851,19 @@ function ProductDetail() {
       : "";
 
     const msgText = giftMessage.trim() ? `\n- *Card Note*: "${giftMessage.trim()}"` : "";
+<<<<<<< HEAD
+=======
+
+    const customizationText = requiresCustomization
+      ? `\n- *Customization*: ${customizationSummary(customization)}`
+      : "";
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
 
     const message = `Hello Hyper Petals Decor! I'd like to place an order:
 - *Product*: ${product.name}
 - *Size*: ${selectedSize} (Price: ${formatUGX(sizePrice)})
-- *Quantity*: ${quantity}${addOnsText}${giftText}
-- *Delivery Location*: ${deliveryLocation}
+- *Quantity*: ${quantity}${customizationText}${addOnsText}${giftText}
+- *Delivery Location*: ${effectiveDeliveryLocation}
 - *Delivery Date*: ${deliveryDate}${msgText}
 *Total*: ${formatUGX(totalPrice)}`;
 
@@ -845,16 +908,17 @@ function ProductDetail() {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-        {/* Left Column: Image Gallery */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-card border border-border/40">
+        {/* Left Column: Image + Delivery / Checkout Actions */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-card border border-border/40">
             <img
-              src={galleryImages[activeImageIndex]}
+              src={product.image}
               alt={`${product.name} detail view`}
               className="object-cover w-full h-full transition-all duration-300"
             />
           </div>
 
+<<<<<<< HEAD
           {/* Thumbnail row */}
           <div className="flex gap-4">
             {galleryImages.map((img, idx) => (
@@ -867,14 +931,159 @@ function ProductDetail() {
                     ? "border-primary ring-1 ring-primary"
                     : "border-border/60 hover:border-primary/50"
                 }`}
+=======
+          {/* Delivery Details */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="delivery-location"
+                className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
               >
-                <img
-                  src={img}
-                  alt={`Thumbnail ${idx + 1}`}
-                  className="object-cover w-full h-full"
+                Delivery Area (Kampala)
+              </Label>
+              <Select value={deliveryLocation} onValueChange={setDeliveryLocation}>
+                <SelectTrigger id="delivery-location" className="text-xs bg-card border-border/60">
+                  <SelectValue placeholder="Select Area" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border-border/60">
+                  {LOCATIONS.map((loc) => (
+                    <SelectItem key={loc.name} value={loc.name} className="text-xs">
+                      {loc.name} (+{formatUGX(loc.fee)})
+                    </SelectItem>
+                  ))}
+                  <SelectItem value={OTHER_LOCATION} className="text-xs">
+                    Other (type in your location)
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {deliveryLocation === OTHER_LOCATION && (
+                <Input
+                  placeholder="Enter your delivery location"
+                  value={customLocation}
+                  onChange={(e) => setCustomLocation(e.target.value)}
+                  className="text-xs bg-card border-border/60 mt-2"
                 />
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="delivery-date"
+                className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+              >
+                Delivery Date
+              </Label>
+              <div className="relative">
+                <Input
+                  id="delivery-date"
+                  type="date"
+                  value={deliveryDate}
+                  onChange={(e) => setDeliveryDate(e.target.value)}
+                  className="text-xs bg-card border-border/60 block w-full pl-3 pr-10 py-2.5"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Gift Message */}
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="gift-message"
+              className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+            >
+              Gift Card Message (Optional)
+            </Label>
+            <Textarea
+              id="gift-message"
+              placeholder="Write a sweet message to be handwritten on our luxury gift card..."
+              value={giftMessage}
+              onChange={(e) => setGiftMessage(e.target.value)}
+              className="text-xs min-h-[80px] bg-card border-border/60 leading-relaxed resize-none"
+            />
+          </div>
+
+          {/* Quantity and CTA Actions */}
+          <div className="pt-2 space-y-3">
+            {requiresCustomization && (
+              <div className="text-xs">
+                {customizationValid ? (
+                  <p className="text-foreground">
+                    <span className="font-semibold">Selected:</span>{" "}
+                    {customizationSummary(customization)}
+                  </p>
+                ) : (
+                  <p className="text-amber-700">Please select: {customizationMissing.join(", ")}</p>
+                )}
+              </div>
+            )}
+
+            <div className="flex gap-4">
+              {/* Quantity selector */}
+              <div className="flex items-center border border-border/80 rounded-sm bg-card">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  -
+                </button>
+                <span className="px-3 text-sm font-semibold text-foreground">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  +
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                disabled={requiresCustomization && !customizationValid}
+                className="flex-1 flex items-center justify-center gap-2 rounded-sm bg-primary py-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-primary-foreground hover:bg-primary/95 transition-colors shadow-xs disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary"
+              >
+                <ShoppingBag className="h-4 w-4" />
+                Add to Cart
               </button>
-            ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleWhatsAppOrder}
+              className="w-full flex items-center justify-center gap-2 rounded-sm border border-emerald-600/80 bg-emerald-500/5 hover:bg-emerald-500/10 py-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-emerald-700 transition-colors"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Order via WhatsApp
+            </button>
+          </div>
+
+          <hr className="border-border/60" />
+
+          {/* Trust Badges */}
+          <div className="grid grid-cols-3 gap-2.5 pt-1 text-center">
+            <div className="flex flex-col items-center justify-center p-2 border border-border/40 rounded-lg bg-card/60">
+              <Truck className="h-4 w-4 text-primary mb-1.5" />
+              <span className="text-[10px] font-semibold text-foreground">Same-day delivery</span>
+              <span className="text-[9px] text-muted-foreground mt-0.5">Order by 2pm</span>
+            </div>
+            <div className="flex flex-col items-center justify-center p-2 border border-border/40 rounded-lg bg-card/60">
+              <div className="flex gap-1 items-center mb-1.5">
+                <span className="text-[9px] font-bold text-[#FFCC00] bg-black px-1 py-0.5 rounded-sm">
+                  MoMo
+                </span>
+                <span className="text-[9px] font-bold text-red-600 bg-white border border-red-500 px-1 py-0.5 rounded-sm">
+                  Airtel
+                </span>
+              </div>
+              <span className="text-[10px] font-semibold text-foreground">Mobile Money</span>
+              <span className="text-[9px] text-muted-foreground mt-0.5">Secure payment</span>
+            </div>
+            <div className="flex flex-col items-center justify-center p-2 border border-border/40 rounded-lg bg-card/60">
+              <RefreshCw className="h-4 w-4 text-primary mb-1.5" />
+              <span className="text-[10px] font-semibold text-foreground">Free rescheduling</span>
+              <span className="text-[9px] text-muted-foreground mt-0.5">Up to 24h prior</span>
+            </div>
           </div>
         </div>
 
@@ -933,7 +1142,11 @@ function ProductDetail() {
                       key={opt.size}
                       type="button"
                       onClick={() => setSelectedSize(opt.size)}
+<<<<<<< HEAD
                       className={`flex flex-col items-center justify-center p-3 rounded-sm border transition-all text-center ${
+=======
+                      className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all text-center ${
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
                         selectedSize === opt.size
                           ? "border-primary bg-primary/5 ring-1 ring-primary"
                           : "border-border/60 hover:border-primary/40 bg-card"
@@ -950,6 +1163,16 @@ function ProductDetail() {
               </div>
             </div>
 
+            {/* Bouquet Customization Filters */}
+            {requiresCustomization && (
+              <div className="space-y-4">
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold block">
+                  Customize Your Bouquet
+                </Label>
+                <BouquetCustomizer value={customization} onChange={setCustomization} />
+              </div>
+            )}
+
             {/* Add-ons */}
             <div>
               <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3.5 block">
@@ -959,13 +1182,21 @@ function ProductDetail() {
                 {ADDONS_LIST.map((addOn) => (
                   <div
                     key={addOn.name}
+<<<<<<< HEAD
                     className="flex items-center justify-between border border-border/40 p-3 rounded-sm bg-card hover:bg-accent/10 transition-colors"
+=======
+                    className="flex items-center justify-between border border-border/40 p-3 rounded-lg bg-card hover:bg-accent/10 transition-colors"
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
                   >
                     <div className="flex items-center space-x-3">
                       <Checkbox
                         id={`addon-${addOn.name}`}
                         checked={selectedAddOns.some((a) => a.name === addOn.name)}
                         onCheckedChange={(checked) => handleAddOnToggle(addOn, checked === true)}
+<<<<<<< HEAD
+=======
+                        className="rounded-lg"
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
                       />
                       <Label
                         htmlFor={`addon-${addOn.name}`}
@@ -983,12 +1214,13 @@ function ProductDetail() {
             </div>
 
             {/* Gift Options */}
-            <div className="border border-border/40 p-4 rounded-sm bg-card space-y-4">
+            <div className="border border-border/40 p-4 rounded-lg bg-card space-y-4">
               <div className="flex items-center space-x-3">
                 <Checkbox
                   id="is-gift"
                   checked={isGift}
                   onCheckedChange={(checked) => setIsGift(checked === true)}
+                  className="rounded-lg"
                 />
                 <Label
                   htmlFor="is-gift"
@@ -1033,6 +1265,7 @@ function ProductDetail() {
                 </div>
               )}
             </div>
+<<<<<<< HEAD
 
             {/* Delivery Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1164,6 +1397,8 @@ function ProductDetail() {
               <span className="text-[10px] font-semibold text-foreground">Free rescheduling</span>
               <span className="text-[9px] text-muted-foreground mt-0.5">Up to 24h prior</span>
             </div>
+=======
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
           </div>
         </div>
       </div>
@@ -1175,7 +1410,7 @@ function ProductDetail() {
           {recommended.map((p) => (
             <div
               key={p.id}
-              className="group relative flex flex-col bg-card border border-border/40 rounded-sm overflow-hidden transition-all duration-300 hover:shadow-[var(--shadow-card)]"
+              className="group relative flex flex-col bg-card border border-border/40 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-[var(--shadow-card)]"
             >
               <Link
                 to={`/product-detail`}

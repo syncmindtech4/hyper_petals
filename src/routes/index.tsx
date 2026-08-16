@@ -376,6 +376,15 @@ function Home() {
               blooms sourced from farms we trust.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
+<<<<<<< HEAD
+=======
+              {/* <Link
+                to="/occasions"
+                className="rounded-sm bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
+              >
+                Our Services
+              </Link> */}
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
               <a
                 href={waLink()}
                 target="_blank"

@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
+import socialLogo from "../assets/hyper petals & decor_logo_black.svg";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -85,8 +86,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Hyper Petals Decor — Premium Bouquets & Event Florals" },
       { name: "twitter:description", content: "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments." },
+<<<<<<< HEAD
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/P0VIV4ecdQNVEFRnizFIzbVrXX52/social-images/social-1783060227617-luxe_floral_logo.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/P0VIV4ecdQNVEFRnizFIzbVrXX52/social-images/social-1783060227617-luxe_floral_logo.webp" },
+=======
+      { property: "og:image", content: socialLogo },
+      { name: "twitter:image", content: socialLogo },
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -3,12 +3,13 @@ import { useState, useMemo, useEffect } from "react";
 import { Lock, ShoppingBag, ShieldCheck, CreditCard, Sparkles, CheckCircle2, ChevronRight, Loader2, ArrowLeft } from "lucide-react";
 import { useCart, CartItem } from "@/hooks/use-cart";
 import { formatUGX } from "@/lib/products";
+import { customizationSummary } from "@/lib/bouquet-customization";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import logo from "@/assets/luxe_floral_logo.svg";
+import logo from "@/assets/hyper petals & decor_logo_black.svg";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   Select,
@@ -39,6 +40,8 @@ const LOCATIONS = [
   { name: "Lubowa", fee: 20000 },
 ];
 
+const OTHER_LOCATION = "Other";
+
 function Checkout() {
   const { items, cartTotal, clearCart, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
@@ -53,6 +56,7 @@ function Checkout() {
   const [recipientName, setRecipientName] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
   const [deliveryLocation, setDeliveryLocation] = useState("Kampala Central");
+  const [customLocation, setCustomLocation] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [landmarkNotes, setLandmarkNotes] = useState("");
 
@@ -85,7 +89,13 @@ function Checkout() {
     // If there is an item in the cart, pre-populate delivery info from the first item
     if (items.length > 0) {
       const firstItem = items[0];
-      setDeliveryLocation(firstItem.deliveryLocation);
+      const isKnownLocation = LOCATIONS.some((l) => l.name === firstItem.deliveryLocation);
+      if (isKnownLocation) {
+        setDeliveryLocation(firstItem.deliveryLocation);
+      } else {
+        setDeliveryLocation(OTHER_LOCATION);
+        setCustomLocation(firstItem.deliveryLocation);
+      }
       setDeliveryDate(firstItem.deliveryDate);
       if (firstItem.isGift && firstItem.giftDetails) {
         setSendToSelf(false);
@@ -94,6 +104,9 @@ function Checkout() {
       }
     }
   }, [items]);
+
+  const effectiveDeliveryLocation =
+    deliveryLocation === OTHER_LOCATION ? customLocation.trim() : deliveryLocation;
 
   // Delivery fee
   const deliveryFee = useMemo(() => {
@@ -104,7 +117,11 @@ function Checkout() {
   // Promo code calculation
   const applyPromoCode = () => {
     const code = promoInput.toUpperCase().trim();
+<<<<<<< HEAD
     if (code === "WELCOME10" || code === "HYPERPETALS" || code === "LUXEFLORAL") {
+=======
+    if (code === "WELCOME10" || code === "HYPERPETALS") {
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
       setAppliedPromo(code);
       setDiscountAmount(cartTotal * 0.1);
       toast.success("Promo code applied! 10% discount subtracted.");
@@ -132,6 +149,10 @@ function Checkout() {
     }
     if (!sendToSelf && (!recipientName.trim() || !recipientPhone.trim())) {
       toast.error("Please fill in recipient details");
+      return;
+    }
+    if (deliveryLocation === OTHER_LOCATION && !customLocation.trim()) {
+      toast.error("Please type in your delivery location");
       return;
     }
     if (!deliveryDate) {
@@ -203,7 +224,7 @@ function Checkout() {
       <header className="border-b border-border/40 bg-background py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="Luxe Floral logo" className="h-10 md:h-12" style={{ width: 220 }} />
+            <img src={logo} alt="Hyper Petals & Decor logo" className="h-10 md:h-12" style={{ width: 220 }} />
           </Link>
           <div className="flex items-center gap-1.5 text-xs uppercase tracking-widest font-semibold text-primary">
             <Lock className="h-3.5 w-3.5" />
@@ -352,8 +373,19 @@ function Checkout() {
                           {loc.name} ({formatUGX(loc.fee)})
                         </SelectItem>
                       ))}
+                      <SelectItem value={OTHER_LOCATION} className="text-xs">
+                        Other (type in your location)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
+                  {deliveryLocation === OTHER_LOCATION && (
+                    <Input
+                      placeholder="Enter your delivery location"
+                      value={customLocation}
+                      onChange={(e) => setCustomLocation(e.target.value)}
+                      className="text-xs bg-background mt-2"
+                    />
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="del-date" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
@@ -509,6 +541,11 @@ function Checkout() {
                             Add-ons: {item.selectedAddOns.map(a => a.name).join(', ')}
                           </p>
                         )}
+                        {item.customizations && (
+                          <p className="text-[10px] text-muted-foreground truncate">
+                            {customizationSummary(item.customizations)}
+                          </p>
+                        )}
                       </div>
                     </div>
                   );
@@ -569,7 +606,7 @@ function Checkout() {
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>Delivery Fee ({deliveryLocation})</span>
+                  <span>Delivery Fee ({effectiveDeliveryLocation || "—"})</span>
                   <span className="font-medium text-foreground">{formatUGX(deliveryFee)}</span>
                 </div>
                 <hr className="border-border/40 my-1" />

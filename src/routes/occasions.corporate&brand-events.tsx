@@ -12,13 +12,13 @@ export const Route = createFileRoute("/occasions/corporate&brand-events")({
   component: () => <OccasionDetail cfg={cfg} />,
   head: () => ({
     meta: [
-      { title: "Corporate & Brand Events — Luxe Floral, Kampala" },
+      { title: "Corporate & Brand Events — Hyper Petals & Decor, Kampala" },
       {
         name: "description",
         content:
           "Birthday party styling in Kampala — themed balloon arches, backdrops, cake tables and full décor for kids' parties, sweet sixteens and milestone birthdays.",
       },
-      { property: "og:title", content: "Birthday Party Décor — Luxe Floral" },
+      { property: "og:title", content: "Birthday Party Décor — Hyper Petals & Decor" },
       { property: "og:description", content: "Themed birthday styling across Uganda." },
       { property: "og:image", content: hero },
       { name: "twitter:card", content: "summary_large_image" },

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import garden_rose from "@/assets/bouquet_garden_roses.jpeg";
 // import luxe from "@/assets/bouquet_006.jpeg";
 // import bridal from "@/assets/bouquet_bridal.jpeg";
@@ -129,6 +130,8 @@
 //     maximumFractionDigits: 0,
 //   }).format(n);
 
+=======
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
 export type Product = {
   id: string;
   name: string;

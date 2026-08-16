@@ -5,6 +5,7 @@ import logo from "@/assets/hyper petals & decor_logo_black.svg";
 import { site } from "@/lib/site";
 import { useCart } from "@/hooks/use-cart";
 import { formatUGX } from "@/lib/products";
+import { customizationSummary } from "@/lib/bouquet-customization";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const nav = [
@@ -131,6 +132,11 @@ export function SiteHeader() {
                               {item.selectedAddOns.length > 0 && (
                                 <p className="text-[11px] text-muted-foreground truncate mt-0.5">
                                   Add-ons: {item.selectedAddOns.map((a) => a.name).join(", ")}
+                                </p>
+                              )}
+                              {item.customizations && (
+                                <p className="text-[11px] text-muted-foreground mt-0.5">
+                                  {customizationSummary(item.customizations)}
                                 </p>
                               )}
                               {item.deliveryDate && (

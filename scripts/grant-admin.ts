@@ -17,7 +17,7 @@ async function main(): Promise<void> {
   if (!userId) {
     console.error("Usage: npm run db:grant-admin -- <clerk_user_id> [--email you@example.com]");
     console.error(
-      'Example: npm run db:grant-admin -- "user_2abC3dEfGhIjK" --email me@luxeflora.ug',
+      'Example: npm run db:grant-admin -- "user_2abC3dEfGhIjK" --email me@hyperpetalsdecor.ug',
     );
     console.error(
       "\nFind your Clerk user id in the Clerk dashboard (Users → click your account → the id starts with 'user_').",

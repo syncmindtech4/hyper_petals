@@ -75,7 +75,11 @@ function GalleryAdmin() {
         <div>
           <h2 className="font-serif text-2xl text-foreground">Media Gallery</h2>
           <p className="text-sm text-muted-foreground mt-1">
+<<<<<<< HEAD
             Upload and manage photos and video showcases for Luxe Floral.
+=======
+            Upload and manage photos and video showcases for Hyper Petals & Decor.
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
           </p>
         </div>
         <button
