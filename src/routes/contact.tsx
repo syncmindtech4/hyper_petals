@@ -150,13 +150,13 @@ function Contact() {
                   className="rounded-sm border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none"
                 >
                   <option value="bouquet">Bouquet Order</option>
-                  <option value="wedding">Birthday Parties</option>
-                  <option value="corporate">Bridal Showers</option>
-                  <option value="bespoke">Baby Showers</option>
-                  <option value="other">Marriage Proposals</option>
-                  <option value="other">Kwanjula & Traditional Events</option>
-                  <option value="other">Tea Party</option>
-                  <option value="other">Corporate & Brand Events</option>
+                  <option value="birthday">Birthday Parties</option>
+                  <option value="bridal_shower">Bridal Showers</option>
+                  <option value="baby_shower">Baby Showers</option>
+                  <option value="marriage_proposal">Marriage Proposals</option>
+                  <option value="kwanjula & kukyala">Kwanjula & Kukyala Events</option>
+                  <option value="tea_party">Tea Party</option>
+                  <option value="corporate & brand">Corporate & Brand Events</option>
                   <option value="other">Something else</option>
                 </select>
               </div>
