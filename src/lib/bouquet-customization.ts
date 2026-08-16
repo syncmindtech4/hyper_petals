@@ -100,7 +100,8 @@ const NON_BOUQUET_CATEGORY_KEYWORDS = [
   "hamper",
 ];
 
-export function isCustomizableBouquet(product: Pick<Product, "category">): boolean {
+export function isCustomizableBouquet(product?: Product | null): boolean {
+  if (!product) return false;
   const category = product.category.toLowerCase();
   return !NON_BOUQUET_CATEGORY_KEYWORDS.some((keyword) => category.includes(keyword));
 }

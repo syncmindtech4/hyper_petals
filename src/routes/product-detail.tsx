@@ -153,7 +153,16 @@ function ProductDetail() {
     return products.filter((p) => p.id !== product.id).slice(0, 3);
   }, [products, product]);
 
-  const requiresCustomization = isCustomizableBouquet(product);
+  // const requiresCustomization = isCustomizableBouquet(product);
+  // const customizationValid = !requiresCustomization || isCustomizationComplete(customization);
+  // const customizationMissing = requiresCustomization
+  //   ? missingCustomizationFields(customization)
+  //   : [];
+
+  // const effectiveDeliveryLocation =
+  //   deliveryLocation === OTHER_LOCATION ? customLocation.trim() : deliveryLocation;
+
+  const requiresCustomization = product ? isCustomizableBouquet(product) : false;
   const customizationValid = !requiresCustomization || isCustomizationComplete(customization);
   const customizationMissing = requiresCustomization
     ? missingCustomizationFields(customization)
