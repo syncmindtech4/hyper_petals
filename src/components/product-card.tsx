@@ -22,7 +22,7 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
         <a
-          href={waLink(`Hi Luxe Floral, I'd love to order the ${product.name}.`)}
+          href={waLink(`Hi Hyper Petals & Decor, I'd love to order the ${product.name}.`)}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 inline-flex w-max items-center gap-2 border-b border-primary pb-1 text-[11px] uppercase tracking-[0.22em] text-primary transition-opacity hover:opacity-70"

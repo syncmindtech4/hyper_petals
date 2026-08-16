@@ -115,8 +115,8 @@ export function SiteFooter() {
           <p className="text-xs tracking-[1.5px] text-[#E0E0E0] text-center">
             © 2026 {site.full}. All rights reserved.
           </p>
-          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] absolute italic font-semibold bottom-24 right-6 z-50 flex gap-1 transition-transform">
-            designed by
+          <p className="text-xs tracking-[1.5px] text-[#E0E0E0] absolute italic font-serif bottom-24 right-6 z-50 flex gap-1 transition-transform">
+            Designed by
             <a
               href="https://syncmindtech.com/"
               target="_blank"

@@ -97,8 +97,13 @@ const SEED_PRODUCTS: SeedProduct[] = [
     imageFile: "bouquet_garden_roses.jpeg",
   },
   {
+<<<<<<< HEAD
     slug: "luxe-pack",
     name: "Luxe Floral Pack",
+=======
+    slug: "statement-pack",
+    name: "Statement Floral Pack",
+>>>>>>> f6858ec5fd00cdef039523b985ba989a45a5a45e
     category_label: "Statement Arrangement",
     price_ugx: 62000,
     description:

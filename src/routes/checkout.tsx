@@ -1,15 +1,32 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
-import { Lock, ShoppingBag, ShieldCheck, CreditCard, Sparkles, CheckCircle2, ChevronRight, Loader2, ArrowLeft } from "lucide-react";
+import {
+  Lock,
+  ShoppingBag,
+  ShieldCheck,
+  CreditCard,
+  Sparkles,
+  CheckCircle2,
+  ChevronRight,
+  Loader2,
+  ArrowLeft,
+} from "lucide-react";
 import { useCart, CartItem } from "@/hooks/use-cart";
 import { formatUGX } from "@/lib/products";
+import { customizationSummary } from "@/lib/bouquet-customization";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import logo from "@/assets/luxe_floral_logo.svg";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import logo from "@/assets/hyper petals & decor_logo_black.svg";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -39,6 +56,8 @@ const LOCATIONS = [
   { name: "Lubowa", fee: 20000 },
 ];
 
+const OTHER_LOCATION = "Other";
+
 function Checkout() {
   const { items, cartTotal, clearCart, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
@@ -53,6 +72,7 @@ function Checkout() {
   const [recipientName, setRecipientName] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
   const [deliveryLocation, setDeliveryLocation] = useState("Kampala Central");
+  const [customLocation, setCustomLocation] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [landmarkNotes, setLandmarkNotes] = useState("");
 
@@ -70,7 +90,9 @@ function Checkout() {
   // Simulation states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<"momo-prompt" | "processing" | "success">("momo-prompt");
+  const [paymentStep, setPaymentStep] = useState<"momo-prompt" | "processing" | "success">(
+    "momo-prompt",
+  );
   const [simulatedPin, setSimulatedPin] = useState("");
 
   // Default delivery dates
@@ -85,7 +107,13 @@ function Checkout() {
     // If there is an item in the cart, pre-populate delivery info from the first item
     if (items.length > 0) {
       const firstItem = items[0];
-      setDeliveryLocation(firstItem.deliveryLocation);
+      const isKnownLocation = LOCATIONS.some((l) => l.name === firstItem.deliveryLocation);
+      if (isKnownLocation) {
+        setDeliveryLocation(firstItem.deliveryLocation);
+      } else {
+        setDeliveryLocation(OTHER_LOCATION);
+        setCustomLocation(firstItem.deliveryLocation);
+      }
       setDeliveryDate(firstItem.deliveryDate);
       if (firstItem.isGift && firstItem.giftDetails) {
         setSendToSelf(false);
@@ -94,6 +122,9 @@ function Checkout() {
       }
     }
   }, [items]);
+
+  const effectiveDeliveryLocation =
+    deliveryLocation === OTHER_LOCATION ? customLocation.trim() : deliveryLocation;
 
   // Delivery fee
   const deliveryFee = useMemo(() => {
@@ -104,7 +135,7 @@ function Checkout() {
   // Promo code calculation
   const applyPromoCode = () => {
     const code = promoInput.toUpperCase().trim();
-    if (code === "WELCOME10" || code === "HYPERPETALS" || code === "LUXEFLORAL") {
+    if (code === "WELCOME10" || code === "HYPERPETALS") {
       setAppliedPromo(code);
       setDiscountAmount(cartTotal * 0.1);
       toast.success("Promo code applied! 10% discount subtracted.");
@@ -134,6 +165,10 @@ function Checkout() {
       toast.error("Please fill in recipient details");
       return;
     }
+    if (deliveryLocation === OTHER_LOCATION && !customLocation.trim()) {
+      toast.error("Please type in your delivery location");
+      return;
+    }
     if (!deliveryDate) {
       toast.error("Please select a delivery date");
       return;
@@ -145,7 +180,7 @@ function Checkout() {
     }
 
     setIsSubmitting(true);
-    
+
     // Simulate API request delay
     setTimeout(() => {
       setIsSubmitting(false);
@@ -203,7 +238,12 @@ function Checkout() {
       <header className="border-b border-border/40 bg-background py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="Luxe Floral logo" className="h-10 md:h-12" style={{ width: 220 }} />
+            <img
+              src={logo}
+              alt="Hyper Petals & Decor logo"
+              className="h-10 md:h-12"
+              style={{ width: 220 }}
+            />
           </Link>
           <div className="flex items-center gap-1.5 text-xs uppercase tracking-widest font-semibold text-primary">
             <Lock className="h-3.5 w-3.5" />
@@ -214,7 +254,10 @@ function Checkout() {
 
       {/* Main Layout Grid */}
       <div className="mx-auto max-w-7xl px-6 py-10 md:py-16">
-        <Link to="/catalogue" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors mb-6 uppercase tracking-wider font-semibold">
+        <Link
+          to="/catalogue"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors mb-6 uppercase tracking-wider font-semibold"
+        >
           <ArrowLeft className="h-3 w-3" />
           Back to Catalogue
         </Link>
@@ -232,7 +275,10 @@ function Checkout() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="cust-name" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  <Label
+                    htmlFor="cust-name"
+                    className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                  >
                     Full Name <span className="text-primary">*</span>
                   </Label>
                   <Input
@@ -245,7 +291,10 @@ function Checkout() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="cust-phone" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  <Label
+                    htmlFor="cust-phone"
+                    className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                  >
                     Phone Number <span className="text-primary">*</span>
                   </Label>
                   <Input
@@ -259,7 +308,10 @@ function Checkout() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="cust-email" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                <Label
+                  htmlFor="cust-email"
+                  className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                >
                   Email Address (Optional)
                 </Label>
                 <Input
@@ -288,7 +340,9 @@ function Checkout() {
                   type="button"
                   onClick={() => setSendToSelf(true)}
                   className={`flex-1 text-center py-2 text-xs font-medium rounded-xs transition-colors ${
-                    sendToSelf ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                    sendToSelf
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Send to Myself
@@ -297,7 +351,9 @@ function Checkout() {
                   type="button"
                   onClick={() => setSendToSelf(false)}
                   className={`flex-1 text-center py-2 text-xs font-medium rounded-xs transition-colors ${
-                    !sendToSelf ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                    !sendToSelf
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Send as a Gift
@@ -308,7 +364,10 @@ function Checkout() {
               {!sendToSelf && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="rec-name" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <Label
+                      htmlFor="rec-name"
+                      className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                    >
                       Recipient's Full Name <span className="text-primary">*</span>
                     </Label>
                     <Input
@@ -321,7 +380,10 @@ function Checkout() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="rec-phone" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <Label
+                      htmlFor="rec-phone"
+                      className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                    >
                       Recipient's Phone <span className="text-primary">*</span>
                     </Label>
                     <Input
@@ -339,7 +401,10 @@ function Checkout() {
               {/* Date & Location Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="del-location" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  <Label
+                    htmlFor="del-location"
+                    className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                  >
                     Delivery Location (Kampala) <span className="text-primary">*</span>
                   </Label>
                   <Select value={deliveryLocation} onValueChange={setDeliveryLocation}>
@@ -352,11 +417,25 @@ function Checkout() {
                           {loc.name} ({formatUGX(loc.fee)})
                         </SelectItem>
                       ))}
+                      <SelectItem value={OTHER_LOCATION} className="text-xs">
+                        Other (type in your location)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
+                  {deliveryLocation === OTHER_LOCATION && (
+                    <Input
+                      placeholder="Enter your delivery location"
+                      value={customLocation}
+                      onChange={(e) => setCustomLocation(e.target.value)}
+                      className="text-xs bg-background mt-2"
+                    />
+                  )}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="del-date" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  <Label
+                    htmlFor="del-date"
+                    className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                  >
                     Delivery Date <span className="text-primary">*</span>
                   </Label>
                   <Input
@@ -372,7 +451,10 @@ function Checkout() {
 
               {/* Delivery landmark notes */}
               <div className="space-y-1.5">
-                <Label htmlFor="del-landmark" className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                <Label
+                  htmlFor="del-landmark"
+                  className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                >
                   Delivery Landmark / Instructions
                 </Label>
                 <Textarea
@@ -394,27 +476,41 @@ function Checkout() {
                 <h2 className="font-serif text-xl text-foreground font-medium">Payment Method</h2>
               </div>
 
-              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3.5">
+              <RadioGroup
+                value={paymentMethod}
+                onValueChange={setPaymentMethod}
+                className="space-y-3.5"
+              >
                 {/* MTN Momo */}
                 <div className="flex items-center justify-between border border-border/40 rounded-sm p-4 bg-background/50 hover:bg-accent/10 transition-colors">
                   <div className="flex items-center space-x-3.5">
                     <RadioGroupItem value="momo" id="pay-momo" />
-                    <Label htmlFor="pay-momo" className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none">
+                    <Label
+                      htmlFor="pay-momo"
+                      className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none"
+                    >
                       MTN Mobile Money
                     </Label>
                   </div>
-                  <span className="text-[9px] font-bold text-[#FFCC00] bg-black px-2 py-1 rounded-sm tracking-wider">MOMO</span>
+                  <span className="text-[9px] font-bold text-[#FFCC00] bg-black px-2 py-1 rounded-sm tracking-wider">
+                    MOMO
+                  </span>
                 </div>
 
                 {/* Airtel Money */}
                 <div className="flex items-center justify-between border border-border/40 rounded-sm p-4 bg-background/50 hover:bg-accent/10 transition-colors">
                   <div className="flex items-center space-x-3.5">
                     <RadioGroupItem value="airtel" id="pay-airtel" />
-                    <Label htmlFor="pay-airtel" className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none">
+                    <Label
+                      htmlFor="pay-airtel"
+                      className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none"
+                    >
                       Airtel Money
                     </Label>
                   </div>
-                  <span className="text-[9px] font-bold text-red-600 bg-white border border-red-500 px-2 py-0.5 rounded-sm tracking-wider">AIRTEL</span>
+                  <span className="text-[9px] font-bold text-red-600 bg-white border border-red-500 px-2 py-0.5 rounded-sm tracking-wider">
+                    AIRTEL
+                  </span>
                 </div>
 
                 {/* Card Payment */}
@@ -422,18 +518,26 @@ function Checkout() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3.5">
                       <RadioGroupItem value="visa" id="pay-visa" />
-                      <Label htmlFor="pay-visa" className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none flex items-center gap-1.5">
+                      <Label
+                        htmlFor="pay-visa"
+                        className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none flex items-center gap-1.5"
+                      >
                         <CreditCard className="h-4 w-4 text-muted-foreground" />
                         Visa / Mastercard
                       </Label>
                     </div>
-                    <span className="text-[9px] font-bold text-muted-foreground border border-border/80 px-2 py-0.5 rounded-sm tracking-wider">CARD</span>
+                    <span className="text-[9px] font-bold text-muted-foreground border border-border/80 px-2 py-0.5 rounded-sm tracking-wider">
+                      CARD
+                    </span>
                   </div>
 
                   {paymentMethod === "visa" && (
                     <div className="grid grid-cols-3 gap-3 pt-2">
                       <div className="col-span-3 space-y-1.5">
-                        <Label htmlFor="visa-num" className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                        <Label
+                          htmlFor="visa-num"
+                          className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
+                        >
                           Card Number
                         </Label>
                         <Input
@@ -446,7 +550,10 @@ function Checkout() {
                         />
                       </div>
                       <div className="space-y-1.5 col-span-2">
-                        <Label htmlFor="visa-expiry" className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                        <Label
+                          htmlFor="visa-expiry"
+                          className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
+                        >
                           Expiry Date
                         </Label>
                         <Input
@@ -459,7 +566,10 @@ function Checkout() {
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="visa-cvv" className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                        <Label
+                          htmlFor="visa-cvv"
+                          className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
+                        >
                           CVV
                         </Label>
                         <Input
@@ -485,20 +595,31 @@ function Checkout() {
             <div className="bg-card border border-border/40 rounded-sm p-6 space-y-5 shadow-xs">
               <h3 className="font-serif text-lg text-foreground font-medium pb-3 border-b border-border/40 flex items-center justify-between">
                 <span>Order Summary</span>
-                <span className="text-xs font-sans font-normal text-muted-foreground">({items.length} items)</span>
+                <span className="text-xs font-sans font-normal text-muted-foreground">
+                  ({items.length} items)
+                </span>
               </h3>
 
               {/* Items List */}
               <div className="max-h-60 overflow-y-auto pr-1 space-y-3.5 border-b border-border/40 pb-4">
                 {items.map((item) => {
-                  const addOnsTotal = item.selectedAddOns.reduce((sum, addOn) => sum + addOn.price, 0);
+                  const addOnsTotal = item.selectedAddOns.reduce(
+                    (sum, addOn) => sum + addOn.price,
+                    0,
+                  );
                   const itemCost = (item.sizePrice + addOnsTotal) * item.quantity;
                   return (
                     <div key={item.cartItemId} className="flex gap-3 text-xs">
-                      <img src={item.product.image} alt={item.product.name} className="h-14 w-12 rounded-sm object-cover bg-muted" />
+                      <img
+                        src={item.product.image}
+                        alt={item.product.name}
+                        className="h-14 w-12 rounded-sm object-cover bg-muted"
+                      />
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start">
-                          <h4 className="font-serif font-medium text-foreground truncate">{item.product.name}</h4>
+                          <h4 className="font-serif font-medium text-foreground truncate">
+                            {item.product.name}
+                          </h4>
                           <span className="font-semibold text-primary">{formatUGX(itemCost)}</span>
                         </div>
                         <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -506,7 +627,12 @@ function Checkout() {
                         </p>
                         {item.selectedAddOns.length > 0 && (
                           <p className="text-[10px] text-muted-foreground truncate">
-                            Add-ons: {item.selectedAddOns.map(a => a.name).join(', ')}
+                            Add-ons: {item.selectedAddOns.map((a) => a.name).join(", ")}
+                          </p>
+                        )}
+                        {item.customizations && (
+                          <p className="text-[10px] text-muted-foreground truncate">
+                            {customizationSummary(item.customizations)}
                           </p>
                         )}
                       </div>
@@ -517,7 +643,10 @@ function Checkout() {
 
               {/* Promo Code Input */}
               <div className="space-y-2">
-                <Label htmlFor="promo-input" className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                <Label
+                  htmlFor="promo-input"
+                  className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
+                >
                   Promo Code
                 </Label>
                 {appliedPromo ? (
@@ -569,7 +698,7 @@ function Checkout() {
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>Delivery Fee ({deliveryLocation})</span>
+                  <span>Delivery Fee ({effectiveDeliveryLocation || "—"})</span>
                   <span className="font-medium text-foreground">{formatUGX(deliveryFee)}</span>
                 </div>
                 <hr className="border-border/40 my-1" />
@@ -603,7 +732,8 @@ function Checkout() {
                 <span>128-bit Encrypted SSL Connection</span>
               </div>
               <p className="text-[10px] text-muted-foreground leading-relaxed px-4">
-                Mobile Money transactions are verified directly on your phone. Refunds & date adjustments are free of charge up to 24h prior to delivery.
+                Mobile Money transactions are verified directly on your phone. Refunds & date
+                adjustments are free of charge up to 24h prior to delivery.
               </p>
             </div>
           </div>
@@ -611,14 +741,17 @@ function Checkout() {
       </div>
 
       {/* Payment Simulation Modal Dialog */}
-      <Dialog open={showPaymentModal} onOpenChange={(open) => {
-        // Prevent manual dismiss during processing or successful payment
-        if (!isSubmitting && paymentStep === "success") {
-          handleCloseSuccess();
-        } else if (paymentStep !== "processing") {
-          setShowPaymentModal(open);
-        }
-      }}>
+      <Dialog
+        open={showPaymentModal}
+        onOpenChange={(open) => {
+          // Prevent manual dismiss during processing or successful payment
+          if (!isSubmitting && paymentStep === "success") {
+            handleCloseSuccess();
+          } else if (paymentStep !== "processing") {
+            setShowPaymentModal(open);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-md bg-background border-border/60 p-6 flex flex-col items-center text-center">
           {paymentStep === "momo-prompt" && (
             <>
@@ -627,13 +760,17 @@ function Checkout() {
                   Simulating Mobile Money Push
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground leading-relaxed text-center">
-                  In a production environment, an API push prompt is sent to {phone}. Enter your Pin below to simulate a successful payment.
+                  In a production environment, an API push prompt is sent to {phone}. Enter your Pin
+                  below to simulate a successful payment.
                 </DialogDescription>
               </DialogHeader>
 
               <form onSubmit={handleSimulateMomoSubmit} className="w-full space-y-4 pt-3">
                 <div className="space-y-2 text-left">
-                  <Label htmlFor="momo-pin" className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  <Label
+                    htmlFor="momo-pin"
+                    className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
+                  >
                     Enter Mobile Money PIN (Simulated)
                   </Label>
                   <Input
@@ -650,9 +787,13 @@ function Checkout() {
                 <div className="bg-[#FFCC00]/10 border border-[#FFCC00]/30 rounded-sm p-3 flex justify-between items-center">
                   <div className="text-left">
                     <p className="text-[11px] font-semibold text-foreground">Hyper Petals Decor</p>
-                    <p className="text-[10px] text-muted-foreground">Amount: {formatUGX(grandTotal)}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Amount: {formatUGX(grandTotal)}
+                    </p>
                   </div>
-                  <span className="text-[9px] font-bold text-black bg-[#FFCC00] px-2 py-0.5 rounded-sm">MoMo Secure</span>
+                  <span className="text-[9px] font-bold text-black bg-[#FFCC00] px-2 py-0.5 rounded-sm">
+                    MoMo Secure
+                  </span>
                 </div>
 
                 <button
@@ -669,9 +810,12 @@ function Checkout() {
             <div className="py-8 flex flex-col items-center space-y-4">
               <Loader2 className="h-12 w-12 text-primary animate-spin" />
               <div className="space-y-1">
-                <h3 className="font-serif text-lg text-foreground font-medium">Verifying Transaction</h3>
+                <h3 className="font-serif text-lg text-foreground font-medium">
+                  Verifying Transaction
+                </h3>
                 <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
-                  Securing communication channel, checking Mobile Money operator status, and processing ledger. Please hold...
+                  Securing communication channel, checking Mobile Money operator status, and
+                  processing ledger. Please hold...
                 </p>
               </div>
             </div>
@@ -681,9 +825,12 @@ function Checkout() {
             <div className="py-6 flex flex-col items-center space-y-5">
               <CheckCircle2 className="h-16 w-16 text-emerald-600 stroke-[1.5]" />
               <div className="space-y-1">
-                <h3 className="font-serif text-2xl text-foreground font-medium">Order Placed Successfully!</h3>
+                <h3 className="font-serif text-2xl text-foreground font-medium">
+                  Order Placed Successfully!
+                </h3>
                 <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
-                  Thank you for choosing Hyper Petals Decor! Your payment has been received, and our Kampalan florists are scheduling your delivery.
+                  Thank you for choosing Hyper Petals Decor! Your payment has been received, and our
+                  Kampalan florists are scheduling your delivery.
                 </p>
               </div>
 

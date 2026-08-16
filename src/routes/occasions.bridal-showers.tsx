@@ -12,13 +12,13 @@ export const Route = createFileRoute("/occasions/bridal-showers")({
   component: () => <OccasionDetail cfg={cfg} />,
   head: () => ({
     meta: [
-      { title: "Bridal Shower Décor & Styling — Luxe Floral, Kampala" },
+      { title: "Bridal Shower Décor & Styling — Hyper Petals & Decor, Kampala" },
       {
         name: "description",
         content:
           "Bridal shower styling in Uganda — blush, gold and ivory balloon arches, table setups and floral accents designed around the bride-to-be.",
       },
-      { property: "og:title", content: "Bridal Shower Styling — Luxe Floral" },
+      { property: "og:title", content: "Bridal Shower Styling — Hyper Petals & Decor" },
       { property: "og:description", content: "Blush, gold and ivory bridal shower décor." },
       { property: "og:image", content: hero },
       { name: "twitter:card", content: "summary_large_image" },
