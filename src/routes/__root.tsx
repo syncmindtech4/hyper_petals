@@ -13,7 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
-import socialLogo from "../assets/hyper petals & decor_logo_black.svg";
+import socialLogo from "../assets/og-image.png";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -102,8 +102,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Hyper Petals Decor crafts romantic, luxury bouquets and full-service event florals for weddings, celebrations, and everyday moments.",
       },
-      { property: "og:image", content: socialLogo },
-      { name: "twitter:image", content: socialLogo },
+      { property: "og:image", content: "https://hyper-petals.vercel.app/og-image.png" },
+      { name: "twitter:image", content: "https://hyper-petals.vercel.app/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
