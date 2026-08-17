@@ -9,65 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProductDetailRouteImport } from './routes/product-detail'
-import { Route as OccasionsRouteImport } from './routes/occasions'
-import { Route as GalleryRouteImport } from './routes/gallery'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as CatalogueRouteImport } from './routes/catalogue'
-import { Route as BouquetsRouteImport } from './routes/bouquets'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as OccasionsIndexRouteImport } from './routes/occasions.index'
-import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
-import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
-import { Route as OccasionsWeddingProposalsRouteImport } from './routes/occasions.wedding-proposals'
-import { Route as OccasionsTeaPartiesRouteImport } from './routes/occasions.tea-parties'
-import { Route as OccasionsKwanjulaRouteImport } from './routes/occasions.kwanjula'
-import { Route as OccasionsCorporateChar38brandEventsRouteImport } from './routes/occasions.corporate&brand-events'
-import { Route as OccasionsBridalShowersRouteImport } from './routes/occasions.bridal-showers'
-import { Route as OccasionsBirthdayPartiesRouteImport } from './routes/occasions.birthday-parties'
-import { Route as OccasionsBabyShowersRouteImport } from './routes/occasions.baby-showers'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BouquetsRouteImport } from './routes/bouquets'
+import { Route as CatalogueRouteImport } from './routes/catalogue'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as OccasionsRouteImport } from './routes/occasions'
+import { Route as ProductDetailRouteImport } from './routes/product-detail'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as OccasionsIndexRouteImport } from './routes/occasions.index'
+import { Route as OccasionsBabyShowersRouteImport } from './routes/occasions.baby-showers'
+import { Route as OccasionsBirthdayPartiesRouteImport } from './routes/occasions.birthday-parties'
+import { Route as OccasionsBridalShowersRouteImport } from './routes/occasions.bridal-showers'
+import { Route as OccasionsCorporateChar38brandEventsRouteImport } from './routes/occasions.corporate&brand-events'
+import { Route as OccasionsKwanjulaRouteImport } from './routes/occasions.kwanjula'
+import { Route as OccasionsTeaPartiesRouteImport } from './routes/occasions.tea-parties'
+import { Route as OccasionsWeddingProposalsRouteImport } from './routes/occasions.wedding-proposals'
+import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
+import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
-import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
 import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authenticated/admin.content'
+import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
+import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 
-const ProductDetailRoute = ProductDetailRouteImport.update({
-  id: '/product-detail',
-  path: '/product-detail',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OccasionsRoute = OccasionsRouteImport.update({
-  id: '/occasions',
-  path: '/occasions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CatalogueRoute = CatalogueRouteImport.update({
-  id: '/catalogue',
-  path: '/catalogue',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BouquetsRoute = BouquetsRouteImport.update({
-  id: '/bouquets',
-  path: '/bouquets',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -75,55 +49,54 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const BouquetsRoute = BouquetsRouteImport.update({
+  id: '/bouquets',
+  path: '/bouquets',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CatalogueRoute = CatalogueRouteImport.update({
+  id: '/catalogue',
+  path: '/catalogue',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OccasionsRoute = OccasionsRouteImport.update({
+  id: '/occasions',
+  path: '/occasions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductDetailRoute = ProductDetailRouteImport.update({
+  id: '/product-detail',
+  path: '/product-detail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const OccasionsIndexRoute = OccasionsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => OccasionsRoute,
 } as any)
-const SignUpSplatRoute = SignUpSplatRouteImport.update({
-  id: '/sign-up/$',
-  path: '/sign-up/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignInSplatRoute = SignInSplatRouteImport.update({
-  id: '/sign-in/$',
-  path: '/sign-in/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OccasionsWeddingProposalsRoute =
-  OccasionsWeddingProposalsRouteImport.update({
-    id: '/wedding-proposals',
-    path: '/wedding-proposals',
-    getParentRoute: () => OccasionsRoute,
-  } as any)
-const OccasionsTeaPartiesRoute = OccasionsTeaPartiesRouteImport.update({
-  id: '/tea-parties',
-  path: '/tea-parties',
-  getParentRoute: () => OccasionsRoute,
-} as any)
-const OccasionsKwanjulaRoute = OccasionsKwanjulaRouteImport.update({
-  id: '/kwanjula',
-  path: '/kwanjula',
-  getParentRoute: () => OccasionsRoute,
-} as any)
-const OccasionsCorporateChar38brandEventsRoute =
-  OccasionsCorporateChar38brandEventsRouteImport.update({
-    id: '/corporate&brand-events',
-    path: '/corporate&brand-events',
-    getParentRoute: () => OccasionsRoute,
-  } as any)
-const OccasionsBridalShowersRoute = OccasionsBridalShowersRouteImport.update({
-  id: '/bridal-showers',
-  path: '/bridal-showers',
+const OccasionsBabyShowersRoute = OccasionsBabyShowersRouteImport.update({
+  id: '/baby-showers',
+  path: '/baby-showers',
   getParentRoute: () => OccasionsRoute,
 } as any)
 const OccasionsBirthdayPartiesRoute =
@@ -132,25 +105,52 @@ const OccasionsBirthdayPartiesRoute =
     path: '/birthday-parties',
     getParentRoute: () => OccasionsRoute,
   } as any)
-const OccasionsBabyShowersRoute = OccasionsBabyShowersRouteImport.update({
-  id: '/baby-showers',
-  path: '/baby-showers',
+const OccasionsBridalShowersRoute = OccasionsBridalShowersRouteImport.update({
+  id: '/bridal-showers',
+  path: '/bridal-showers',
   getParentRoute: () => OccasionsRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const OccasionsCorporateChar38brandEventsRoute =
+  OccasionsCorporateChar38brandEventsRouteImport.update({
+    id: '/corporate&brand-events',
+    path: '/corporate&brand-events',
+    getParentRoute: () => OccasionsRoute,
+  } as any)
+const OccasionsKwanjulaRoute = OccasionsKwanjulaRouteImport.update({
+  id: '/kwanjula',
+  path: '/kwanjula',
+  getParentRoute: () => OccasionsRoute,
+} as any)
+const OccasionsTeaPartiesRoute = OccasionsTeaPartiesRouteImport.update({
+  id: '/tea-parties',
+  path: '/tea-parties',
+  getParentRoute: () => OccasionsRoute,
+} as any)
+const OccasionsWeddingProposalsRoute =
+  OccasionsWeddingProposalsRouteImport.update({
+    id: '/wedding-proposals',
+    path: '/wedding-proposals',
+    getParentRoute: () => OccasionsRoute,
+  } as any)
+const SignInSplatRoute = SignInSplatRouteImport.update({
+  id: '/sign-in/$',
+  path: '/sign-in/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignUpSplatRoute = SignUpSplatRouteImport.update({
+  id: '/sign-up/$',
+  path: '/sign-up/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminProductsRoute =
-  AuthenticatedAdminProductsRouteImport.update({
-    id: '/products',
-    path: '/products',
+const AuthenticatedAdminContentRoute =
+  AuthenticatedAdminContentRouteImport.update({
+    id: '/content',
+    path: '/content',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminGalleryRoute =
@@ -159,10 +159,10 @@ const AuthenticatedAdminGalleryRoute =
     path: '/gallery',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminContentRoute =
-  AuthenticatedAdminContentRouteImport.update({
-    id: '/content',
-    path: '/content',
+const AuthenticatedAdminProductsRoute =
+  AuthenticatedAdminProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
@@ -341,60 +341,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/product-detail': {
-      id: '/product-detail'
-      path: '/product-detail'
-      fullPath: '/product-detail'
-      preLoaderRoute: typeof ProductDetailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/occasions': {
-      id: '/occasions'
-      path: '/occasions'
-      fullPath: '/occasions'
-      preLoaderRoute: typeof OccasionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/catalogue': {
-      id: '/catalogue'
-      path: '/catalogue'
-      fullPath: '/catalogue'
-      preLoaderRoute: typeof CatalogueRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bouquets': {
-      id: '/bouquets'
-      path: '/bouquets'
-      fullPath: '/bouquets'
-      preLoaderRoute: typeof BouquetsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -404,74 +355,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/bouquets': {
+      id: '/bouquets'
+      path: '/bouquets'
+      fullPath: '/bouquets'
+      preLoaderRoute: typeof BouquetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalogue': {
+      id: '/catalogue'
+      path: '/catalogue'
+      fullPath: '/catalogue'
+      preLoaderRoute: typeof CatalogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/occasions': {
+      id: '/occasions'
+      path: '/occasions'
+      fullPath: '/occasions'
+      preLoaderRoute: typeof OccasionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product-detail': {
+      id: '/product-detail'
+      path: '/product-detail'
+      fullPath: '/product-detail'
+      preLoaderRoute: typeof ProductDetailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/occasions/': {
       id: '/occasions/'
       path: '/'
       fullPath: '/occasions/'
       preLoaderRoute: typeof OccasionsIndexRouteImport
-      parentRoute: typeof OccasionsRoute
-    }
-    '/sign-up/$': {
-      id: '/sign-up/$'
-      path: '/sign-up/$'
-      fullPath: '/sign-up/$'
-      preLoaderRoute: typeof SignUpSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-in/$': {
-      id: '/sign-in/$'
-      path: '/sign-in/$'
-      fullPath: '/sign-in/$'
-      preLoaderRoute: typeof SignInSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/occasions/wedding-proposals': {
-      id: '/occasions/wedding-proposals'
-      path: '/wedding-proposals'
-      fullPath: '/occasions/wedding-proposals'
-      preLoaderRoute: typeof OccasionsWeddingProposalsRouteImport
-      parentRoute: typeof OccasionsRoute
-    }
-    '/occasions/tea-parties': {
-      id: '/occasions/tea-parties'
-      path: '/tea-parties'
-      fullPath: '/occasions/tea-parties'
-      preLoaderRoute: typeof OccasionsTeaPartiesRouteImport
-      parentRoute: typeof OccasionsRoute
-    }
-    '/occasions/kwanjula': {
-      id: '/occasions/kwanjula'
-      path: '/kwanjula'
-      fullPath: '/occasions/kwanjula'
-      preLoaderRoute: typeof OccasionsKwanjulaRouteImport
-      parentRoute: typeof OccasionsRoute
-    }
-    '/occasions/corporate&brand-events': {
-      id: '/occasions/corporate&brand-events'
-      path: '/corporate&brand-events'
-      fullPath: '/occasions/corporate&brand-events'
-      preLoaderRoute: typeof OccasionsCorporateChar38brandEventsRouteImport
-      parentRoute: typeof OccasionsRoute
-    }
-    '/occasions/bridal-showers': {
-      id: '/occasions/bridal-showers'
-      path: '/bridal-showers'
-      fullPath: '/occasions/bridal-showers'
-      preLoaderRoute: typeof OccasionsBridalShowersRouteImport
-      parentRoute: typeof OccasionsRoute
-    }
-    '/occasions/birthday-parties': {
-      id: '/occasions/birthday-parties'
-      path: '/birthday-parties'
-      fullPath: '/occasions/birthday-parties'
-      preLoaderRoute: typeof OccasionsBirthdayPartiesRouteImport
       parentRoute: typeof OccasionsRoute
     }
     '/occasions/baby-showers': {
@@ -481,12 +432,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OccasionsBabyShowersRouteImport
       parentRoute: typeof OccasionsRoute
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/occasions/birthday-parties': {
+      id: '/occasions/birthday-parties'
+      path: '/birthday-parties'
+      fullPath: '/occasions/birthday-parties'
+      preLoaderRoute: typeof OccasionsBirthdayPartiesRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/bridal-showers': {
+      id: '/occasions/bridal-showers'
+      path: '/bridal-showers'
+      fullPath: '/occasions/bridal-showers'
+      preLoaderRoute: typeof OccasionsBridalShowersRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/corporate&brand-events': {
+      id: '/occasions/corporate&brand-events'
+      path: '/corporate&brand-events'
+      fullPath: '/occasions/corporate&brand-events'
+      preLoaderRoute: typeof OccasionsCorporateChar38brandEventsRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/kwanjula': {
+      id: '/occasions/kwanjula'
+      path: '/kwanjula'
+      fullPath: '/occasions/kwanjula'
+      preLoaderRoute: typeof OccasionsKwanjulaRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/tea-parties': {
+      id: '/occasions/tea-parties'
+      path: '/tea-parties'
+      fullPath: '/occasions/tea-parties'
+      preLoaderRoute: typeof OccasionsTeaPartiesRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/occasions/wedding-proposals': {
+      id: '/occasions/wedding-proposals'
+      path: '/wedding-proposals'
+      fullPath: '/occasions/wedding-proposals'
+      preLoaderRoute: typeof OccasionsWeddingProposalsRouteImport
+      parentRoute: typeof OccasionsRoute
+    }
+    '/sign-in/$': {
+      id: '/sign-in/$'
+      path: '/sign-in/$'
+      fullPath: '/sign-in/$'
+      preLoaderRoute: typeof SignInSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-up/$': {
+      id: '/sign-up/$'
+      path: '/sign-up/$'
+      fullPath: '/sign-up/$'
+      preLoaderRoute: typeof SignUpSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -495,11 +495,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/products': {
-      id: '/_authenticated/admin/products'
-      path: '/products'
-      fullPath: '/admin/products'
-      preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
+    '/_authenticated/admin/content': {
+      id: '/_authenticated/admin/content'
+      path: '/content'
+      fullPath: '/admin/content'
+      preLoaderRoute: typeof AuthenticatedAdminContentRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/gallery': {
@@ -509,11 +509,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/content': {
-      id: '/_authenticated/admin/content'
-      path: '/content'
-      fullPath: '/admin/content'
-      preLoaderRoute: typeof AuthenticatedAdminContentRouteImport
+    '/_authenticated/admin/products': {
+      id: '/_authenticated/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
   }
