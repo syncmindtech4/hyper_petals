@@ -1,1 +1,0 @@
-var e=`/assets/bouquet_015-BAoFMr_G.jpeg`,t=`/assets/decoration_000-CxF3cIi8.jpeg`;export{e as n,t};
