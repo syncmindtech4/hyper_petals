@@ -1,0 +1,1 @@
+import{i as e,t}from"./jsx-runtime-bzQ4Vb5N.js";import{n}from"./uiComponents-CUjzAEX2.js";var r=e(t());function i(){return(0,r.jsx)(`div`,{className:`flex min-h-screen items-center justify-center`,children:(0,r.jsx)(n,{})})}export{i as component};

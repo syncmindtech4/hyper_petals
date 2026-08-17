@@ -1,0 +1,1 @@
+var e=`/assets/bouquet_005-D39FayM0.jpeg`;export{e as t};

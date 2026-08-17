@@ -1,0 +1,1 @@
+var e=`/assets/hero-bouquet-zRiBO0qS.jpg`;export{e as t};

@@ -3,7 +3,6 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { nitro } from "nitro/vite";
 
 // Standalone Vite config — replaces @lovable.dev/vite-tanstack-config.
 //
@@ -13,8 +12,15 @@ import { nitro } from "nitro/vite";
 //   - tailwindcss(): Tailwind v4's Vite plugin
 //   - tsConfigPaths(): resolves the "@/*" -> "./src/*" alias from tsconfig.json
 //   - nitro(): production build/deploy target — explicitly pinned to the
-//     "vercel" preset rather than relying on auto-detection, since this
-//     project deploys to Vercel.
+//     "vercel" preset, and ONLY loaded during `vite build` (see below).
+//
+// IMPORTANT: nitro is only added to the plugins array when command === "build".
+// Lovable's original config does exactly this too (gate: `command === "build"`).
+// nitro's dev-mode multi-environment worker is beta-quality and known to be
+// unstable on Windows ("Vite environment 'nitro' is unavailable", worker
+// crashes on named pipes) — see https://github.com/nitrojs/nitro/issues/3917.
+// TanStack Start's own dev server doesn't need nitro at all; nitro's only
+// job here is packaging the production build for Vercel.
 //
 // Intentionally NOT included (Lovable-sandbox-only features, safe to drop
 // for a self-hosted/standalone setup):
@@ -26,13 +32,8 @@ import { nitro } from "nitro/vite";
 // If you ever go back to editing this project inside Lovable's UI, you'd
 // need to reinstall @lovable.dev/vite-tanstack-config and revert this file.
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      "@": new URL("./src", import.meta.url).pathname,
-    },
-  },
-  plugins: [
+export default defineConfig(async ({ command }) => {
+  const plugins = [
     tsConfigPaths(),
     tailwindcss(),
     tanstackStart({
@@ -42,8 +43,19 @@ export default defineConfig({
       server: { entry: "server" },
     }),
     viteReact(),
-    nitro({
-      preset: "vercel",
-    }),
-  ],
+  ];
+
+  if (command === "build") {
+    const { nitro } = await import("nitro/vite");
+    plugins.push(nitro({ preset: "vercel" }));
+  }
+
+  return {
+    resolve: {
+      alias: {
+        "@": new URL("./src", import.meta.url).pathname,
+      },
+    },
+    plugins,
+  };
 });
