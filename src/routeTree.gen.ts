@@ -32,6 +32,7 @@ import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authenticated/admin.content'
+import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authenticated/admin.enquiries'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 
@@ -153,6 +154,12 @@ const AuthenticatedAdminContentRoute =
     path: '/content',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEnquiriesRoute =
+  AuthenticatedAdminEnquiriesRouteImport.update({
+    id: '/enquiries',
+    path: '/enquiries',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminGalleryRoute =
   AuthenticatedAdminGalleryRouteImport.update({
     id: '/gallery',
@@ -188,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/sign-up/$': typeof SignUpSplatRoute
   '/occasions/': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
+  '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -212,6 +220,7 @@ export interface FileRoutesByTo {
   '/sign-up/$': typeof SignUpSplatRoute
   '/occasions': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
+  '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -240,6 +249,7 @@ export interface FileRoutesById {
   '/sign-up/$': typeof SignUpSplatRoute
   '/occasions/': typeof OccasionsIndexRoute
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
+  '/_authenticated/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/sign-up/$'
     | '/occasions/'
     | '/admin/content'
+    | '/admin/enquiries'
     | '/admin/gallery'
     | '/admin/products'
     | '/admin/'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/sign-up/$'
     | '/occasions'
     | '/admin/content'
+    | '/admin/enquiries'
     | '/admin/gallery'
     | '/admin/products'
     | '/admin'
@@ -319,6 +331,7 @@ export interface FileRouteTypes {
     | '/sign-up/$'
     | '/occasions/'
     | '/_authenticated/admin/content'
+    | '/_authenticated/admin/enquiries'
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/'
@@ -502,6 +515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminContentRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/enquiries': {
+      id: '/_authenticated/admin/enquiries'
+      path: '/enquiries'
+      fullPath: '/admin/enquiries'
+      preLoaderRoute: typeof AuthenticatedAdminEnquiriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/gallery': {
       id: '/_authenticated/admin/gallery'
       path: '/gallery'
@@ -521,6 +541,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminContentRoute: typeof AuthenticatedAdminContentRoute
+  AuthenticatedAdminEnquiriesRoute: typeof AuthenticatedAdminEnquiriesRoute
   AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
   AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -528,6 +549,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminContentRoute: AuthenticatedAdminContentRoute,
+  AuthenticatedAdminEnquiriesRoute: AuthenticatedAdminEnquiriesRoute,
   AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
   AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
