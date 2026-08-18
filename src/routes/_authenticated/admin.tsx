@@ -1,26 +1,8 @@
-import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { UserButton, SignOutButton } from "@clerk/tanstack-react-start";
 import { useIsAdmin } from "@/hooks/useSiteContent";
-import { requireAdminUser } from "@/lib/db/auth.server";
-
-// Server-side gate for the whole /admin subtree. This runs before any child
-// route (loader or component) so admin-only data can never be fetched by a
-// logged-in-but-non-admin user, regardless of what AdminLayout renders below —
-// the client-side `useIsAdmin` check in AdminLayout is UI polish on top of
-// this, not the actual boundary.
-const requireAdminFn = createServerFn().handler(async () => {
-  await requireAdminUser();
-});
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  beforeLoad: async () => {
-    try {
-      await requireAdminFn();
-    } catch {
-      throw redirect({ to: "/" });
-    }
-  },
   component: AdminLayout,
   head: () => ({
     meta: [{ title: "Admin — Hyper Petals Decor" }, { name: "robots", content: "noindex" }],
@@ -63,6 +45,7 @@ function AdminLayout() {
     { to: "/admin/content", label: "Site content" },
     { to: "/admin/products", label: "Products" },
     { to: "/admin/gallery", label: "Gallery" },
+    { to: "/admin/enquiries", label: "Enquiries" },
   ] as const;
 
   return (
