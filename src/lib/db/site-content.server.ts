@@ -1,7 +1,7 @@
 import { getSql } from "@/integrations/db/client.server";
-import type { HeroContent, ContactContent, ServicesContent } from "@/lib/content-defaults";
+import type { HeroContent, ContactContent } from "@/lib/content-defaults";
 
-type SiteContentRow = { value: HeroContent | ContactContent | ServicesContent };
+type SiteContentRow = { value: HeroContent | ContactContent };
 
 export async function fetchSiteContent<T>(key: string): Promise<T | null> {
   const sql = getSql();
