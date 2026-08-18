@@ -2,51 +2,74 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useHero, useContact, useServicesContent } from "@/hooks/useSiteContent";
+import { useHero, useContact } from "@/hooks/useSiteContent";
 import { saveSiteContent } from "@/lib/cms.functions";
-import type { HeroContent, ContactContent, ServicesContent, ServiceItem } from "@/lib/content-defaults";
+import type { HeroContent, ContactContent } from "@/lib/content-defaults";
 
 export const Route = createFileRoute("/_authenticated/admin/content")({
   component: ContentEditor,
 });
 
-type Tab = "hero" | "contact" | "services";
+type Tab = "hero" | "contact";
 
 function ContentEditor() {
   const [tab, setTab] = useState<Tab>("hero");
   return (
     <div>
       <div className="flex gap-2 border-b border-border/40">
-        {(["hero", "contact", "services"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
+        {(["hero", "contact"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
             className={`px-4 py-2 text-[11px] uppercase tracking-[0.22em] ${
-              tab === t ? "border-b-2 border-primary text-primary" : "text-muted-foreground hover:text-foreground"
-            }`}>{t}</button>
+              tab === t
+                ? "border-b-2 border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {t}
+          </button>
         ))}
       </div>
       <div className="mt-8">
         {tab === "hero" && <HeroEditor />}
         {tab === "contact" && <ContactEditor />}
-        {tab === "services" && <ServicesEditor />}
       </div>
     </div>
   );
 }
 
-async function saveKey(key: "hero" | "contact" | "services", value: unknown) {
+async function saveKey(key: "hero" | "contact", value: unknown) {
   await saveSiteContent({ data: { key, value } });
 }
 
-function Field({ label, value, onChange, textarea }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) {
+function Field({
+  label,
+  value,
+  onChange,
+  textarea,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  textarea?: boolean;
+}) {
   return (
     <label className="grid gap-2">
       <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{label}</span>
       {textarea ? (
-        <textarea rows={3} value={value} onChange={(e) => onChange(e.target.value)}
-          className="rounded-sm border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none" />
+        <textarea
+          rows={3}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="rounded-sm border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none"
+        />
       ) : (
-        <input value={value} onChange={(e) => onChange(e.target.value)}
-          className="rounded-sm border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none" />
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="rounded-sm border border-input bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none"
+        />
       )}
     </label>
   );
@@ -55,8 +78,11 @@ function Field({ label, value, onChange, textarea }: { label: string; value: str
 function SaveBar({ onSave, saving }: { onSave: () => void; saving: boolean }) {
   return (
     <div className="mt-8">
-      <button onClick={onSave} disabled={saving}
-        className="rounded-sm bg-primary px-8 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90 disabled:opacity-60">
+      <button
+        onClick={onSave}
+        disabled={saving}
+        className="rounded-sm bg-primary px-8 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+      >
         {saving ? "Saving…" : "Save changes"}
       </button>
     </div>
@@ -68,13 +94,21 @@ function HeroEditor() {
   const qc = useQueryClient();
   const [form, setForm] = useState<HeroContent>(data);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => {
+    if (data) setForm(data);
+  }, [data]);
 
   async function save() {
     setSaving(true);
-    try { await saveKey("hero", form); toast.success("Homepage hero updated"); qc.invalidateQueries({ queryKey: ["site_content", "hero"] }); }
-    catch (e: any) { toast.error(e?.message ?? "Save failed"); }
-    finally { setSaving(false); }
+    try {
+      await saveKey("hero", form);
+      toast.success("Homepage hero updated");
+      qc.invalidateQueries({ queryKey: ["site_content", "hero"] });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Save failed");
+    } finally {
+      setSaving(false);
+    }
   }
   const upd = (k: keyof HeroContent) => (v: string) => setForm({ ...form, [k]: v });
 
@@ -105,7 +139,9 @@ function ContactEditor() {
   const qc = useQueryClient();
   const [form, setForm] = useState<ContactContent>(data);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => {
+    if (data) setForm(data);
+  }, [data]);
 
   async function save() {
     setSaving(true);
@@ -113,8 +149,11 @@ function ContactEditor() {
       await saveKey("contact", form);
       toast.success("Contact info updated");
       qc.invalidateQueries({ queryKey: ["site_content", "contact"] });
-    } catch (e: any) { toast.error(e?.message ?? "Save failed"); }
-    finally { setSaving(false); }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Save failed");
+    } finally {
+      setSaving(false);
+    }
   }
   const upd = (k: keyof ContactContent) => (v: string) => setForm({ ...form, [k]: v });
 
@@ -129,50 +168,6 @@ function ContactEditor() {
         <Field label="Hours" value={form.hours} onChange={upd("hours")} />
       </div>
       <Field label="Instagram URL" value={form.instagram} onChange={upd("instagram")} />
-      <SaveBar onSave={save} saving={saving} />
-    </div>
-  );
-}
-
-function ServicesEditor() {
-  const { data } = useServicesContent();
-  const qc = useQueryClient();
-  const [form, setForm] = useState<ServicesContent>(data);
-  const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setForm(data); }, [data]);
-
-  async function save() {
-    setSaving(true);
-    try { await saveKey("services", form); toast.success("Services updated"); qc.invalidateQueries({ queryKey: ["site_content", "services"] }); }
-    catch (e: any) { toast.error(e?.message ?? "Save failed"); }
-    finally { setSaving(false); }
-  }
-
-  function updItem(i: number, patch: Partial<ServiceItem>) {
-    const items = form.items.slice();
-    items[i] = { ...items[i], ...patch };
-    setForm({ ...form, items });
-  }
-
-  return (
-    <div className="grid gap-8 max-w-3xl">
-      <Field label="Page heading" value={form.heading} onChange={(v) => setForm({ ...form, heading: v })} />
-      <Field label="Page subtitle" value={form.subtitle} onChange={(v) => setForm({ ...form, subtitle: v })} textarea />
-
-      {form.items.map((item, i) => (
-        <div key={i} className="rounded-sm border border-border/60 bg-card p-6">
-          <p className="eyebrow">Service {i + 1}</p>
-          <div className="mt-4 grid gap-4">
-            <Field label="Title" value={item.title} onChange={(v) => updItem(i, { title: v })} />
-            <Field label="Price" value={item.price} onChange={(v) => updItem(i, { price: v })} />
-            <Field label="Body" value={item.body} onChange={(v) => updItem(i, { body: v })} textarea />
-            <Field label="Includes (one per line)"
-              value={item.includes.join("\n")}
-              onChange={(v) => updItem(i, { includes: v.split("\n").map((s) => s.trim()).filter(Boolean) })}
-              textarea />
-          </div>
-        </div>
-      ))}
       <SaveBar onSave={save} saving={saving} />
     </div>
   );

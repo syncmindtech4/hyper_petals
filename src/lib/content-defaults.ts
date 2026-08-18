@@ -23,19 +23,6 @@ export type ContactContent = {
   instagram: string;
 };
 
-export type ServiceItem = {
-  title: string;
-  price: string;
-  body: string;
-  includes: string[];
-};
-
-export type ServicesContent = {
-  heading: string;
-  subtitle: string;
-  items: ServiceItem[];
-};
-
 export const defaultHero: HeroContent = {
   eyebrow: "Kampala · Entebbe · Wakiso · Nationwide Delivery",
   titleLead: "Flowers and celebrations, ",
@@ -53,52 +40,9 @@ export const defaultHero: HeroContent = {
 export const defaultContact: ContactContent = {
   phone: "+256790449711",
   phoneHref: "tel:++256790449711",
-  whatsapp: "+971522901168",
-  email: "syncmindtech4@gmail.com",
+  whatsapp: "+256790449711",
+  email: "hyperpetals.decor@gmail.com",
   address: "Kampala, Uganda",
   hours: "Tue – Sat · 10am – 6pm",
   instagram: "https://instagram.com",
-};
-// whatsapp: "+256790449711",
-//email: "hyperpetals.decor@gmail.com",
-
-export const defaultServices: ServicesContent = {
-  heading: "Florals for birthdays, showers & proposals.",
-  subtitle:
-    "From surprise proposals to milestone celebrations, we design and install floral moments that feel like an extension of you.",
-  items: [
-    {
-      title: "Birthday Parties",
-      price: "From UGX 450,000",
-      body: "From sweet sixteen surprises to milestone celebrations — bold backdrops, table florals, and cake table styling that set the tone for an unforgettable party.",
-      includes: [
-        "Theme & palette design",
-        "Backdrop & balloon florals",
-        "Table centerpieces",
-        "Cake table styling",
-      ],
-    },
-    {
-      title: "Baby Showers",
-      price: "From UGX 380,000",
-      body: "Soft, dreamy installations in pastel or gender-neutral palettes. Thoughtful details that make the mum-to-be feel truly celebrated.",
-      includes: [
-        "Mood board & concept",
-        "Welcome arch or backdrop",
-        "Guest table florals",
-        "Gift & dessert table styling",
-      ],
-    },
-    {
-      title: "Wedding Proposals",
-      price: "From UGX 280,000",
-      body: "Intimate, romantic settings designed to make the moment unforgettable. From private dinners to surprise garden setups — one question, one yes.",
-      includes: [
-        "Venue scouting advice",
-        "Romantic floral setup",
-        "Candle & prop styling",
-        "On-site installation",
-      ],
-    },
-  ],
 };
