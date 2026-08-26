@@ -105,7 +105,7 @@ function Home() {
           <path
             d="M0 20 Q 40 0, 80 20 T 160 20 T 240 20 T 320 20 T 400 20 T 480 20 T 560 20 T 640 20"
             stroke="#1F3D2B"
-            stroke-width="1.3"
+            strokeWidth="1.3"
             fill="none"
           />
           <g fill="#C6992F">

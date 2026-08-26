@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Lock,
   ShoppingBag,
@@ -14,6 +14,7 @@ import {
 import { useCart, CartItem } from "@/hooks/use-cart";
 import { formatUGX } from "@/lib/products";
 import { customizationSummary } from "@/lib/bouquet-customization";
+import { submitOrder } from "@/lib/cms.functions";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -94,6 +95,7 @@ function Checkout() {
     "momo-prompt",
   );
   const [simulatedPin, setSimulatedPin] = useState("");
+  const ordersSavedRef = useRef(false);
 
   // Default delivery dates
   useEffect(() => {
@@ -125,6 +127,51 @@ function Checkout() {
 
   const effectiveDeliveryLocation =
     deliveryLocation === OTHER_LOCATION ? customLocation.trim() : deliveryLocation;
+
+  // Persist each cart item as an order the moment checkout reaches
+  // "success" — this is the actual order-confirmation point for the whole
+  // cart flow. Runs once per checkout (ref guard survives Strict Mode's
+  // double-invoke and re-renders while the success modal stays open).
+  useEffect(() => {
+    if (paymentStep !== "success" || ordersSavedRef.current || items.length === 0) return;
+    ordersSavedRef.current = true;
+
+    (async () => {
+      const results = await Promise.allSettled(
+        items.map((item) => {
+          const addOnsTotal = item.selectedAddOns.reduce((sum, a) => sum + a.price, 0);
+          const itemTotal = (item.sizePrice + addOnsTotal) * item.quantity;
+          return submitOrder({
+            data: {
+              productSlug: item.product.id,
+              productName: item.product.name,
+              size: item.selectedSize,
+              sizePriceUgx: item.sizePrice,
+              quantity: item.quantity,
+              addOns: item.selectedAddOns.map((a) => ({ name: a.name, price: a.price })),
+              customization: item.customizations ?? undefined,
+              isGift: item.isGift,
+              recipientName: item.isGift ? item.giftDetails?.recipientName : undefined,
+              recipientPhone: item.isGift ? item.giftDetails?.recipientPhone : undefined,
+              giftMessage: item.giftMessage,
+              deliveryLocation: effectiveDeliveryLocation || item.deliveryLocation,
+              deliveryDate: deliveryDate || item.deliveryDate,
+              totalPriceUgx: itemTotal,
+            },
+          });
+        }),
+      );
+      const failed = results.filter((r) => r.status === "rejected");
+      if (failed.length > 0) {
+        console.error("Some order(s) failed to save:", failed);
+        toast.error(
+          failed.length === items.length
+            ? "Payment succeeded, but orders couldn't be saved to the dashboard."
+            : `Payment succeeded, but ${failed.length} item(s) couldn't be saved to the dashboard.`,
+        );
+      }
+    })();
+  }, [paymentStep, items, effectiveDeliveryLocation, deliveryDate]);
 
   // Delivery fee
   const deliveryFee = useMemo(() => {

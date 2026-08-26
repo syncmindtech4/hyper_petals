@@ -27,6 +27,15 @@ import {
   type ProductInput,
 } from "@/lib/db/products.server";
 import { createEnquiry, listEnquiriesAdmin, updateEnquiryStatus } from "@/lib/db/enquiries.server";
+import {
+  createOrder,
+  listOrdersAdmin,
+  updateOrderStatus,
+  getOrderById,
+  markOrderWhatsAppSent as markOrderWhatsAppSentDb,
+} from "@/lib/db/orders.server";
+import { getProductIdBySlug } from "@/lib/db/products.server";
+import { FLOWER_TYPES, STYLES, OCCASIONS, ARRANGEMENT_STYLES } from "@/lib/bouquet-customization";
 import { validateMediaFile } from "@/lib/media";
 
 export type { GalleryItem };
@@ -172,6 +181,90 @@ export const adminUpdateEnquiryStatus = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireAdminUser();
     await updateEnquiryStatus(data.id, data.status);
+    return { ok: true };
+  });
+
+// ── Public: orders (confirmed via product-detail "Order via WhatsApp") ─────────
+
+const orderAddOnSchema = z.object({
+  name: z.string().trim().min(1).max(200),
+  price: z.number().min(0),
+});
+
+const customizationSchema = z.object({
+  flowerType: z.enum(FLOWER_TYPES).nullable(),
+  style: z.enum(STYLES).nullable(),
+  colors: z.array(z.string()),
+  occasion: z.enum(OCCASIONS).nullable(),
+  arrangementStyle: z.enum(ARRANGEMENT_STYLES).nullable(),
+});
+
+const orderSchema = z.object({
+  // The frontend's Product.id is actually the slug (see toPublicProduct in
+  // products.server.ts) — resolved to the real products.id UUID below,
+  // server-side, before it's used as a foreign key.
+  productSlug: z.string().trim().min(1).max(300).optional(),
+  productName: z.string().trim().min(1).max(300),
+  size: z.string().trim().min(1).max(100),
+  sizePriceUgx: z.number().min(0),
+  quantity: z.number().int().min(1).max(50),
+  addOns: z.array(orderAddOnSchema).default([]),
+  customization: customizationSchema.nullish(),
+  isGift: z.boolean().default(false),
+  recipientName: z.string().trim().max(200).optional(),
+  recipientPhone: z.string().trim().max(50).optional(),
+  giftMessage: z.string().trim().max(1000).optional(),
+  deliveryLocation: z.string().trim().min(1).max(300),
+  deliveryDate: z.string().trim().min(1).max(100),
+  totalPriceUgx: z.number().min(0),
+});
+
+export const submitOrder = createServerFn({ method: "POST" })
+  .validator(orderSchema)
+  .handler(async ({ data }) => {
+    const { productSlug, ...rest } = data;
+    // Best-effort lookup — if the slug doesn't resolve (e.g. product was
+    // since deleted), the order still saves with productId: null; product
+    // name/price/etc are already captured directly on the row regardless.
+    const productId = productSlug ? await getProductIdBySlug(productSlug) : undefined;
+    const order = await createOrder({ ...rest, productId: productId ?? undefined });
+    return { id: order.id };
+  });
+
+// Public: fetch one order for the post-checkout success page. `id` is a
+// UUID acting as a capability token — see getOrderById for the trust model.
+const orderIdSchema = z.object({ id: z.string().uuid() });
+
+export const getOrder = createServerFn({ method: "GET" })
+  .validator(orderIdSchema)
+  .handler(async ({ data }) => {
+    return getOrderById(data.id);
+  });
+
+export const markOrderWhatsAppSent = createServerFn({ method: "POST" })
+  .validator(orderIdSchema)
+  .handler(async ({ data }) => {
+    await markOrderWhatsAppSentDb(data.id);
+    return { ok: true };
+  });
+
+// ── Admin: orders ────────────────────────────────────────────────────────────
+
+export const adminListOrders = createServerFn({ method: "GET" }).handler(async () => {
+  await requireAdminUser();
+  return listOrdersAdmin();
+});
+
+const orderStatusSchema = z.object({
+  id: z.string().uuid(),
+  status: z.enum(["new", "confirmed", "fulfilled", "cancelled"]),
+});
+
+export const adminUpdateOrderStatus = createServerFn({ method: "POST" })
+  .validator(orderStatusSchema)
+  .handler(async ({ data }) => {
+    await requireAdminUser();
+    await updateOrderStatus(data.id, data.status);
     return { ok: true };
   });
 

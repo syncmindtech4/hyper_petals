@@ -44,6 +44,12 @@ function toPublicProduct(row: ProductRow): PublicProduct {
   };
 }
 
+export async function getProductIdBySlug(slug: string): Promise<string | null> {
+  const sql = getSql();
+  const rows = await sql`SELECT id FROM products WHERE slug = ${slug} LIMIT 1`;
+  return rows[0] ? (rows[0] as { id: string }).id : null;
+}
+
 export async function listActiveProducts(): Promise<PublicProduct[]> {
   const sql = getSql();
   const rows = await sql`
@@ -121,7 +127,8 @@ export async function updateProduct(id: string, patch: ProductUpdate): Promise<P
   const merged = {
     slug: patch.slug !== undefined ? patch.slug : existing.slug,
     name: patch.name !== undefined ? patch.name : existing.name,
-    category_label: patch.category_label !== undefined ? patch.category_label : existing.category_label,
+    category_label:
+      patch.category_label !== undefined ? patch.category_label : existing.category_label,
     price_ugx: patch.price_ugx !== undefined ? patch.price_ugx : existing.price_ugx,
     description: patch.description !== undefined ? patch.description : existing.description,
     best_for: patch.best_for !== undefined ? patch.best_for : existing.best_for,

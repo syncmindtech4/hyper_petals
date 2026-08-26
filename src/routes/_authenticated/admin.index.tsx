@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { adminGalleryCount } from "@/lib/cms.functions";
 import { useAdminProducts } from "@/hooks/useProducts";
 import { useAdminEnquiries } from "@/hooks/useEnquiries";
+import { useAdminOrders } from "@/hooks/useOrders";
+import { formatUGX } from "@/lib/products";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Overview,
@@ -20,6 +22,13 @@ function Overview() {
   const { data: enquiries } = useAdminEnquiries();
   const enquiryCount = enquiries?.length ?? 0;
   const newEnquiryCount = enquiries?.filter((e) => e.status === "new").length ?? 0;
+
+  const { data: orders } = useAdminOrders();
+  const orderCount = orders?.length ?? 0;
+  const newOrderCount = orders?.filter((o) => o.status === "new").length ?? 0;
+  const orderRevenue = orders
+    ?.filter((o) => o.status !== "cancelled")
+    .reduce((sum, o) => sum + o.total_price_ugx, 0) ?? 0;
 
   const cards = [
     {
@@ -41,6 +50,12 @@ function Overview() {
       cta: "Manage gallery",
     },
     {
+      title: "Orders",
+      body: `${orderCount} order${orderCount === 1 ? "" : "s"}${newOrderCount > 0 ? ` — ${newOrderCount} new` : ""}. ${formatUGX(orderRevenue)} total.`,
+      to: "/admin/orders",
+      cta: "View orders",
+    },
+    {
       title: "Enquiries",
       body: `${enquiryCount} total${newEnquiryCount > 0 ? ` — ${newEnquiryCount} new` : ""}. Messages from the contact form.`,
       to: "/admin/enquiries",
@@ -49,7 +64,7 @@ function Overview() {
   ] as const;
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {cards.map((c) => (
         <Link
           key={c.to}
