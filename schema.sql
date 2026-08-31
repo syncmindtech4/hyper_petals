@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS site_content (
   updated_by TEXT
 );
 
--- Gallery media metadata. Files themselves live in object storage
--- (S3/R2/Supabase Storage/etc.) — public_url is the CDN-facing URL.
+-- Gallery media metadata. Files themselves live in Vercel Blob —
+-- public_url is the CDN-facing URL blob.put() returns.
 CREATE TABLE IF NOT EXISTS gallery_items (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   kind         gallery_kind NOT NULL,
@@ -82,11 +82,25 @@ CREATE TABLE IF NOT EXISTS gallery_items (
   title        TEXT,
   alt_text     TEXT,
   caption      TEXT,
+  -- One of OCCASION_SLUGS in src/lib/occasions.ts (e.g. "kwanjula",
+  -- "wedding-proposals"), or NULL for general/unsorted gallery items not
+  -- tied to a specific occasion page. Kept as free TEXT rather than a DB
+  -- enum so adding a new occasion is a code change, not a migration.
+  occasion     TEXT,
   sort_order   INT NOT NULL DEFAULT 0,
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_by   TEXT
 );
+
+-- Additive column for pre-existing installations — safe to run repeatedly.
+-- Must run before the index below for the same reason noted in the orders
+-- table further down this file: on an existing install, CREATE TABLE IF
+-- NOT EXISTS above is a no-op, so an index on occasion would fail if it
+-- ran before this ALTER added the column.
+ALTER TABLE gallery_items ADD COLUMN IF NOT EXISTS occasion TEXT;
+
 CREATE INDEX IF NOT EXISTS gallery_items_sort_idx ON gallery_items (sort_order, created_at DESC);
+CREATE INDEX IF NOT EXISTS gallery_items_occasion_idx ON gallery_items (occasion);
 
 
 -- =====================================================================
@@ -163,10 +177,10 @@ CREATE TABLE IF NOT EXISTS promo_codes (
 -- install and section 10's became a silent no-op, leaving the live table
 -- without product_id. Removed to avoid that ever happening again.
 --
--- delivery_locations and promo_codes above are also currently unused by
--- the app (checkout.tsx uses a hardcoded LOCATIONS array and a hardcoded
--- WELCOME10 promo code) — left in place in case checkout is wired up to
--- read from them later, but not referenced by any live code today.
+-- delivery_locations and promo_codes above are read live by checkout.tsx
+-- (via getDeliveryLocations / validatePromoCode in cms.functions.ts) as of
+-- the checkout rewrite that replaced the old hardcoded LOCATIONS array and
+-- hardcoded WELCOME10 check.
 
 -- ---------------------------------------------------------------------
 -- 5b. Fix pre-existing installations
@@ -357,6 +371,13 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS orders (
   id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- Groups line items submitted together from one checkout (cart with
+  -- multiple products = multiple rows sharing one group_id). Defaults to a
+  -- fresh UUID so single-item orders (e.g. product-detail's "Order via
+  -- WhatsApp") are naturally a group of one without special-casing.
+  group_id           UUID NOT NULL DEFAULT gen_random_uuid(),
+
   product_id         UUID REFERENCES products(id) ON DELETE SET NULL,
   product_name       TEXT NOT NULL,
   size               TEXT NOT NULL,
@@ -370,17 +391,55 @@ CREATE TABLE IF NOT EXISTS orders (
   gift_message       TEXT,
   delivery_location  TEXT NOT NULL,
   delivery_date      TEXT NOT NULL,
+  delivery_fee_ugx   INTEGER NOT NULL DEFAULT 0,
+
+  -- Promo code applied at checkout, if any — snapshotted so historical
+  -- orders stay accurate even if the code is later edited/deleted.
+  promo_code         TEXT,
+  discount_ugx       INTEGER NOT NULL DEFAULT 0,
+
   total_price_ugx    INTEGER NOT NULL,
+
+  -- Payment: method is captured today so it's ready the moment a gateway
+  -- is wired in (see src/lib/payments/). Until then, payment_status stays
+  -- 'pending' for every order and confirmation happens over WhatsApp.
+  payment_method     payment_method,
+  payment_status     payment_status NOT NULL DEFAULT 'pending',
+
   status             TEXT NOT NULL DEFAULT 'new',  -- 'new' | 'confirmed' | 'fulfilled' | 'cancelled'
   whatsapp_sent      BOOLEAN NOT NULL DEFAULT false,
   created_at         TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Additive columns for pre-existing installations — each is safe to run
+-- repeatedly and safe against an already-populated table (existing rows
+-- get the stated default, which is the correct assumption for orders that
+-- predate these columns). Must run BEFORE the indexes below: on an
+-- existing install, CREATE TABLE IF NOT EXISTS above is a no-op, so an
+-- index on a column that doesn't exist yet would fail if it ran first.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS whatsapp_sent BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS group_id UUID NOT NULL DEFAULT gen_random_uuid();
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_fee_ugx INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS promo_code TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_ugx INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method payment_method;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status payment_status NOT NULL DEFAULT 'pending';
+
 CREATE INDEX IF NOT EXISTS orders_created_at_idx ON orders (created_at DESC);
 CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status);
+CREATE INDEX IF NOT EXISTS orders_group_id_idx ON orders (group_id);
 
--- If this table already existed before whatsapp_sent was added, this adds
--- it without touching existing rows (they default to false, i.e. "not yet
--- confirmed on WhatsApp" — the safe assumption for pre-existing orders).
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS whatsapp_sent BOOLEAN NOT NULL DEFAULT false;
+COMMIT;
+
+-- =====================================================================
+-- 11. Promo codes seed (mirrors the two codes previously hardcoded in
+--     src/routes/checkout.tsx: WELCOME10 and HYPERPETALS, both 10% off)
+-- =====================================================================
+BEGIN;
+
+INSERT INTO promo_codes (code, discount_type, discount_value, is_active) VALUES
+('WELCOME10', 'percent', 10, true),
+('HYPERPETALS', 'percent', 10, true)
+ON CONFLICT (code) DO NOTHING;
 
 COMMIT;

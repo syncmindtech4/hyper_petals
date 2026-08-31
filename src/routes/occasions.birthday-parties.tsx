@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { OccasionDetail } from "@/components/occasion-detail";
+import { getGalleryByOccasion } from "@/lib/cms.functions";
 import hero from "@/assets/birthday_party.jpg";
 import g1 from "@/assets/decoration_001.jpeg";
 import g2 from "@/assets/decoration_002.jpeg";
@@ -9,7 +11,7 @@ import g5 from "@/assets/bouquet_005.jpeg";
 import g6 from "@/assets/bouquet_010.jpeg";
 
 export const Route = createFileRoute("/occasions/birthday-parties")({
-  component: () => <OccasionDetail cfg={cfg} />,
+  component: BirthdayPartiesPage,
   head: () => ({
     meta: [
       { title: "Birthday Party Décor & Balloons — Hyper Petals & Decor, Kampala" },
@@ -64,3 +66,21 @@ const cfg = {
     cite: "— Daniel O., Birthday client, Naguru",
   },
 };
+
+function BirthdayPartiesPage() {
+  const { data: dbItems = [] } = useQuery({
+    queryKey: ["occasion_gallery", "birthday-parties"],
+    queryFn: () => getGalleryByOccasion({ data: { occasion: "birthday-parties" } }),
+  });
+
+  const gallery = [
+    ...cfg.gallery.map((src) => ({ src })),
+    ...dbItems.map((item) => ({
+      src: item.public_url,
+      alt: item.alt_text ?? item.title ?? "",
+      video: item.kind === "video",
+    })),
+  ];
+
+  return <OccasionDetail cfg={{ ...cfg, gallery }} />;
+}

@@ -6,7 +6,7 @@ export const site = {
   phoneHref: "tel:+256790449711",
   whatsapp: "+971522901168",
   whatsappMsg: "Hi Hyper Petals & Decor, I'd love to place an order.",
-  email: "syncmindtech4@gmail.com",
+  email: "hyperpetals.decor@gmail.com",
   address: "Kampala, Uganda",
   hours: "Tue – Sat · 10am – 6pm",
   instagram: "https://instagram.com",
@@ -52,6 +52,3 @@ export function buildOrderWhatsAppUrl(
   const cleanPhone = phone.replace(/[^\d]/g, "");
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
-
-// whatsapp: "+256790449711",
-// email: "hyperpetals.decor@gmail.com",

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Trash2, Pencil, Upload, X, ChevronDown, ChevronUp } from "lucide-react";
 import {
@@ -11,12 +11,14 @@ import {
   type GalleryItem,
 } from "@/lib/cms.functions";
 import { MediaUploader } from "@/components/media-uploader";
+import { OCCASION_SLUGS, OCCASION_LABELS, type OccasionSlug } from "@/lib/occasions";
 
 export const Route = createFileRoute("/_authenticated/admin/gallery")({
   component: GalleryAdmin,
 });
 
 type Item = GalleryItem;
+const UNSORTED = "unsorted";
 
 function GalleryAdmin() {
   const qc = useQueryClient();
@@ -26,6 +28,19 @@ function GalleryAdmin() {
   });
   const [editing, setEditing] = useState<Item | null>(null);
   const [showUploader, setShowUploader] = useState(true);
+  // Occasion applied to every file in the CURRENT upload batch — a simple
+  // batch-level tag rather than a per-file field, since in practice you
+  // upload a set of photos from one event/shoot at a time.
+  const [uploadOccasion, setUploadOccasion] = useState<OccasionSlug | "">("");
+  const [filterOccasion, setFilterOccasion] = useState<OccasionSlug | typeof UNSORTED | "all">(
+    "all",
+  );
+
+  const filteredItems = useMemo(() => {
+    if (filterOccasion === "all") return items;
+    if (filterOccasion === UNSORTED) return items.filter((i) => !i.occasion);
+    return items.filter((i) => i.occasion === filterOccasion);
+  }, [items, filterOccasion]);
 
   const handleUploadSingleFile = async (
     file: File,
@@ -38,6 +53,7 @@ function GalleryAdmin() {
     if (meta.title) formData.append("title", meta.title);
     if (meta.altText) formData.append("alt_text", meta.altText);
     if (meta.caption) formData.append("caption", meta.caption);
+    if (uploadOccasion) formData.append("occasion", uploadOccasion);
 
     onProgress(60);
     const result = await adminUploadGalleryMedia({ data: formData });
@@ -90,7 +106,28 @@ function GalleryAdmin() {
 
       {/* Multi-Media Uploader Section */}
       {showUploader && (
-        <div className="rounded-lg border border-border/80 bg-card/50 p-6 shadow-sm">
+        <div className="rounded-lg border border-border/80 bg-card/50 p-6 shadow-sm space-y-4">
+          <label className="grid gap-2 max-w-sm">
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Occasion for this batch
+            </span>
+            <select
+              value={uploadOccasion}
+              onChange={(e) => setUploadOccasion(e.target.value as OccasionSlug | "")}
+              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+            >
+              <option value="">General / unsorted (no occasion page)</option>
+              {OCCASION_SLUGS.map((slug) => (
+                <option key={slug} value={slug}>
+                  {OCCASION_LABELS[slug]}
+                </option>
+              ))}
+            </select>
+            <span className="text-[11px] text-muted-foreground">
+              Applied to every file you upload below. Everything in this batch will show on the{" "}
+              {uploadOccasion ? OCCASION_LABELS[uploadOccasion] : "general"} gallery.
+            </span>
+          </label>
           <MediaUploader
             onUploadFile={handleUploadSingleFile}
             onAllCompleted={handleAllCompleted}
@@ -101,18 +138,42 @@ function GalleryAdmin() {
         </div>
       )}
 
+      {/* Occasion filter */}
+      <div className="flex flex-wrap gap-2">
+        <FilterChip
+          active={filterOccasion === "all"}
+          onClick={() => setFilterOccasion("all")}
+          label={`All (${items.length})`}
+        />
+        <FilterChip
+          active={filterOccasion === UNSORTED}
+          onClick={() => setFilterOccasion(UNSORTED)}
+          label={`Unsorted (${items.filter((i) => !i.occasion).length})`}
+        />
+        {OCCASION_SLUGS.map((slug) => (
+          <FilterChip
+            key={slug}
+            active={filterOccasion === slug}
+            onClick={() => setFilterOccasion(slug)}
+            label={`${OCCASION_LABELS[slug]} (${items.filter((i) => i.occasion === slug).length})`}
+          />
+        ))}
+      </div>
+
       {isLoading ? (
         <div className="mt-10 text-sm text-muted-foreground">Loading…</div>
-      ) : items.length === 0 ? (
+      ) : filteredItems.length === 0 ? (
         <div className="mt-10 rounded-sm border border-dashed border-border/60 p-14 text-center">
           <p className="font-serif text-2xl text-foreground">No media yet</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Upload your first image or video to get started.
+            {filterOccasion === "all"
+              ? "Upload your first image or video to get started."
+              : "No items tagged for this occasion yet."}
           </p>
         </div>
       ) : (
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <div
               key={item.id}
               className="group overflow-hidden rounded-sm border border-border/60 bg-card"
@@ -137,6 +198,11 @@ function GalleryAdmin() {
                 )}
                 <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                   {item.kind} · {new Date(item.created_at).toLocaleDateString()}
+                </p>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-primary">
+                  {item.occasion
+                    ? (OCCASION_LABELS[item.occasion as OccasionSlug] ?? item.occasion)
+                    : "Unsorted"}
                 </p>
                 <div className="mt-3 flex gap-2">
                   <button
@@ -163,11 +229,37 @@ function GalleryAdmin() {
   );
 }
 
+function FilterChip({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-full border px-3.5 py-1.5 text-[11px] uppercase tracking-wider transition-colors ${
+        active
+          ? "border-primary bg-primary text-primary-foreground"
+          : "border-border/60 text-muted-foreground hover:bg-accent"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 function EditDialog({ item, onClose }: { item: Item; onClose: () => void }) {
   const qc = useQueryClient();
   const [title, setTitle] = useState(item.title ?? "");
   const [alt, setAlt] = useState(item.alt_text ?? "");
   const [caption, setCaption] = useState(item.caption ?? "");
+  const [occasion, setOccasion] = useState<OccasionSlug | "">(
+    (item.occasion as OccasionSlug) ?? "",
+  );
   const [sortOrder, setSortOrder] = useState(item.sort_order);
   const [saving, setSaving] = useState(false);
 
@@ -175,7 +267,14 @@ function EditDialog({ item, onClose }: { item: Item; onClose: () => void }) {
     setSaving(true);
     try {
       await adminUpdateGalleryItem({
-        data: { id: item.id, title, alt_text: alt, caption, sort_order: sortOrder },
+        data: {
+          id: item.id,
+          title,
+          alt_text: alt,
+          caption,
+          occasion: occasion || null,
+          sort_order: sortOrder,
+        },
       });
       toast.success("Updated");
       qc.invalidateQueries({ queryKey: ["gallery"] });
@@ -234,6 +333,23 @@ function EditDialog({ item, onClose }: { item: Item; onClose: () => void }) {
               onChange={(e) => setCaption(e.target.value)}
               className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
             />
+          </label>
+          <label className="grid gap-2">
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Occasion
+            </span>
+            <select
+              value={occasion}
+              onChange={(e) => setOccasion(e.target.value as OccasionSlug | "")}
+              className="rounded-sm border border-input bg-background px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+            >
+              <option value="">General / unsorted</option>
+              {OCCASION_SLUGS.map((slug) => (
+                <option key={slug} value={slug}>
+                  {OCCASION_LABELS[slug]}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="grid gap-2">
             <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">

@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { OccasionDetail } from "@/components/occasion-detail";
+import { getGalleryByOccasion } from "@/lib/cms.functions";
 import hero from "@/assets/team.jpg";
 import g1 from "@/assets/decoration_001.jpeg";
 import g2 from "@/assets/decoration_002.jpeg";
@@ -9,7 +11,7 @@ import g5 from "@/assets/bouquet_005.jpeg";
 import g6 from "@/assets/bouquet_010.jpeg";
 
 export const Route = createFileRoute("/occasions/corporate&brand-events")({
-  component: () => <OccasionDetail cfg={cfg} />,
+  component: CorporateBrandEventsPage,
   head: () => ({
     meta: [
       { title: "Corporate & Brand Events — Hyper Petals & Decor, Kampala" },
@@ -64,3 +66,24 @@ const cfg = {
     cite: "— Marketing Lead, FMCG client, Kampala",
   },
 };
+
+function CorporateBrandEventsPage() {
+  // Note: cfg.slug above is a display string ("Corporate & Brand Events"),
+  // not the DB tag — the canonical occasion slug used for tagging uploads
+  // (see src/lib/occasions.ts) is "corporate-brand-events".
+  const { data: dbItems = [] } = useQuery({
+    queryKey: ["occasion_gallery", "corporate-brand-events"],
+    queryFn: () => getGalleryByOccasion({ data: { occasion: "corporate-brand-events" } }),
+  });
+
+  const gallery = [
+    ...cfg.gallery.map((src) => ({ src })),
+    ...dbItems.map((item) => ({
+      src: item.public_url,
+      alt: item.alt_text ?? item.title ?? "",
+      video: item.kind === "video",
+    })),
+  ];
+
+  return <OccasionDetail cfg={{ ...cfg, gallery }} />;
+}

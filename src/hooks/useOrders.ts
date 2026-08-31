@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { adminListOrders, getOrder, markOrderWhatsAppSent } from "@/lib/cms.functions";
+import {
+  adminListOrders,
+  getOrder,
+  markOrderWhatsAppSent,
+  getOrderGroupItems,
+  markOrderGroupWhatsAppSent,
+} from "@/lib/cms.functions";
 import type { OrderRow } from "@/lib/db/orders.server";
 
 export function useAdminOrders() {
@@ -9,14 +15,14 @@ export function useAdminOrders() {
   });
 }
 
-// Public: single order for the post-checkout success page.
+// Public: single order (used by anything that only ever creates one order
+// row, if that ever comes up again — the post-checkout success page uses
+// useOrderGroup below instead, since every checkout is a group of >= 1).
 export function useOrder(orderId: string | undefined) {
   return useQuery<OrderRow | null>({
     queryKey: ["order", orderId],
     queryFn: () => getOrder({ data: { id: orderId! } }),
     enabled: !!orderId,
-    // Refetch on mount so a refresh always reflects the latest whatsapp_sent
-    // state, but don't poll — the user drives state changes by clicking.
     staleTime: 0,
   });
 }
@@ -26,10 +32,34 @@ export function useMarkOrderWhatsAppSent(orderId: string | undefined) {
   return useMutation({
     mutationFn: () => markOrderWhatsAppSent({ data: { id: orderId! } }),
     onSuccess: () => {
-      // Optimistically flip the cached order so the badge updates instantly
-      // without waiting on a refetch.
       qc.setQueryData<OrderRow | null>(["order", orderId], (old) =>
         old ? { ...old, whatsapp_sent: true } : old,
+      );
+    },
+  });
+}
+
+// Public: every order line-item from one checkout (product-detail's
+// single-item flow and checkout's multi-item cart both land here — a
+// single-item order is just a group of one). Powers /order-success/$orderId.
+export function useOrderGroup(groupId: string | undefined) {
+  return useQuery<OrderRow[]>({
+    queryKey: ["orderGroup", groupId],
+    queryFn: () => getOrderGroupItems({ data: { groupId: groupId! } }),
+    enabled: !!groupId,
+    // Refetch on mount so a refresh always reflects the latest whatsapp_sent
+    // state, but don't poll — the user drives state changes by clicking.
+    staleTime: 0,
+  });
+}
+
+export function useMarkOrderGroupWhatsAppSent(groupId: string | undefined) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => markOrderGroupWhatsAppSent({ data: { groupId: groupId! } }),
+    onSuccess: () => {
+      qc.setQueryData<OrderRow[] | undefined>(["orderGroup", groupId], (old) =>
+        old?.map((o) => ({ ...o, whatsapp_sent: true })),
       );
     },
   });

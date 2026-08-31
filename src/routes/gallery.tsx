@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { getPublicGallery } from "@/lib/cms.functions";
+import type { OccasionSlug } from "@/lib/occasions";
 import galleryHero from "@/assets/gallery-hero.png";
-import { MediaCarousel } from "@/components/media-carousel";
+import { MediaCarousel, type CarouselItem } from "@/components/media-carousel";
 
 // Birthday
 import bd1 from "@/assets/decoration_001.jpeg";
@@ -74,6 +76,7 @@ export const Route = createFileRoute("/gallery")({
 
 type Band = {
   key: string;
+  occasion: OccasionSlug;
   eyebrowClass: string;
   eyebrow: string;
   heading: string;
@@ -89,6 +92,7 @@ type Band = {
 const bands: Band[] = [
   {
     key: "birthday",
+    occasion: "birthday-parties",
     eyebrow: "Birthday Parties",
     eyebrowClass: "text-[#E4C877]",
     heading: "Every theme, every age.",
@@ -102,6 +106,7 @@ const bands: Band[] = [
   },
   {
     key: "bridal",
+    occasion: "bridal-showers",
     eyebrow: "Bridal Showers",
     eyebrowClass: "text-[#E4C877]",
     heading: "Real setups, real brides.",
@@ -115,6 +120,7 @@ const bands: Band[] = [
   },
   {
     key: "baby",
+    occasion: "baby-showers",
     eyebrow: "Baby Showers",
     eyebrowClass: "text-[#E4C877]",
     heading: "Boy, girl, or beautifully neutral.",
@@ -128,6 +134,7 @@ const bands: Band[] = [
   },
   {
     key: "proposal",
+    occasion: "wedding-proposals",
     eyebrow: "Marriage Proposals",
     eyebrowClass: "text-[#E4C877]",
     heading: "Every setup, kept secret until the moment.",
@@ -141,6 +148,7 @@ const bands: Band[] = [
   },
   {
     key: "tea",
+    occasion: "tea-parties",
     eyebrow: "Tea Parties",
     eyebrowClass: "text-[#6E2434]",
     heading: "Delicate, unhurried, beautifully set.",
@@ -155,6 +163,7 @@ const bands: Band[] = [
   },
   {
     key: "corporate",
+    occasion: "corporate-brand-events",
     eyebrow: "Corporate & Brand Events",
     eyebrowClass: "text-[#E4C877]",
     heading: "From a lobby refresh to a 300-guest gala.",
@@ -168,6 +177,7 @@ const bands: Band[] = [
   },
   {
     key: "kwanjula",
+    occasion: "kwanjula",
     eyebrow: "Kwanjula & Traditional Ceremonies",
     eyebrowClass: "text-[#E4C877]",
     heading: "From intimate family gatherings to 300+ guests.",
@@ -186,6 +196,29 @@ function Gallery() {
     queryKey: ["public_gallery"],
     queryFn: () => getPublicGallery(),
   });
+
+  // Admin uploads tagged with an occasion (see admin.gallery.tsx) join the
+  // matching band below, alongside the curated local images. Untagged
+  // uploads fall through to the "Fresh from the studio" section instead —
+  // that way nothing tagged for an occasion shows in both places, and
+  // nothing untagged silently disappears.
+  const itemsByOccasion = useMemo(() => {
+    const map = new Map<OccasionSlug, CarouselItem[]>();
+    for (const item of adminItems) {
+      if (!item.occasion) continue;
+      const carouselItem: CarouselItem = {
+        src: item.public_url,
+        alt: item.alt_text ?? item.title ?? "",
+        video: item.kind === "video",
+      };
+      const existing = map.get(item.occasion as OccasionSlug);
+      if (existing) existing.push(carouselItem);
+      else map.set(item.occasion as OccasionSlug, [carouselItem]);
+    }
+    return map;
+  }, [adminItems]);
+
+  const unsortedItems = useMemo(() => adminItems.filter((item) => !item.occasion), [adminItems]);
 
   return (
     <>
@@ -244,7 +277,10 @@ function Gallery() {
               </Link>
             </div>
             <MediaCarousel
-              items={band.images.map((src) => ({ src }))}
+              items={[
+                ...band.images.map((src) => ({ src })),
+                ...(itemsByOccasion.get(band.occasion) ?? []),
+              ]}
               dotClassName={band.dotClassName}
               direction={i % 2 === 0 ? "left" : "right"}
             />
@@ -252,7 +288,7 @@ function Gallery() {
         </section>
       ))}
 
-      {adminItems.length > 0 && (
+      {unsortedItems.length > 0 && (
         <section className="border-t border-border/60 bg-background">
           <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
             <div>
@@ -262,7 +298,7 @@ function Gallery() {
               </h2>
             </div>
             <MediaCarousel
-              items={adminItems.map((item) => ({
+              items={unsortedItems.map((item) => ({
                 src: item.public_url,
                 alt: item.alt_text ?? item.title ?? "",
                 video: item.kind === "video",

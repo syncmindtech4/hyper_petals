@@ -10,12 +10,14 @@ import {
 import { fetchSiteContent, upsertSiteContent } from "@/lib/db/site-content.server";
 import {
   listGalleryItems,
+  listGalleryItemsByOccasion,
   countGalleryItems,
   insertGalleryItem,
   updateGalleryItem,
   deleteGalleryItem,
   type GalleryItem,
 } from "@/lib/db/gallery.server";
+import { isOccasionSlug } from "@/lib/occasions";
 import { userHasRole } from "@/lib/db/roles.server";
 import { getAuthenticatedUserId, requireAdminUser } from "@/lib/db/auth.server";
 import {
@@ -33,7 +35,15 @@ import {
   updateOrderStatus,
   getOrderById,
   markOrderWhatsAppSent as markOrderWhatsAppSentDb,
+  getOrderGroup,
+  markGroupWhatsAppSent as markGroupWhatsAppSentDb,
 } from "@/lib/db/orders.server";
+import {
+  listActiveDeliveryLocations,
+  validatePromoCode as validatePromoCodeDb,
+  incrementPromoRedemption,
+} from "@/lib/db/checkout.server";
+import { isPaymentConfigured } from "@/lib/payments/index.server";
 import { getProductIdBySlug } from "@/lib/db/products.server";
 import { FLOWER_TYPES, STYLES, OCCASIONS, ARRANGEMENT_STYLES } from "@/lib/bouquet-customization";
 import { validateMediaFile } from "@/lib/media";
@@ -97,13 +107,20 @@ export const adminUploadGalleryMedia = createServerFn({ method: "POST" })
     const title = (data.get("title") as string) || null;
     const altText = (data.get("alt_text") as string) || null;
     const caption = (data.get("caption") as string) || null;
+    const occasionRaw = (data.get("occasion") as string) || null;
+    // Validated server-side too, not just in the admin dropdown — don't
+    // trust an arbitrary string from FormData as an occasion tag.
+    const occasion = occasionRaw && isOccasionSlug(occasionRaw) ? occasionRaw : null;
 
     if (!file || !(file instanceof File)) {
       throw new Error("No valid file provided");
     }
 
     const { isImage } = validateMediaFile(file);
-    const folder = isImage ? "gallery/images" : "gallery/videos";
+    // Nested by occasion purely so the Blob dashboard is browsable by eye —
+    // this has no effect on the app itself, which always filters by the
+    // `occasion` column in Postgres, never by storage path.
+    const folder = `gallery/${isImage ? "images" : "videos"}/${occasion ?? "general"}`;
     const blob = await uploadFileToVercelBlob(file, folder);
 
     const item = await insertGalleryItem({
@@ -113,6 +130,7 @@ export const adminUploadGalleryMedia = createServerFn({ method: "POST" })
       title: title || file.name,
       alt_text: altText,
       caption: caption,
+      occasion,
       created_by: userId,
     });
 
@@ -133,15 +151,34 @@ export const getContactContent = createServerFn({ method: "GET" }).handler(async
 
 export const getPublicGallery = createServerFn({ method: "GET" }).handler(async () => {
   const items = await listGalleryItems();
-  return items.map(({ id, kind, public_url, title, alt_text, caption }) => ({
+  return items.map(({ id, kind, public_url, title, alt_text, caption, occasion }) => ({
     id,
     kind,
     public_url,
     title,
     alt_text,
     caption,
+    occasion,
   }));
 });
+
+// Public: gallery items for one occasion page (e.g. src/routes/occasions.kwanjula.tsx).
+const occasionGallerySchema = z.object({ occasion: z.string().trim().min(1).max(100) });
+
+export const getGalleryByOccasion = createServerFn({ method: "GET" })
+  .validator(occasionGallerySchema)
+  .handler(async ({ data }) => {
+    if (!isOccasionSlug(data.occasion)) return [];
+    const items = await listGalleryItemsByOccasion(data.occasion);
+    return items.map(({ id, kind, public_url, title, alt_text, caption }) => ({
+      id,
+      kind,
+      public_url,
+      title,
+      alt_text,
+      caption,
+    }));
+  });
 
 export const getProducts = createServerFn({ method: "GET" }).handler(async () => {
   return listActiveProducts();
@@ -200,6 +237,11 @@ const customizationSchema = z.object({
 });
 
 const orderSchema = z.object({
+  // Shared across every line item submitted from the same checkout (a cart
+  // with several products = several submitOrder calls with the same
+  // groupId), so the success page can show/confirm them together. Omit for
+  // single-item flows (e.g. product-detail) — the DB generates one.
+  groupId: z.string().uuid().optional(),
   // The frontend's Product.id is actually the slug (see toPublicProduct in
   // products.server.ts) — resolved to the real products.id UUID below,
   // server-side, before it's used as a foreign key.
@@ -216,7 +258,11 @@ const orderSchema = z.object({
   giftMessage: z.string().trim().max(1000).optional(),
   deliveryLocation: z.string().trim().min(1).max(300),
   deliveryDate: z.string().trim().min(1).max(100),
+  deliveryFeeUgx: z.number().min(0).default(0),
+  promoCode: z.string().trim().max(50).optional(),
+  discountUgx: z.number().min(0).default(0),
   totalPriceUgx: z.number().min(0),
+  paymentMethod: z.enum(["momo", "airtel_money", "card", "cash_on_delivery"]).optional(),
 });
 
 export const submitOrder = createServerFn({ method: "POST" })
@@ -228,7 +274,14 @@ export const submitOrder = createServerFn({ method: "POST" })
     // name/price/etc are already captured directly on the row regardless.
     const productId = productSlug ? await getProductIdBySlug(productSlug) : undefined;
     const order = await createOrder({ ...rest, productId: productId ?? undefined });
-    return { id: order.id };
+    // Best-effort: don't fail the order if this update hiccups — the code
+    // still validated and applied correctly for the customer either way.
+    if (rest.promoCode) {
+      incrementPromoRedemption(rest.promoCode).catch((err) =>
+        console.error("incrementPromoRedemption failed:", err),
+      );
+    }
+    return { id: order.id, groupId: order.group_id };
   });
 
 // Public: fetch one order for the post-checkout success page. `id` is a
@@ -247,6 +300,47 @@ export const markOrderWhatsAppSent = createServerFn({ method: "POST" })
     await markOrderWhatsAppSentDb(data.id);
     return { ok: true };
   });
+
+// Public: fetch every line item from one checkout (cart with several
+// products). Same capability-token model as getOrder above.
+const groupIdSchema = z.object({ groupId: z.string().uuid() });
+
+export const getOrderGroupItems = createServerFn({ method: "GET" })
+  .validator(groupIdSchema)
+  .handler(async ({ data }) => {
+    return getOrderGroup(data.groupId);
+  });
+
+export const markOrderGroupWhatsAppSent = createServerFn({ method: "POST" })
+  .validator(groupIdSchema)
+  .handler(async ({ data }) => {
+    await markGroupWhatsAppSentDb(data.groupId);
+    return { ok: true };
+  });
+
+// ── Public: checkout data (delivery locations, promo codes) ────────────────
+
+export const getDeliveryLocations = createServerFn({ method: "GET" }).handler(async () => {
+  return listActiveDeliveryLocations();
+});
+
+const promoCodeCheckSchema = z.object({ code: z.string().trim().min(1).max(50) });
+
+export const validatePromoCode = createServerFn({ method: "POST" })
+  .validator(promoCodeCheckSchema)
+  .handler(async ({ data }) => {
+    return validatePromoCodeDb(data.code);
+  });
+
+// Lets checkout.tsx know whether a real payment gateway is wired up yet.
+// Today this always returns false until Flutterwave (or whichever
+// processor the client picks) has real API keys in .env — see
+// src/lib/payments/flutterwave.server.ts. Until then, checkout saves
+// orders as pending and confirms payment manually over WhatsApp, the same
+// as the product-detail flow.
+export const checkPaymentConfigured = createServerFn({ method: "GET" }).handler(async () => {
+  return { configured: isPaymentConfigured() };
+});
 
 // ── Admin: orders ────────────────────────────────────────────────────────────
 
@@ -307,6 +401,7 @@ const galleryUpdateSchema = z.object({
   title: z.string().nullable().optional(),
   alt_text: z.string().nullable().optional(),
   caption: z.string().nullable().optional(),
+  occasion: z.string().nullable().optional(),
   sort_order: z.number().optional(),
 });
 
@@ -314,8 +409,16 @@ export const adminUpdateGalleryItem = createServerFn({ method: "POST" })
   .validator(galleryUpdateSchema)
   .handler(async ({ data }) => {
     await requireAdminUser();
-    const { id, ...patch } = data;
-    await updateGalleryItem(id, patch);
+    const { id, occasion, ...rest } = data;
+    // Same server-side validation as the upload handler — don't trust an
+    // arbitrary string as an occasion tag, but allow explicit null (clears
+    // the tag back to "general/unsorted").
+    const cleanOccasion =
+      occasion === null ? null : occasion && isOccasionSlug(occasion) ? occasion : undefined;
+    await updateGalleryItem(id, {
+      ...rest,
+      ...(cleanOccasion !== undefined ? { occasion: cleanOccasion } : {}),
+    });
   });
 
 export const adminDeleteGalleryItem = createServerFn({ method: "POST" })

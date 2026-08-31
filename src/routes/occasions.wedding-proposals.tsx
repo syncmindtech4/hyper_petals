@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { OccasionDetail } from "@/components/occasion-detail";
+import { getGalleryByOccasion } from "@/lib/cms.functions";
 import hero from "@/assets/proposal_africa.png";
 import g1 from "@/assets/bouquet_003.jpeg";
 import g2 from "@/assets/decoration_004.jpeg";
@@ -9,7 +11,7 @@ import g5 from "@/assets/bouquet_020.jpeg";
 import g6 from "@/assets/bouquet_007.jpeg";
 
 export const Route = createFileRoute("/occasions/wedding-proposals")({
-  component: () => <OccasionDetail cfg={cfg} />,
+  component: WeddingProposalsPage,
   head: () => ({
     meta: [
       { title: "Marriage Proposal Setups — Hyper Petals & Decor, Kampala" },
@@ -91,3 +93,24 @@ const cfg = {
     cite: "— Brian K., Proposal client, Kampala",
   },
 };
+
+function WeddingProposalsPage() {
+  // Admin uploads tagged "wedding-proposals" in /admin/gallery join the
+  // curated static gallery below — see src/lib/occasions.ts for the slug
+  // this must match, and admin.gallery.tsx for where items get tagged.
+  const { data: dbItems = [] } = useQuery({
+    queryKey: ["occasion_gallery", "wedding-proposals"],
+    queryFn: () => getGalleryByOccasion({ data: { occasion: "wedding-proposals" } }),
+  });
+
+  const gallery = [
+    ...cfg.gallery.map((src) => ({ src })),
+    ...dbItems.map((item) => ({
+      src: item.public_url,
+      alt: item.alt_text ?? item.title ?? "",
+      video: item.kind === "video",
+    })),
+  ];
+
+  return <OccasionDetail cfg={{ ...cfg, gallery }} />;
+}

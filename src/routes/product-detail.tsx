@@ -266,7 +266,7 @@ function ProductDetail() {
 
     setIsSubmittingOrder(true);
     try {
-      const { id: orderId } = await submitOrder({
+      const { groupId } = await submitOrder({
         data: {
           productSlug: product.id,
           productName: product.name,
@@ -286,7 +286,7 @@ function ProductDetail() {
       });
       // Order saved — hand off to the success page, which owns the actual
       // WhatsApp button click and tracks whether it's been sent yet.
-      navigate({ to: "/order-success/$orderId", params: { orderId } });
+      navigate({ to: "/order-success/$orderId", params: { orderId: groupId } });
     } catch (err) {
       // DB save failed, so there's no orderId to route to. Don't block the
       // WhatsApp handoff on that — the order still reaches the studio via

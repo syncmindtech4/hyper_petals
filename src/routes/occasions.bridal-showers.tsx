@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { OccasionDetail } from "@/components/occasion-detail";
+import { getGalleryByOccasion } from "@/lib/cms.functions";
 import hero from "@/assets/bridal-shower-party.jpg";
 import g1 from "@/assets/bouquet_003.jpeg";
 import g2 from "@/assets/bouquet_007.jpeg";
@@ -9,7 +11,7 @@ import g5 from "@/assets/bouquet_014.jpeg";
 import g6 from "@/assets/bouquet_018.jpeg";
 
 export const Route = createFileRoute("/occasions/bridal-showers")({
-  component: () => <OccasionDetail cfg={cfg} />,
+  component: BridalShowersPage,
   head: () => ({
     meta: [
       { title: "Bridal Shower Décor & Styling — Hyper Petals & Decor, Kampala" },
@@ -62,3 +64,21 @@ const cfg = {
     cite: "— Patricia M., Bridal Shower client, Kololo",
   },
 };
+
+function BridalShowersPage() {
+  const { data: dbItems = [] } = useQuery({
+    queryKey: ["occasion_gallery", "bridal-showers"],
+    queryFn: () => getGalleryByOccasion({ data: { occasion: "bridal-showers" } }),
+  });
+
+  const gallery = [
+    ...cfg.gallery.map((src) => ({ src })),
+    ...dbItems.map((item) => ({
+      src: item.public_url,
+      alt: item.alt_text ?? item.title ?? "",
+      video: item.kind === "video",
+    })),
+  ];
+
+  return <OccasionDetail cfg={{ ...cfg, gallery }} />;
+}

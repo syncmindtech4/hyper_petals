@@ -2,24 +2,25 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, MessageCircle, ShoppingBag } from "lucide-react";
 import { formatUGX } from "@/lib/products";
 import { buildOrderWhatsAppUrl } from "@/lib/site";
-import { useOrder, useMarkOrderWhatsAppSent } from "@/hooks/useOrders";
+import { useOrderGroup, useMarkOrderGroupWhatsAppSent } from "@/hooks/useOrders";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+// Note: the "$orderId" param actually holds a group_id — every checkout
+// (single product-detail order or a multi-item cart from checkout.tsx)
+// saves as a group of one-or-more order rows sharing one group_id, so this
+// page always fetches and confirms the whole group together. Kept the
+// param name as "orderId" rather than "groupId" so any links already
+// shared/bookmarked from before this change keep working.
 export const Route = createFileRoute("/order-success/$orderId")({
   component: OrderSuccessPage,
 });
 
 function OrderSuccessPage() {
-  const { orderId } = Route.useParams();
-  const { data: order, isLoading, isError } = useOrder(orderId);
-  const markSent = useMarkOrderWhatsAppSent(orderId);
+  const { orderId: groupId } = Route.useParams();
+  const { data: orders, isLoading, isError } = useOrderGroup(groupId);
+  const markSent = useMarkOrderGroupWhatsAppSent(groupId);
 
   if (isLoading) {
     return (
@@ -29,12 +30,10 @@ function OrderSuccessPage() {
     );
   }
 
-  if (isError || !order) {
+  if (isError || !orders || orders.length === 0) {
     return (
       <div className="mx-auto max-w-xl px-4 py-24 text-center">
-        <h1 className="font-serif text-2xl text-foreground mb-2">
-          We couldn't find that order
-        </h1>
+        <h1 className="font-serif text-2xl text-foreground mb-2">We couldn't find that order</h1>
         <p className="text-muted-foreground mb-6">
           The link may be incorrect, or the order may have been removed.
         </p>
@@ -45,21 +44,23 @@ function OrderSuccessPage() {
     );
   }
 
-  const whatsappSent = order.whatsapp_sent;
+  const first = orders[0];
+  const whatsappSent = orders.every((o) => o.whatsapp_sent);
+
+  const itemsSubtotal = orders.reduce((sum, o) => sum + o.total_price_ugx, 0);
+  const deliveryFee = orders.reduce((sum, o) => sum + o.delivery_fee_ugx, 0);
+  const discount = orders.reduce((sum, o) => sum + o.discount_ugx, 0);
+  const grandTotal = itemsSubtotal + deliveryFee - discount;
 
   const waUrl = buildOrderWhatsAppUrl({
-    orderId: order.id,
-    items: [
-      {
-        name: `${order.product_name} (${order.size})`,
-        quantity: order.quantity,
-        priceUgx: order.size_price_ugx,
-      },
-      ...order.add_ons.map((a) => ({ name: a.name, quantity: 1, priceUgx: a.price })),
-    ],
-    totalUgx: order.total_price_ugx,
-    deliveryLocation: order.delivery_location,
-    deliveryDate: order.delivery_date,
+    orderId: groupId,
+    items: orders.flatMap((o) => [
+      { name: `${o.product_name} (${o.size})`, quantity: o.quantity, priceUgx: o.size_price_ugx },
+      ...o.add_ons.map((a) => ({ name: a.name, quantity: 1, priceUgx: a.price })),
+    ]),
+    totalUgx: grandTotal,
+    deliveryLocation: first.delivery_location,
+    deliveryDate: first.delivery_date,
   });
 
   const openWhatsApp = () => {
@@ -72,46 +73,50 @@ function OrderSuccessPage() {
       <div className="text-center mb-8">
         <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-primary" />
         <h1 className="font-serif text-3xl text-foreground mb-2">Order Placed</h1>
-        <p className="text-muted-foreground">
-          Order #{order.id.slice(0, 8).toUpperCase()}
-        </p>
+        <p className="text-muted-foreground">Order #{groupId.slice(0, 8).toUpperCase()}</p>
       </div>
 
       <Card className="mb-6">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">Order Summary</CardTitle>
           {whatsappSent ? (
-            <Badge className="bg-primary text-primary-foreground">
-              Message Sent · Processing
-            </Badge>
+            <Badge className="bg-primary text-primary-foreground">Message Sent · Processing</Badge>
           ) : (
             <Badge variant="destructive">Order Placed · Action Required</Badge>
           )}
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Item</span>
-            <span className="text-right font-medium">
-              {order.product_name} ({order.size}) × {order.quantity}
-            </span>
-          </div>
-          {order.add_ons.length > 0 && (
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Add-ons</span>
-              <span className="text-right">
-                {order.add_ons.map((a) => a.name).join(", ")}
+          {orders.map((o) => (
+            <div key={o.id} className="flex justify-between">
+              <span className="text-muted-foreground">
+                {o.product_name} ({o.size})
+                {o.add_ons.length > 0 && (
+                  <span className="block text-xs">+ {o.add_ons.map((a) => a.name).join(", ")}</span>
+                )}
+              </span>
+              <span className="text-right font-medium">
+                × {o.quantity} · {formatUGX(o.total_price_ugx)}
               </span>
             </div>
-          )}
-          <div className="flex justify-between">
+          ))}
+          <div className="flex justify-between border-t pt-3">
             <span className="text-muted-foreground">Delivery</span>
             <span className="text-right">
-              {order.delivery_location} · {order.delivery_date}
+              {first.delivery_location} · {first.delivery_date}
+              {deliveryFee > 0 && ` · ${formatUGX(deliveryFee)}`}
             </span>
           </div>
+          {discount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">
+                Discount {first.promo_code ? `(${first.promo_code})` : ""}
+              </span>
+              <span className="text-right text-primary">-{formatUGX(discount)}</span>
+            </div>
+          )}
           <div className="flex justify-between border-t pt-3 font-semibold">
             <span>Total</span>
-            <span>{formatUGX(order.total_price_ugx)}</span>
+            <span>{formatUGX(grandTotal)}</span>
           </div>
         </CardContent>
       </Card>
