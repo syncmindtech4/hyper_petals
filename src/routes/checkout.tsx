@@ -1,32 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
-import {
-  Lock,
-  ShoppingBag,
-  ShieldCheck,
-  CreditCard,
-  Sparkles,
-  CheckCircle2,
-  ChevronRight,
-  Loader2,
-  ArrowLeft,
-} from "lucide-react";
-import { useCart, CartItem } from "@/hooks/use-cart";
+import { Lock, ShoppingBag, ShieldCheck, CreditCard, Sparkles, Loader2 } from "lucide-react";
+import { useCart } from "@/hooks/use-cart";
 import { formatUGX } from "@/lib/products";
 import { customizationSummary } from "@/lib/bouquet-customization";
+import { submitOrder } from "@/lib/cms.functions";
+import { buildOrderWhatsAppUrl } from "@/lib/site";
+import { useDeliveryLocations, useValidatePromoCode } from "@/hooks/useCheckout";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import logo from "@/assets/hyper petals & decor_logo_black.svg";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -39,28 +25,30 @@ export const Route = createFileRoute("/checkout")({
   component: Checkout,
   head: () => ({
     meta: [
-      { title: "Secure Checkout — Hyper Petals Decor" },
-      { name: "description", content: "Complete your premium hand-tied bouquet order securely." },
+      { title: "Checkout — Hyper Petals Decor" },
+      { name: "description", content: "Complete your premium hand-tied bouquet order." },
     ],
   }),
 });
 
-const LOCATIONS = [
-  { name: "Kampala Central", fee: 5000 },
-  { name: "Muyenga", fee: 10000 },
-  { name: "Kololo", fee: 8000 },
-  { name: "Nakasero", fee: 8000 },
-  { name: "Bugolobi", fee: 10000 },
-  { name: "Entebbe", fee: 30000 },
-  { name: "Naalya", fee: 15000 },
-  { name: "Lubowa", fee: 20000 },
-];
-
 const OTHER_LOCATION = "Other";
+const DEFAULT_CUSTOM_LOCATION_FEE_UGX = 5000;
+
+type PaymentMethod = "momo" | "airtel_money" | "card" | "cash_on_delivery";
+
+const PROMO_ERROR_MESSAGES: Record<string, string> = {
+  not_found: "That promo code doesn't exist.",
+  inactive: "That promo code is no longer active.",
+  expired: "That promo code has expired.",
+  not_started: "That promo code isn't active yet.",
+  redemption_limit_reached: "That promo code has reached its usage limit.",
+};
 
 function Checkout() {
-  const { items, cartTotal, clearCart, updateQuantity, removeFromCart } = useCart();
+  const { items, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
+  const { data: locations, isLoading: locationsLoading } = useDeliveryLocations();
+  const validatePromo = useValidatePromoCode();
 
   // Contact details
   const [name, setName] = useState("");
@@ -76,24 +64,22 @@ function Checkout() {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [landmarkNotes, setLandmarkNotes] = useState("");
 
-  // Payment details
-  const [paymentMethod, setPaymentMethod] = useState("momo");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCvv, setCardCvv] = useState("");
+  // Payment method — no real gateway is connected yet (see
+  // src/lib/payments/), so this is captured for the order record and to
+  // have the field ready the moment one is wired up. Every option today
+  // resolves to the same outcome: order saved as pending, confirmed over
+  // WhatsApp.
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("momo");
 
   // Promo code details
   const [promoInput, setPromoInput] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
-  const [discountAmount, setDiscountAmount] = useState(0);
+  const [appliedPromo, setAppliedPromo] = useState<{
+    code: string;
+    discountType: "flat" | "percent";
+    discountValue: number;
+  } | null>(null);
 
-  // Simulation states
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<"momo-prompt" | "processing" | "success">(
-    "momo-prompt",
-  );
-  const [simulatedPin, setSimulatedPin] = useState("");
 
   // Default delivery dates
   useEffect(() => {
@@ -103,50 +89,73 @@ function Checkout() {
     const mm = String(tomorrow.getMonth() + 1).padStart(2, "0");
     const dd = String(tomorrow.getDate()).padStart(2, "0");
     setDeliveryDate(`${yyyy}-${mm}-${dd}`);
+  }, []);
 
-    // If there is an item in the cart, pre-populate delivery info from the first item
-    if (items.length > 0) {
-      const firstItem = items[0];
-      const isKnownLocation = LOCATIONS.some((l) => l.name === firstItem.deliveryLocation);
-      if (isKnownLocation) {
-        setDeliveryLocation(firstItem.deliveryLocation);
-      } else {
-        setDeliveryLocation(OTHER_LOCATION);
-        setCustomLocation(firstItem.deliveryLocation);
-      }
-      setDeliveryDate(firstItem.deliveryDate);
-      if (firstItem.isGift && firstItem.giftDetails) {
-        setSendToSelf(false);
-        setRecipientName(firstItem.giftDetails.recipientName);
-        setRecipientPhone(firstItem.giftDetails.recipientPhone);
-      }
+  // Pre-populate delivery info from the first cart item once locations load
+  useEffect(() => {
+    if (!locations || items.length === 0) return;
+    const firstItem = items[0];
+    const isKnownLocation = locations.some((l) => l.name === firstItem.deliveryLocation);
+    if (isKnownLocation) {
+      setDeliveryLocation(firstItem.deliveryLocation);
+    } else {
+      setDeliveryLocation(OTHER_LOCATION);
+      setCustomLocation(firstItem.deliveryLocation);
     }
-  }, [items]);
+    setDeliveryDate(firstItem.deliveryDate);
+    if (firstItem.isGift && firstItem.giftDetails) {
+      setSendToSelf(false);
+      setRecipientName(firstItem.giftDetails.recipientName);
+      setRecipientPhone(firstItem.giftDetails.recipientPhone);
+    }
+    // Only run once locations arrive / items change — not on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locations, items.length]);
 
   const effectiveDeliveryLocation =
     deliveryLocation === OTHER_LOCATION ? customLocation.trim() : deliveryLocation;
 
-  // Delivery fee
   const deliveryFee = useMemo(() => {
-    const loc = LOCATIONS.find((l) => l.name === deliveryLocation);
-    return loc ? loc.fee : 5000;
-  }, [deliveryLocation]);
+    if (deliveryLocation === OTHER_LOCATION) return DEFAULT_CUSTOM_LOCATION_FEE_UGX;
+    const loc = locations?.find((l) => l.name === deliveryLocation);
+    return loc ? loc.fee_ugx : DEFAULT_CUSTOM_LOCATION_FEE_UGX;
+  }, [deliveryLocation, locations]);
 
-  // Promo code calculation
+  const discountAmount = useMemo(() => {
+    if (!appliedPromo) return 0;
+    return appliedPromo.discountType === "percent"
+      ? Math.round((cartTotal * appliedPromo.discountValue) / 100)
+      : Math.min(appliedPromo.discountValue, cartTotal);
+  }, [appliedPromo, cartTotal]);
+
   const applyPromoCode = () => {
-    const code = promoInput.toUpperCase().trim();
-    if (code === "WELCOME10" || code === "HYPERPETALS") {
-      setAppliedPromo(code);
-      setDiscountAmount(cartTotal * 0.1);
-      toast.success("Promo code applied! 10% discount subtracted.");
-    } else {
-      toast.error("Invalid promo code. Try WELCOME10.");
-    }
+    const code = promoInput.trim();
+    if (!code) return;
+    validatePromo.mutate(code, {
+      onSuccess: (result) => {
+        if (result.valid) {
+          setAppliedPromo({
+            code: result.code,
+            discountType: result.discountType,
+            discountValue: result.discountValue,
+          });
+          toast.success(
+            result.discountType === "percent"
+              ? `Promo applied! ${result.discountValue}% off.`
+              : `Promo applied! ${formatUGX(result.discountValue)} off.`,
+          );
+        } else {
+          toast.error(PROMO_ERROR_MESSAGES[result.reason] ?? "That promo code isn't valid.");
+        }
+      },
+      onError: () => {
+        toast.error("Couldn't check that promo code right now — try again in a moment.");
+      },
+    });
   };
 
   const removePromoCode = () => {
     setAppliedPromo(null);
-    setDiscountAmount(0);
     setPromoInput("");
     toast.info("Promo code removed.");
   };
@@ -155,7 +164,7 @@ function Checkout() {
     return Math.max(0, cartTotal - discountAmount + deliveryFee);
   }, [cartTotal, discountAmount, deliveryFee]);
 
-  const handlePay = (e: React.FormEvent) => {
+  const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !phone.trim()) {
       toast.error("Please fill in your name and phone number");
@@ -173,48 +182,93 @@ function Checkout() {
       toast.error("Please select a delivery date");
       return;
     }
-
-    if (paymentMethod === "visa" && (!cardNumber.trim() || !cardExpiry.trim() || !cardCvv.trim())) {
-      toast.error("Please fill in your card details");
-      return;
-    }
+    if (items.length === 0) return;
 
     setIsSubmitting(true);
 
-    // Simulate API request delay
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setShowPaymentModal(true);
-      if (paymentMethod === "visa") {
-        setPaymentStep("processing");
-        setTimeout(() => {
-          setPaymentStep("success");
-        }, 2500);
-      } else {
-        setPaymentStep("momo-prompt");
+    // Every item in the cart is saved as its own order row, all sharing one
+    // group_id so the success page can show and confirm them together —
+    // same pattern as product-detail's single-item "Order via WhatsApp"
+    // flow, just for N items instead of one. Delivery fee, discount, and
+    // promo code are only attached to the first row so summing across the
+    // group on the success page gives the right total without double-
+    // counting a fee that only applies once per checkout, not per item.
+    const groupId = crypto.randomUUID();
+
+    try {
+      const results = await Promise.allSettled(
+        items.map((item, index) => {
+          const addOnsTotal = item.selectedAddOns.reduce((sum, a) => sum + a.price, 0);
+          const itemTotal = (item.sizePrice + addOnsTotal) * item.quantity;
+          return submitOrder({
+            data: {
+              groupId,
+              productSlug: item.product.id,
+              productName: item.product.name,
+              size: item.selectedSize,
+              sizePriceUgx: item.sizePrice,
+              quantity: item.quantity,
+              addOns: item.selectedAddOns.map((a) => ({ name: a.name, price: a.price })),
+              customization: item.customizations ?? undefined,
+              isGift: item.isGift,
+              recipientName: item.isGift ? item.giftDetails?.recipientName : undefined,
+              recipientPhone: item.isGift ? item.giftDetails?.recipientPhone : undefined,
+              giftMessage: item.giftMessage,
+              deliveryLocation: effectiveDeliveryLocation || item.deliveryLocation,
+              deliveryDate: deliveryDate || item.deliveryDate,
+              deliveryFeeUgx: index === 0 ? deliveryFee : 0,
+              promoCode: index === 0 ? appliedPromo?.code : undefined,
+              discountUgx: index === 0 ? discountAmount : 0,
+              totalPriceUgx: itemTotal,
+              paymentMethod,
+            },
+          });
+        }),
+      );
+
+      const fulfilled = results.filter(
+        (r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof submitOrder>>> =>
+          r.status === "fulfilled",
+      );
+      const failedCount = results.length - fulfilled.length;
+
+      if (fulfilled.length === 0) {
+        // Nothing saved at all — no group to route to. Fall back to a
+        // direct WhatsApp message so the order still reaches the studio,
+        // same safety net as product-detail's catch block.
+        console.error("All order(s) failed to save:", results);
+        toast.error(
+          "Couldn't save your order, but we've opened WhatsApp so you can send it directly.",
+        );
+        const waUrl = buildOrderWhatsAppUrl({
+          orderId: groupId,
+          items: items.map((item) => ({
+            name: `${item.product.name} (${item.selectedSize})`,
+            quantity: item.quantity,
+            priceUgx: item.sizePrice,
+          })),
+          totalUgx: grandTotal,
+          deliveryLocation: effectiveDeliveryLocation,
+          deliveryDate,
+        });
+        window.open(waUrl, "_blank");
+        return;
       }
-    }, 1500);
-  };
 
-  const handleSimulateMomoSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (simulatedPin.length < 4) {
-      toast.error("Please enter a valid 4-digit PIN");
-      return;
+      if (failedCount > 0) {
+        toast.error(
+          `${failedCount} item(s) couldn't be saved — the rest of your order went through.`,
+        );
+      }
+
+      clearCart();
+      navigate({ to: "/order-success/$orderId", params: { orderId: groupId } });
+    } finally {
+      setIsSubmitting(false);
     }
-    setPaymentStep("processing");
-    setTimeout(() => {
-      setPaymentStep("success");
-    }, 3000);
   };
 
-  const handleCloseSuccess = () => {
-    setShowPaymentModal(false);
-    clearCart();
-    navigate({ to: "/" });
-  };
-
-  if (items.length === 0 && paymentStep !== "success") {
+  if (items.length === 0) {
     return (
       <div className="mx-auto max-w-md px-6 py-24 text-center">
         <ShoppingBag className="mx-auto h-16 w-16 text-muted/40 stroke-[1]" />
@@ -247,25 +301,16 @@ function Checkout() {
           </Link>
           <div className="flex items-center gap-1.5 text-xs uppercase tracking-widest font-semibold text-primary">
             <Lock className="h-3.5 w-3.5" />
-            <span>Secure Checkout</span>
+            <span>Checkout</span>
           </div>
         </div>
       </header>
 
-      {/* Main Layout Grid */}
       <div className="mx-auto max-w-7xl px-6 py-10 md:py-16">
-        <Link
-          to="/catalogue"
-          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors mb-6 uppercase tracking-wider font-semibold"
-        >
-          <ArrowLeft className="h-3 w-3" />
-          Back to Catalogue
-        </Link>
-
         <form onSubmit={handlePay} className="grid grid-cols-1 gap-12 lg:grid-cols-12 items-start">
-          {/* Left Column: Forms */}
+          {/* Left Column: Details */}
           <div className="lg:col-span-7 space-y-8">
-            {/* Step 1: Your Details */}
+            {/* Step 1: Contact */}
             <section className="bg-card border border-border/40 rounded-sm p-6 space-y-5">
               <div className="flex items-center gap-3 pb-3 border-b border-border/40">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
@@ -284,7 +329,7 @@ function Checkout() {
                   <Input
                     id="cust-name"
                     required
-                    placeholder="e.g. John Doe"
+                    placeholder="e.g. Sarah Nakato"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="text-xs bg-background"
@@ -300,75 +345,73 @@ function Checkout() {
                   <Input
                     id="cust-phone"
                     required
-                    placeholder="e.g. 0772 000 000"
+                    placeholder="e.g. 0770 123 456"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="text-xs bg-background"
                   />
                 </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="cust-email"
-                  className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
-                >
-                  Email Address (Optional)
-                </Label>
-                <Input
-                  id="cust-email"
-                  type="email"
-                  placeholder="e.g. name@domain.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="text-xs bg-background"
-                />
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label
+                    htmlFor="cust-email"
+                    className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
+                  >
+                    Email (optional)
+                  </Label>
+                  <Input
+                    id="cust-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="text-xs bg-background"
+                  />
+                </div>
               </div>
             </section>
 
-            {/* Step 2: Delivery Details */}
+            {/* Step 2: Delivery */}
             <section className="bg-card border border-border/40 rounded-sm p-6 space-y-5">
               <div className="flex items-center gap-3 pb-3 border-b border-border/40">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                   2
                 </span>
-                <h2 className="font-serif text-xl text-foreground font-medium">Delivery Details</h2>
+                <h2 className="font-serif text-xl text-foreground font-medium">Delivery</h2>
               </div>
 
-              {/* Sender Toggle */}
-              <div className="flex rounded-sm bg-accent/20 p-1 border border-border/40 max-w-sm">
-                <button
-                  type="button"
-                  onClick={() => setSendToSelf(true)}
-                  className={`flex-1 text-center py-2 text-xs font-medium rounded-xs transition-colors ${
-                    sendToSelf
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Send to Myself
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSendToSelf(false)}
-                  className={`flex-1 text-center py-2 text-xs font-medium rounded-xs transition-colors ${
-                    !sendToSelf
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Send as a Gift
-                </button>
-              </div>
+              <RadioGroup
+                value={sendToSelf ? "self" : "gift"}
+                onValueChange={(v) => setSendToSelf(v === "self")}
+                className="flex gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="self" id="send-self" />
+                  <Label
+                    htmlFor="send-self"
+                    className="text-xs font-medium cursor-pointer select-none"
+                  >
+                    This is for me
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="gift" id="send-gift" />
+                  <Label
+                    htmlFor="send-gift"
+                    className="text-xs font-medium cursor-pointer select-none"
+                  >
+                    This is a gift
+                  </Label>
+                </div>
+              </RadioGroup>
 
-              {/* Recipient Fields */}
               {!sendToSelf && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                   <div className="space-y-1.5">
                     <Label
                       htmlFor="rec-name"
                       className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
                     >
-                      Recipient's Full Name <span className="text-primary">*</span>
+                      Recipient's Name <span className="text-primary">*</span>
                     </Label>
                     <Input
                       id="rec-name"
@@ -409,12 +452,14 @@ function Checkout() {
                   </Label>
                   <Select value={deliveryLocation} onValueChange={setDeliveryLocation}>
                     <SelectTrigger id="del-location" className="text-xs bg-background">
-                      <SelectValue placeholder="Select Area" />
+                      <SelectValue
+                        placeholder={locationsLoading ? "Loading areas…" : "Select Area"}
+                      />
                     </SelectTrigger>
                     <SelectContent className="bg-background border-border/60">
-                      {LOCATIONS.map((loc) => (
-                        <SelectItem key={loc.name} value={loc.name} className="text-xs">
-                          {loc.name} ({formatUGX(loc.fee)})
+                      {(locations ?? []).map((loc) => (
+                        <SelectItem key={loc.id} value={loc.name} className="text-xs">
+                          {loc.name} ({formatUGX(loc.fee_ugx)})
                         </SelectItem>
                       ))}
                       <SelectItem value={OTHER_LOCATION} className="text-xs">
@@ -476,9 +521,14 @@ function Checkout() {
                 <h2 className="font-serif text-xl text-foreground font-medium">Payment Method</h2>
               </div>
 
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Choose how you'd like to pay — we'll confirm your order and finalize payment with
+                you directly on WhatsApp. Online payment isn't live yet, so nothing is charged here.
+              </p>
+
               <RadioGroup
                 value={paymentMethod}
-                onValueChange={setPaymentMethod}
+                onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
                 className="space-y-3.5"
               >
                 {/* MTN Momo */}
@@ -500,7 +550,7 @@ function Checkout() {
                 {/* Airtel Money */}
                 <div className="flex items-center justify-between border border-border/40 rounded-sm p-4 bg-background/50 hover:bg-accent/10 transition-colors">
                   <div className="flex items-center space-x-3.5">
-                    <RadioGroupItem value="airtel" id="pay-airtel" />
+                    <RadioGroupItem value="airtel_money" id="pay-airtel" />
                     <Label
                       htmlFor="pay-airtel"
                       className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none"
@@ -513,78 +563,47 @@ function Checkout() {
                   </span>
                 </div>
 
-                {/* Card Payment */}
-                <div className="border border-border/40 rounded-sm p-4 bg-background/50 hover:bg-accent/5 transition-colors space-y-4">
+                {/* Card Payment — no raw card fields: once a gateway (see
+                    src/lib/payments/) is connected, selecting this will
+                    redirect to their hosted payment page instead. */}
+                <div className="border border-border/40 rounded-sm p-4 bg-background/50 hover:bg-accent/5 transition-colors space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3.5">
-                      <RadioGroupItem value="visa" id="pay-visa" />
+                      <RadioGroupItem value="card" id="pay-card" />
                       <Label
-                        htmlFor="pay-visa"
+                        htmlFor="pay-card"
                         className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none flex items-center gap-1.5"
                       >
                         <CreditCard className="h-4 w-4 text-muted-foreground" />
-                        Visa / Mastercard
+                        Card (Visa / Mastercard)
                       </Label>
                     </div>
                     <span className="text-[9px] font-bold text-muted-foreground border border-border/80 px-2 py-0.5 rounded-sm tracking-wider">
                       CARD
                     </span>
                   </div>
-
-                  {paymentMethod === "visa" && (
-                    <div className="grid grid-cols-3 gap-3 pt-2">
-                      <div className="col-span-3 space-y-1.5">
-                        <Label
-                          htmlFor="visa-num"
-                          className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
-                        >
-                          Card Number
-                        </Label>
-                        <Input
-                          id="visa-num"
-                          required={paymentMethod === "visa"}
-                          placeholder="4000 1234 5678 9010"
-                          value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value)}
-                          className="text-xs bg-background"
-                        />
-                      </div>
-                      <div className="space-y-1.5 col-span-2">
-                        <Label
-                          htmlFor="visa-expiry"
-                          className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
-                        >
-                          Expiry Date
-                        </Label>
-                        <Input
-                          id="visa-expiry"
-                          required={paymentMethod === "visa"}
-                          placeholder="MM/YY"
-                          value={cardExpiry}
-                          onChange={(e) => setCardExpiry(e.target.value)}
-                          className="text-xs bg-background"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label
-                          htmlFor="visa-cvv"
-                          className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
-                        >
-                          CVV
-                        </Label>
-                        <Input
-                          id="visa-cvv"
-                          type="password"
-                          required={paymentMethod === "visa"}
-                          maxLength={3}
-                          placeholder="123"
-                          value={cardCvv}
-                          onChange={(e) => setCardCvv(e.target.value)}
-                          className="text-xs bg-background"
-                        />
-                      </div>
-                    </div>
+                  {paymentMethod === "card" && (
+                    <p className="text-[11px] text-muted-foreground leading-relaxed pl-8">
+                      Online card payment is coming soon. We'll share a secure payment link on
+                      WhatsApp, or you can pay by Mobile Money on delivery instead.
+                    </p>
                   )}
+                </div>
+
+                {/* Cash / MoMo on delivery */}
+                <div className="flex items-center justify-between border border-border/40 rounded-sm p-4 bg-background/50 hover:bg-accent/10 transition-colors">
+                  <div className="flex items-center space-x-3.5">
+                    <RadioGroupItem value="cash_on_delivery" id="pay-cod" />
+                    <Label
+                      htmlFor="pay-cod"
+                      className="text-xs md:text-sm font-semibold text-foreground cursor-pointer select-none"
+                    >
+                      Cash / Mobile Money on Delivery
+                    </Label>
+                  </div>
+                  <span className="text-[9px] font-bold text-muted-foreground border border-border/80 px-2 py-0.5 rounded-sm tracking-wider">
+                    COD
+                  </span>
                 </div>
               </RadioGroup>
             </section>
@@ -653,7 +672,7 @@ function Checkout() {
                   <div className="flex items-center justify-between border border-emerald-600/30 bg-emerald-500/5 px-3 py-2 rounded-sm text-xs text-emerald-800">
                     <span className="flex items-center gap-1.5 font-medium">
                       <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-                      {appliedPromo} Applied
+                      {appliedPromo.code} Applied
                     </span>
                     <button
                       type="button"
@@ -675,9 +694,10 @@ function Checkout() {
                     <button
                       type="button"
                       onClick={applyPromoCode}
-                      className="rounded-sm bg-primary/10 border border-primary/20 px-4 py-2 text-[10px] uppercase tracking-wider font-semibold text-primary hover:bg-primary/20 transition-colors"
+                      disabled={validatePromo.isPending}
+                      className="rounded-sm bg-primary/10 border border-primary/20 px-4 py-2 text-[10px] uppercase tracking-wider font-semibold text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
                     >
-                      Apply
+                      {validatePromo.isPending ? "Checking…" : "Apply"}
                     </button>
                   </div>
                 )}
@@ -712,158 +732,33 @@ function Checkout() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full flex items-center justify-center gap-2 rounded-sm bg-primary py-3.5 text-xs uppercase tracking-[0.22em] font-bold text-primary-foreground hover:bg-primary/95 transition-colors shadow-xs focus:outline-none"
+                className="w-full flex items-center justify-center gap-2 rounded-sm bg-primary py-3.5 text-xs uppercase tracking-[0.22em] font-bold text-primary-foreground hover:bg-primary/95 transition-colors shadow-xs focus:outline-none disabled:opacity-70"
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Preparing Secure Form...
+                    Placing Order...
                   </>
                 ) : (
-                  `Pay ${formatUGX(grandTotal)}`
+                  "Place Order"
                 )}
               </button>
             </div>
 
-            {/* Security Footer */}
+            {/* Trust Footer */}
             <div className="text-center space-y-2">
               <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                <span>128-bit Encrypted SSL Connection</span>
+                <span>Your order details are saved securely</span>
               </div>
               <p className="text-[10px] text-muted-foreground leading-relaxed px-4">
-                Mobile Money transactions are verified directly on your phone. Refunds & date
-                adjustments are free of charge up to 24h prior to delivery.
+                We'll confirm your order and payment with you directly on WhatsApp after you place
+                it. Refunds & date adjustments are free of charge up to 24h prior to delivery.
               </p>
             </div>
           </div>
         </form>
       </div>
-
-      {/* Payment Simulation Modal Dialog */}
-      <Dialog
-        open={showPaymentModal}
-        onOpenChange={(open) => {
-          // Prevent manual dismiss during processing or successful payment
-          if (!isSubmitting && paymentStep === "success") {
-            handleCloseSuccess();
-          } else if (paymentStep !== "processing") {
-            setShowPaymentModal(open);
-          }
-        }}
-      >
-        <DialogContent className="sm:max-w-md bg-background border-border/60 p-6 flex flex-col items-center text-center">
-          {paymentStep === "momo-prompt" && (
-            <>
-              <DialogHeader className="space-y-2">
-                <DialogTitle className="font-serif text-xl text-foreground text-center">
-                  Simulating Mobile Money Push
-                </DialogTitle>
-                <DialogDescription className="text-xs text-muted-foreground leading-relaxed text-center">
-                  In a production environment, an API push prompt is sent to {phone}. Enter your Pin
-                  below to simulate a successful payment.
-                </DialogDescription>
-              </DialogHeader>
-
-              <form onSubmit={handleSimulateMomoSubmit} className="w-full space-y-4 pt-3">
-                <div className="space-y-2 text-left">
-                  <Label
-                    htmlFor="momo-pin"
-                    className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold"
-                  >
-                    Enter Mobile Money PIN (Simulated)
-                  </Label>
-                  <Input
-                    id="momo-pin"
-                    type="password"
-                    maxLength={4}
-                    placeholder="••••"
-                    value={simulatedPin}
-                    onChange={(e) => setSimulatedPin(e.target.value.replace(/\D/g, ""))}
-                    className="text-center tracking-widest text-lg font-semibold bg-accent/10 border-border/80 h-12"
-                  />
-                </div>
-
-                <div className="bg-[#FFCC00]/10 border border-[#FFCC00]/30 rounded-sm p-3 flex justify-between items-center">
-                  <div className="text-left">
-                    <p className="text-[11px] font-semibold text-foreground">Hyper Petals Decor</p>
-                    <p className="text-[10px] text-muted-foreground">
-                      Amount: {formatUGX(grandTotal)}
-                    </p>
-                  </div>
-                  <span className="text-[9px] font-bold text-black bg-[#FFCC00] px-2 py-0.5 rounded-sm">
-                    MoMo Secure
-                  </span>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full rounded-sm bg-primary py-3 text-xs uppercase tracking-widest font-semibold text-primary-foreground hover:bg-primary/95 transition-colors focus:outline-none"
-                >
-                  Confirm PIN & Pay
-                </button>
-              </form>
-            </>
-          )}
-
-          {paymentStep === "processing" && (
-            <div className="py-8 flex flex-col items-center space-y-4">
-              <Loader2 className="h-12 w-12 text-primary animate-spin" />
-              <div className="space-y-1">
-                <h3 className="font-serif text-lg text-foreground font-medium">
-                  Verifying Transaction
-                </h3>
-                <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
-                  Securing communication channel, checking Mobile Money operator status, and
-                  processing ledger. Please hold...
-                </p>
-              </div>
-            </div>
-          )}
-
-          {paymentStep === "success" && (
-            <div className="py-6 flex flex-col items-center space-y-5">
-              <CheckCircle2 className="h-16 w-16 text-emerald-600 stroke-[1.5]" />
-              <div className="space-y-1">
-                <h3 className="font-serif text-2xl text-foreground font-medium">
-                  Order Placed Successfully!
-                </h3>
-                <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
-                  Thank you for choosing Hyper Petals Decor! Your payment has been received, and our
-                  Kampalan florists are scheduling your delivery.
-                </p>
-              </div>
-
-              <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-sm p-4 w-full text-xs text-left text-foreground/90 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Customer Name:</span>
-                  <span className="font-medium">{name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Recipient Name:</span>
-                  <span className="font-medium">{sendToSelf ? name : recipientName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Delivery Date:</span>
-                  <span className="font-medium text-primary font-semibold">{deliveryDate}</span>
-                </div>
-                <div className="flex justify-between border-t border-border/40 pt-2 mt-1">
-                  <span className="text-muted-foreground font-semibold">Total Paid:</span>
-                  <span className="font-bold text-primary">{formatUGX(grandTotal)}</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleCloseSuccess}
-                className="w-full rounded-sm bg-primary py-3 text-xs uppercase tracking-widest font-semibold text-primary-foreground hover:bg-primary/95 transition-colors focus:outline-none"
-              >
-                Close & Return Home
-              </button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

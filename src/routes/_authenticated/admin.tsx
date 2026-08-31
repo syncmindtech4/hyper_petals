@@ -45,6 +45,7 @@ function AdminLayout() {
     { to: "/admin/content", label: "Site content" },
     { to: "/admin/products", label: "Products" },
     { to: "/admin/gallery", label: "Gallery" },
+    { to: "/admin/orders", label: "Orders" },
     { to: "/admin/enquiries", label: "Enquiries" },
   ] as const;
 

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { z } from "zod";
 import { Star, Truck, Calendar, RefreshCw, MessageSquare, ShoppingBag } from "lucide-react";
@@ -6,6 +6,7 @@ import { Product, formatUGX } from "@/lib/products";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart, AddOn } from "@/hooks/use-cart";
 import { waLink } from "@/lib/site";
+import { submitOrder } from "@/lib/cms.functions";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -72,6 +73,7 @@ const OTHER_LOCATION = "Other";
 
 function ProductDetail() {
   const { id } = Route.useSearch();
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { data: products, isLoading } = useProducts();
 
@@ -105,6 +107,7 @@ function ProductDetail() {
   const [giftMessage, setGiftMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [customization, setCustomization] = useState(EMPTY_CUSTOMIZATION);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
 
   // Reset customization selections when switching products
   useEffect(() => {
@@ -218,7 +221,7 @@ function ProductDetail() {
     });
   };
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = async () => {
     if (requiresCustomization && !customizationValid) {
       toast.error("Please finish customizing your bouquet", {
         description: `Still needed: ${customizationMissing.join(", ")}`,
@@ -261,7 +264,39 @@ function ProductDetail() {
 - *Delivery Date*: ${deliveryDate}${msgText}
 *Total*: ${formatUGX(totalPrice)}`;
 
-    window.open(waLink(message), "_blank");
+    setIsSubmittingOrder(true);
+    try {
+      const { groupId } = await submitOrder({
+        data: {
+          productSlug: product.id,
+          productName: product.name,
+          size: selectedSize,
+          sizePriceUgx: sizePrice,
+          quantity,
+          addOns: selectedAddOns.map((a) => ({ name: a.name, price: a.price })),
+          customization: requiresCustomization ? customization : undefined,
+          isGift,
+          recipientName: isGift ? recipientName : undefined,
+          recipientPhone: isGift ? recipientPhone : undefined,
+          giftMessage: giftMessage.trim() || undefined,
+          deliveryLocation: effectiveDeliveryLocation,
+          deliveryDate,
+          totalPriceUgx: totalPrice,
+        },
+      });
+      // Order saved — hand off to the success page, which owns the actual
+      // WhatsApp button click and tracks whether it's been sent yet.
+      navigate({ to: "/order-success/$orderId", params: { orderId: groupId } });
+    } catch (err) {
+      // DB save failed, so there's no orderId to route to. Don't block the
+      // WhatsApp handoff on that — the order still reaches the studio via
+      // WhatsApp either way — but it won't show up in /admin/orders.
+      console.error("submitOrder failed:", err);
+      toast.error("Order sent via WhatsApp, but couldn't save it to the dashboard.");
+      window.open(waLink(message), "_blank");
+    } finally {
+      setIsSubmittingOrder(false);
+    }
   };
 
   if (!product) {
@@ -430,10 +465,11 @@ function ProductDetail() {
             <button
               type="button"
               onClick={handleWhatsAppOrder}
-              className="w-full flex items-center justify-center gap-2 rounded-sm border border-emerald-600/80 bg-emerald-500/5 hover:bg-emerald-500/10 py-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-emerald-700 transition-colors"
+              disabled={isSubmittingOrder}
+              className="w-full flex items-center justify-center gap-2 rounded-sm border border-emerald-600/80 bg-emerald-500/5 hover:bg-emerald-500/10 py-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-emerald-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <MessageSquare className="h-4 w-4" />
-              Order via WhatsApp
+              {isSubmittingOrder ? "Placing order…" : "Order via WhatsApp"}
             </button>
           </div>
 

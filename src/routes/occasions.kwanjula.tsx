@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { OccasionDetail } from "@/components/occasion-detail";
+import { getGalleryByOccasion } from "@/lib/cms.functions";
 import hero from "@/assets/decoration_003.jpeg";
 import g1 from "@/assets/decoration_000.jpeg";
 import g2 from "@/assets/decoration_001.jpeg";
@@ -9,7 +11,7 @@ import g5 from "@/assets/bouquet_015.jpeg";
 import g6 from "@/assets/bouquet_020.jpeg";
 
 export const Route = createFileRoute("/occasions/kwanjula")({
-  component: () => <OccasionDetail cfg={cfg} />,
+  component: KwanjulaPage,
   head: () => ({
     meta: [
       { title: "Kwanjula & Kukyala Ceremony Décor — Hyper Petals & Decor" },
@@ -75,3 +77,21 @@ const cfg = {
     </div>
   ),
 };
+
+function KwanjulaPage() {
+  const { data: dbItems = [] } = useQuery({
+    queryKey: ["occasion_gallery", "kwanjula"],
+    queryFn: () => getGalleryByOccasion({ data: { occasion: "kwanjula" } }),
+  });
+
+  const gallery = [
+    ...cfg.gallery.map((src) => ({ src })),
+    ...dbItems.map((item) => ({
+      src: item.public_url,
+      alt: item.alt_text ?? item.title ?? "",
+      video: item.kind === "video",
+    })),
+  ];
+
+  return <OccasionDetail cfg={{ ...cfg, gallery }} />;
+}

@@ -28,12 +28,14 @@ import { Route as OccasionsCorporateChar38brandEventsRouteImport } from './route
 import { Route as OccasionsKwanjulaRouteImport } from './routes/occasions.kwanjula'
 import { Route as OccasionsTeaPartiesRouteImport } from './routes/occasions.tea-parties'
 import { Route as OccasionsWeddingProposalsRouteImport } from './routes/occasions.wedding-proposals'
+import { Route as OrderSuccessOrderIdRouteImport } from './routes/order-success.$orderId'
 import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authenticated/admin.content'
 import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authenticated/admin.enquiries'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
+import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 
 const IndexRoute = IndexRouteImport.update({
@@ -133,6 +135,11 @@ const OccasionsWeddingProposalsRoute =
     path: '/wedding-proposals',
     getParentRoute: () => OccasionsRoute,
   } as any)
+const OrderSuccessOrderIdRoute = OrderSuccessOrderIdRouteImport.update({
+  id: '/order-success/$orderId',
+  path: '/order-success/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignInSplatRoute = SignInSplatRouteImport.update({
   id: '/sign-in/$',
   path: '/sign-in/$',
@@ -166,6 +173,12 @@ const AuthenticatedAdminGalleryRoute =
     path: '/gallery',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminOrdersRoute =
+  AuthenticatedAdminOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminProductsRoute =
   AuthenticatedAdminProductsRouteImport.update({
     id: '/products',
@@ -191,12 +204,14 @@ export interface FileRoutesByFullPath {
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
   '/occasions/tea-parties': typeof OccasionsTeaPartiesRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/order-success/$orderId': typeof OrderSuccessOrderIdRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
   '/occasions/': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -216,12 +231,14 @@ export interface FileRoutesByTo {
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
   '/occasions/tea-parties': typeof OccasionsTeaPartiesRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/order-success/$orderId': typeof OrderSuccessOrderIdRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
   '/occasions': typeof OccasionsIndexRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -245,12 +262,14 @@ export interface FileRoutesById {
   '/occasions/kwanjula': typeof OccasionsKwanjulaRoute
   '/occasions/tea-parties': typeof OccasionsTeaPartiesRoute
   '/occasions/wedding-proposals': typeof OccasionsWeddingProposalsRoute
+  '/order-success/$orderId': typeof OrderSuccessOrderIdRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
   '/occasions/': typeof OccasionsIndexRoute
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
   '/_authenticated/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -274,12 +293,14 @@ export interface FileRouteTypes {
     | '/occasions/kwanjula'
     | '/occasions/tea-parties'
     | '/occasions/wedding-proposals'
+    | '/order-success/$orderId'
     | '/sign-in/$'
     | '/sign-up/$'
     | '/occasions/'
     | '/admin/content'
     | '/admin/enquiries'
     | '/admin/gallery'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -299,12 +320,14 @@ export interface FileRouteTypes {
     | '/occasions/kwanjula'
     | '/occasions/tea-parties'
     | '/occasions/wedding-proposals'
+    | '/order-success/$orderId'
     | '/sign-in/$'
     | '/sign-up/$'
     | '/occasions'
     | '/admin/content'
     | '/admin/enquiries'
     | '/admin/gallery'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin'
   id:
@@ -327,12 +350,14 @@ export interface FileRouteTypes {
     | '/occasions/kwanjula'
     | '/occasions/tea-parties'
     | '/occasions/wedding-proposals'
+    | '/order-success/$orderId'
     | '/sign-in/$'
     | '/sign-up/$'
     | '/occasions/'
     | '/_authenticated/admin/content'
     | '/_authenticated/admin/enquiries'
     | '/_authenticated/admin/gallery'
+    | '/_authenticated/admin/orders'
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -348,6 +373,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   OccasionsRoute: typeof OccasionsRouteWithChildren
   ProductDetailRoute: typeof ProductDetailRoute
+  OrderSuccessOrderIdRoute: typeof OrderSuccessOrderIdRoute
   SignInSplatRoute: typeof SignInSplatRoute
   SignUpSplatRoute: typeof SignUpSplatRoute
 }
@@ -487,6 +513,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OccasionsWeddingProposalsRouteImport
       parentRoute: typeof OccasionsRoute
     }
+    '/order-success/$orderId': {
+      id: '/order-success/$orderId'
+      path: '/order-success/$orderId'
+      fullPath: '/order-success/$orderId'
+      preLoaderRoute: typeof OrderSuccessOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign-in/$': {
       id: '/sign-in/$'
       path: '/sign-in/$'
@@ -529,6 +562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/orders': {
+      id: '/_authenticated/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/products': {
       id: '/_authenticated/admin/products'
       path: '/products'
@@ -543,6 +583,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminContentRoute: typeof AuthenticatedAdminContentRoute
   AuthenticatedAdminEnquiriesRoute: typeof AuthenticatedAdminEnquiriesRoute
   AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
+  AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -551,6 +592,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminContentRoute: AuthenticatedAdminContentRoute,
   AuthenticatedAdminEnquiriesRoute: AuthenticatedAdminEnquiriesRoute,
   AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
+  AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -607,6 +649,7 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   OccasionsRoute: OccasionsRouteWithChildren,
   ProductDetailRoute: ProductDetailRoute,
+  OrderSuccessOrderIdRoute: OrderSuccessOrderIdRoute,
   SignInSplatRoute: SignInSplatRoute,
   SignUpSplatRoute: SignUpSplatRoute,
 }

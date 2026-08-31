@@ -3,10 +3,7 @@ import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Trash2, Pencil, X, Plus, Upload } from "lucide-react";
 import { formatUGX } from "@/lib/products";
-import {
-  useAdminProducts,
-  useInvalidateProducts,
-} from "@/hooks/useProducts";
+import { useAdminProducts, useInvalidateProducts } from "@/hooks/useProducts";
 import {
   adminCreateProduct,
   adminUpdateProduct,
@@ -60,7 +57,7 @@ function ProductsAdmin() {
         </p>
         <button
           onClick={() => setEditing("new")}
-          className="inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-[11px] uppercase tracking-[0.24em] text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
           Add product
@@ -72,7 +69,9 @@ function ProductsAdmin() {
       ) : products.length === 0 ? (
         <div className="mt-10 rounded-sm border border-dashed border-border/60 p-14 text-center">
           <p className="font-serif text-2xl text-foreground">No products yet</p>
-          <p className="mt-2 text-sm text-muted-foreground">Add your first bouquet to get it live on the site.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Add your first bouquet to get it live on the site.
+          </p>
         </div>
       ) : (
         <div className="mt-8 overflow-x-auto">
@@ -92,7 +91,11 @@ function ProductsAdmin() {
                 <tr key={p.id} className="border-b border-border/40">
                   <td className="py-3 pr-4">
                     <div className="flex items-center gap-3">
-                      <img src={p.image_url} alt={p.name} className="h-12 w-12 rounded-sm object-cover bg-muted" />
+                      <img
+                        src={p.image_url}
+                        alt={p.name}
+                        className="h-12 w-12 rounded-sm object-cover bg-muted"
+                      />
                       <div>
                         <p className="font-serif text-base text-foreground">{p.name}</p>
                         <p className="text-[11px] text-muted-foreground">{p.slug}</p>
@@ -100,7 +103,9 @@ function ProductsAdmin() {
                     </div>
                   </td>
                   <td className="py-3 pr-4 text-muted-foreground">{p.category_label || "—"}</td>
-                  <td className="py-3 pr-4 font-medium text-foreground">{formatUGX(p.price_ugx)}</td>
+                  <td className="py-3 pr-4 font-medium text-foreground">
+                    {formatUGX(p.price_ugx)}
+                  </td>
                   <td className="py-3 pr-4">
                     <button
                       onClick={() => toggleActive(p)}
@@ -113,7 +118,9 @@ function ProductsAdmin() {
                       {p.is_active ? "Live" : "Hidden"}
                     </button>
                   </td>
-                  <td className="py-3 pr-4 text-muted-foreground">{p.is_bestseller ? "Yes" : "—"}</td>
+                  <td className="py-3 pr-4 text-muted-foreground">
+                    {p.is_bestseller ? "Yes" : "—"}
+                  </td>
                   <td className="py-3">
                     <div className="flex gap-2">
                       <button
@@ -137,7 +144,9 @@ function ProductsAdmin() {
         </div>
       )}
 
-      {editing && <ProductDialog item={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
+      {editing && (
+        <ProductDialog item={editing === "new" ? null : editing} onClose={() => setEditing(null)} />
+      )}
     </div>
   );
 }
@@ -157,7 +166,9 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
   const [isActive, setIsActive] = useState(item?.is_active ?? true);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<string[]>(item?.image_url ? [item.image_url] : []);
+  const [uploadedImages, setUploadedImages] = useState<string[]>(
+    item?.image_url ? [item.image_url] : [],
+  );
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const imageFileRef = useRef<HTMLInputElement>(null);
 
@@ -170,7 +181,7 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
     const toastId = toast.loading(
       fileList.length === 1
         ? "Uploading image to Vercel Blob…"
-        : `Uploading ${fileList.length} images to Vercel Blob…`
+        : `Uploading ${fileList.length} images to Vercel Blob…`,
     );
 
     const newUrls: string[] = [];
@@ -196,7 +207,7 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
         fileList.length === 1
           ? "Image uploaded successfully!"
           : `Successfully uploaded ${successCount} product images!`,
-        { id: toastId }
+        { id: toastId },
       );
     } else {
       toast.error("Failed to upload images.", { id: toastId });
@@ -247,13 +258,18 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={onClose}
+    >
       <div
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-sm border border-border bg-card p-8 shadow-2xl"
       >
         <div className="flex items-center justify-between">
-          <h2 className="font-serif text-2xl text-foreground">{isNew ? "Add product" : "Edit product"}</h2>
+          <h2 className="font-serif text-2xl text-foreground">
+            {isNew ? "Add product" : "Edit product"}
+          </h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
             <X className="h-5 w-5" />
           </button>
@@ -321,7 +337,9 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
                       multiple
                       className="hidden"
                       disabled={uploadingImage}
-                      onChange={(e) => e.target.files?.length && handleMultipleImageUploads(e.target.files)}
+                      onChange={(e) =>
+                        e.target.files?.length && handleMultipleImageUploads(e.target.files)
+                      }
                     />
                   </label>
                 </div>
@@ -344,7 +362,9 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
                       type="button"
                       onClick={() => setImageUrl(url)}
                       className={`relative h-12 w-12 overflow-hidden rounded-sm border-2 transition-all ${
-                        imageUrl === url ? "border-primary scale-105 shadow-xs" : "border-transparent opacity-60 hover:opacity-100"
+                        imageUrl === url
+                          ? "border-primary scale-105 shadow-xs"
+                          : "border-transparent opacity-60 hover:opacity-100"
                       }`}
                     >
                       <img src={url} alt="" className="h-full w-full object-cover" />
@@ -356,7 +376,9 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
           </div>
 
           <label className="grid gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Name</span>
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Name
+            </span>
             <input
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
@@ -390,7 +412,9 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
           </label>
 
           <label className="grid gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Price (UGX)</span>
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Price (UGX)
+            </span>
             <input
               type="number"
               min={0}
@@ -402,7 +426,9 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
           </label>
 
           <label className="grid gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Description</span>
+            <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+              Description
+            </span>
             <textarea
               rows={3}
               value={description}
@@ -424,11 +450,19 @@ function ProductDialog({ item, onClose }: { item: ProductRow | null; onClose: ()
 
           <div className="flex flex-wrap gap-6 pt-1">
             <label className="flex items-center gap-2 text-sm text-foreground">
-              <input type="checkbox" checked={isBestseller} onChange={(e) => setIsBestseller(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={isBestseller}
+                onChange={(e) => setIsBestseller(e.target.checked)}
+              />
               Mark as bestseller
             </label>
             <label className="flex items-center gap-2 text-sm text-foreground">
-              <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+              />
               Visible on site
             </label>
           </div>
